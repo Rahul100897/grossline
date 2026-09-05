@@ -15,6 +15,20 @@
       "when": 1788604510698,
       "tag": "0001_rls_and_app_role",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788617958628,
+      "tag": "0002_connector_framework",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788617959018,
+      "tag": "0003_rls_sync_cursors",
+      "breakpoints": true
     }
   ]
 }

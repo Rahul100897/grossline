@@ -13,6 +13,17 @@ export {
   type CredentialProvider,
   type CredentialPayload,
 } from './credentials';
+export { getCursor, setCursor, clearCursors } from './cursors';
+export {
+  createConnection,
+  listConnections,
+  getConnection,
+  updateConnectionHealth,
+  updateConnectionSettings,
+  markBackfillComplete,
+  type Connection,
+  type CreateConnectionInput,
+} from './connections';
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {

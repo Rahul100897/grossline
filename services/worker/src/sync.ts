@@ -3,8 +3,11 @@ import type IORedis from 'ioredis';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { logger } from '@grossline/core';
-import { schema, withTenant } from '@grossline/db';
+import { getConnection, schema, updateConnectionHealth, withTenant } from '@grossline/db';
 import { queuePrefix } from './redis';
+import { getConnector } from './connectors/registry';
+import { runBackfill, runIncremental } from './connectors/engine';
+import type { SyncContext } from './connectors/types';
 
 export const syncJobSchema = z.object({
   tenantId: z.string().uuid(),
@@ -20,13 +23,11 @@ export const syncJobSchema = z.object({
 
 export type SyncJobData = z.infer<typeof syncJobSchema>;
 
+// One queue for every tenant — the tenant travels on the job, so a tenant
+// created a second ago can sync without any worker restart (docs/decisions.md).
+export const SYNC_QUEUE = 'sync';
 export const DEAD_LETTER_QUEUE = 'dead-letter';
 export const SYNC_ATTEMPTS = 3;
-
-export function syncQueueName(tenantId: string): string {
-  // BullMQ forbids ':' inside queue names (it is the Redis key separator).
-  return `sync-${tenantId}`;
-}
 
 export function defaultJobOptions(): JobsOptions {
   return {
@@ -35,13 +36,13 @@ export function defaultJobOptions(): JobsOptions {
       type: 'exponential',
       delay: Number(process.env.SYNC_BACKOFF_MS ?? 30_000),
     },
-    removeOnComplete: { count: 100 },
+    removeOnComplete: { count: 1000 },
     removeOnFail: false,
   };
 }
 
-export function getSyncQueue(connection: IORedis, tenantId: string): Queue<SyncJobData> {
-  return new Queue<SyncJobData>(syncQueueName(tenantId), {
+export function getSyncQueue(connection: IORedis): Queue<SyncJobData> {
+  return new Queue<SyncJobData>(SYNC_QUEUE, {
     connection,
     prefix: queuePrefix(),
     defaultJobOptions: defaultJobOptions(),
@@ -57,10 +58,7 @@ export async function enqueueSync(
   data: Omit<SyncJobData, 'syncRunId'>,
 ): Promise<string> {
   const parsed = syncJobSchema.parse(data);
-  const queue = new Queue<SyncJobData>(syncQueueName(parsed.tenantId), {
-    connection,
-    prefix: queuePrefix(),
-  });
+  const queue = getSyncQueue(connection);
   try {
     const job = await queue.add(`sync-${parsed.kind}`, parsed, defaultJobOptions());
     return job.id ?? 'unknown';
@@ -109,16 +107,40 @@ async function finishSyncRun(
   );
 }
 
+async function processConnectorJob(data: SyncJobData): Promise<number> {
+  const connection = await getConnection(data.tenantId, data.connectionId!);
+  if (!connection) throw new Error(`connection ${data.connectionId} not found for tenant`);
+  const connector = getConnector(connection.provider);
+  const ctx: SyncContext = {
+    tenantId: data.tenantId,
+    connectionId: connection.id,
+    fetchImpl: fetch,
+    log: logger,
+  };
+  if (data.kind === 'backfill') {
+    if (!data.windowStart || !data.windowEnd) {
+      throw new Error('backfill jobs need windowStart and windowEnd');
+    }
+    const summary = await runBackfill(ctx, connector, {
+      start: new Date(data.windowStart),
+      end: new Date(data.windowEnd),
+    });
+    return summary.rowsWritten;
+  }
+  const result = await runIncremental(ctx, connector);
+  return result.rowsWritten;
+}
+
 /**
- * Worker for one tenant's sync queue. Phase 0 has no connectors, so a
- * successful run is a recorded no-op; the machinery (retries, dead-letter,
- * sync_runs bookkeeping) is the deliverable.
+ * The single sync worker. Phase 1 connectors are dispatched by provider via
+ * the registry; a job without a connectionId is a recorded no-op (kept for
+ * the Phase 0 retry/dead-letter proofs).
  */
-export function createSyncWorker(connection: IORedis, tenantId: string): Worker<SyncJobData> {
+export function createSyncWorker(connection: IORedis): Worker<SyncJobData> {
   const deadLetter = getDeadLetterQueue(connection);
 
   const worker = new Worker<SyncJobData>(
-    syncQueueName(tenantId),
+    SYNC_QUEUE,
     async (job) => {
       const started = Date.now();
       const syncRunId = await ensureSyncRun(job);
@@ -126,13 +148,21 @@ export function createSyncWorker(connection: IORedis, tenantId: string): Worker<
       if (data.simulateFailure) {
         throw new Error('simulated failure (requested by job data)');
       }
-      // Connector work goes here from Phase 1.
+      const rowsWritten = data.connectionId ? await processConnectorJob(data) : 0;
       await finishSyncRun(data.tenantId, syncRunId, {
         status: 'success',
+        rowsWritten,
         durationMs: Date.now() - started,
       });
+      if (data.connectionId) {
+        await updateConnectionHealth(data.tenantId, data.connectionId, {
+          health: 'healthy',
+          lastError: null,
+          lastSuccessAt: new Date(),
+        });
+      }
     },
-    { connection, prefix: queuePrefix(), concurrency: 1 },
+    { connection, prefix: queuePrefix(), concurrency: 2 },
   );
 
   worker.on('failed', (job, err) => {
@@ -140,8 +170,8 @@ export function createSyncWorker(connection: IORedis, tenantId: string): Worker<
     const attempts = job.opts.attempts ?? 1;
     const isFinal = job.attemptsMade >= attempts;
     logger.warn('sync job attempt failed', {
-      tenantId,
       jobId: job.id,
+      tenantId: job.data.tenantId,
       attempt: job.attemptsMade,
       of: attempts,
       final: isFinal,
@@ -156,8 +186,14 @@ export function createSyncWorker(connection: IORedis, tenantId: string): Worker<
           error: err.message,
         });
       }
+      if (data.connectionId) {
+        await updateConnectionHealth(data.tenantId, data.connectionId, {
+          health: 'degraded',
+          lastError: err.message,
+        });
+      }
       await deadLetter.add('dead', {
-        queue: syncQueueName(tenantId),
+        queue: SYNC_QUEUE,
         jobId: job.id,
         data,
         failedReason: err.message,
@@ -165,7 +201,6 @@ export function createSyncWorker(connection: IORedis, tenantId: string): Worker<
       });
     })().catch((e: unknown) => {
       logger.error('dead-letter handling failed', {
-        tenantId,
         jobId: job.id,
         error: e instanceof Error ? e.message : String(e),
       });

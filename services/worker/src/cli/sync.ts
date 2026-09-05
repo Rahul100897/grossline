@@ -1,6 +1,8 @@
 // Manual sync for one tenant: pnpm worker:sync <tenantId> [backfill|incremental]
+// Enqueues one job per connection the tenant has (a running worker picks them up).
 import { z } from 'zod';
 import { logger } from '@grossline/core';
+import { listConnections } from '@grossline/db';
 import { createRedis } from '../redis';
 import { enqueueSync } from '../sync';
 
@@ -17,11 +19,20 @@ if (!args.success) {
 const [tenantId, kind = 'incremental'] = args.data;
 const connection = createRedis();
 
-enqueueSync(connection, { tenantId, kind })
-  .then((jobId) => {
-    logger.info('sync enqueued', { tenantId, kind, jobId });
-    connection.disconnect();
-  })
+async function main(): Promise<void> {
+  const connections = await listConnections(tenantId);
+  if (connections.length === 0) {
+    logger.warn('tenant has no connections; nothing to sync', { tenantId });
+    return;
+  }
+  for (const conn of connections) {
+    const jobId = await enqueueSync(connection, { tenantId, kind, connectionId: conn.id });
+    logger.info('sync enqueued', { tenantId, kind, provider: conn.provider, jobId });
+  }
+}
+
+main()
+  .then(() => connection.disconnect())
   .catch((err) => {
     logger.error('failed to enqueue sync', {
       tenantId,
