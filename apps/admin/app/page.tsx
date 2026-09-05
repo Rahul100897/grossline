@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { listTenants, type Tenant } from '@grossline/db';
 import { requireSession } from '../lib/auth';
 import { logout } from './login/actions';
@@ -19,14 +20,19 @@ export default async function TenantsPage() {
     <main className="mx-auto max-w-3xl p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Tenants</h1>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="rounded border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100"
-          >
-            Sign out
-          </button>
-        </form>
+        <div className="flex items-center gap-4">
+          <Link href="/connections" className="text-sm text-neutral-500 hover:text-neutral-900">
+            Connections →
+          </Link>
+          <form action={logout}>
+            <button
+              type="submit"
+              className="rounded border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       {loadError ? (

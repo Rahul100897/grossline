@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { connections } from './schema';
+import { connections, syncCursors } from './schema';
 import { withTenant } from './tenant-scope';
 
 export type Connection = typeof connections.$inferSelect;
@@ -60,6 +60,17 @@ export async function updateConnectionHealth(
       })
       .where(eq(connections.id, connectionId)),
   );
+}
+
+/** Explicit reset before re-running a backfill with a different window. */
+export async function resetBackfill(tenantId: string, connectionId: string): Promise<void> {
+  await withTenant(tenantId, async (tx) => {
+    await tx.delete(syncCursors).where(eq(syncCursors.connectionId, connectionId));
+    await tx
+      .update(connections)
+      .set({ backfillCompletedAt: null })
+      .where(eq(connections.id, connectionId));
+  });
 }
 
 export async function markBackfillComplete(

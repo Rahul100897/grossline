@@ -40,9 +40,11 @@ export {
   updateConnectionHealth,
   updateConnectionSettings,
   markBackfillComplete,
+  resetBackfill,
   type Connection,
   type CreateConnectionInput,
 } from './connections';
+export { getBackfillProgress, type BackfillProgress } from './backfill-progress';
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {
