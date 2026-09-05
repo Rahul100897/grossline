@@ -70,6 +70,20 @@ simplest option was chosen. Anything here can be revisited.
   job fails before resolving its connection (task 0.5 writes a failed row in
   every path).
 
+## 2026-09-05 — Task 0.4 credential store
+
+- **`getCredential(tenantId, ref)`, not `getCredential(ref)`.** The phase doc
+  writes the one-argument form, but CLAUDE.md non-negotiable #1 says no read
+  without a tenant filter — and the two rules conflict. CLAUDE.md wins: the
+  lookup runs through `withTenant`, so a ref belonging to another tenant
+  resolves to `null` under RLS instead of ever loading the row.
+- **Envelope format.** Wrapped data key + auth tags travel as a versioned
+  JSON envelope inside the `ciphertext` column; the payload IV uses the
+  schema's `iv` column. Rotation: `key_version` names the wrapping key;
+  the current key is `MASTER_KEY` (version from `MASTER_KEY_VERSION`,
+  default 1) and superseded keys will be provided as `MASTER_KEY_V<n>` during
+  a rotation window.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
