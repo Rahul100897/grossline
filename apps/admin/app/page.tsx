@@ -60,7 +60,9 @@ export default async function TenantsPage() {
             {tenants!.map((t) => (
               <tr key={t.id} className="border-b border-neutral-100">
                 <td className="py-2 pr-4">
-                  {t.name}
+                  <Link href={`/tenants/${t.id}/costs`} className="hover:underline">
+                    {t.name}
+                  </Link>
                   {t.isDemo ? (
                     <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">
                       demo

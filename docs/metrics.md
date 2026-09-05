@@ -47,6 +47,14 @@ Every change to this file needs a note in the changelog at the bottom and a reco
 **Payment fees** — merchant-supplied percentage and fixed fee per order.
 **Shipping cost** — merchant-supplied, per order or monthly total allocated per order.
 **Fulfilment cost** — merchant-supplied, per order.
+**Packaging cost** — merchant-supplied, per order.
+
+All merchant-supplied cost inputs carry **effective-from dates** (like COGS): a
+later change never alters a historical month. Missing inputs are missing, not
+zero, and surface as reduced completeness.
+
+**Monthly revenue target / monthly ad spend target** — merchant-supplied,
+effective-from dated. Not metrics; reference lines for pacing (Phase 2.6).
 
 **Contribution margin after ad spend** — net sales − COGS − ad spend.
 **Full contribution margin** — net sales − COGS − ad spend − payment fees − shipping cost − fulfilment cost.
@@ -127,3 +135,4 @@ Decide before Phase 2 ends. Do not guess in code.
 | Date | Change | Periods recomputed |
 |---|---|---|
 | — | Initial version | — |
+| 2026-09-05 | Added packaging cost and monthly revenue/spend targets to merchant-supplied inputs; documented effective-from dating for all cost inputs (Phase 2 tasks 2.1/2.2) | none — no metrics computed yet |

@@ -51,6 +51,13 @@ export { getBackfillProgress, type BackfillProgress } from './backfill-progress'
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {
+  upsertTenantCostInputs,
+  listTenantCostInputs,
+  getCostInputsEffectiveOn,
+  type TenantCostInputs,
+  type TenantCostInputsInput,
+} from './cost-inputs';
+export {
   upsertProductCosts,
   listProductCosts,
   listCostableOrderLines,

@@ -1,4 +1,5 @@
 import {
+  bigint,
   boolean,
   date,
   integer,
@@ -272,6 +273,33 @@ export const productCosts = pgTable(
   (t) => [
     uniqueIndex('product_costs_uniq').on(t.tenantId, t.sku, t.variantId, t.effectiveFrom),
   ],
+);
+
+// Merchant-supplied cost inputs as whole-row snapshots with effective-from
+// dates: resolution picks the latest row on or before the date in question,
+// so a later change never touches a historical month (same rule as
+// product_costs). Every field nullable — merchants supply what they know,
+// and missing is missing.
+export const tenantCostInputs = pgTable(
+  'tenant_cost_inputs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    effectiveFrom: date('effective_from', { mode: 'string' }).notNull(),
+    currency: text('currency').notNull(),
+    /** Basis points: 290 = 2.90% */
+    paymentFeeBp: integer('payment_fee_bp'),
+    paymentFeeFixedMinor: integer('payment_fee_fixed_minor'),
+    shippingCostPerOrderMinor: integer('shipping_cost_per_order_minor'),
+    fulfilmentCostPerOrderMinor: integer('fulfilment_cost_per_order_minor'),
+    packagingCostPerOrderMinor: integer('packaging_cost_per_order_minor'),
+    monthlyRevenueTargetMinor: bigint('monthly_revenue_target_minor', { mode: 'number' }),
+    monthlySpendTargetMinor: bigint('monthly_spend_target_minor', { mode: 'number' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('tenant_cost_inputs_uniq').on(t.tenantId, t.effectiveFrom)],
 );
 
 // Global reference data (no tenant_id, like admin_users): daily ECB FX rates,

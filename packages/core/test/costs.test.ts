@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { computeCostCoverage, resolveUnitCost, type ProductCostRow } from '../src/costs';
+import {
+  computeCostCoverage,
+  latestEffective,
+  resolveUnitCost,
+  type ProductCostRow,
+} from '../src/costs';
 import { decimalToMinorUnits } from '../src/money';
 import { parseCsv } from '../src/csv';
 
@@ -54,6 +59,18 @@ describe('resolveUnitCost', () => {
   it('the effective date boundary is inclusive', () => {
     const rows = [cost({ effectiveFrom: '2026-03-01', unitCostMinor: 999 })];
     expect(resolveUnitCost(rows, { sku: 'AUR-MUG-01' }, '2026-03-01')!.unitCostMinor).toBe(999);
+  });
+});
+
+describe('latestEffective', () => {
+  it('picks the latest row on or before the date, or null', () => {
+    const rows = [
+      { effectiveFrom: '2026-01-01', v: 'jan' },
+      { effectiveFrom: '2026-06-01', v: 'jun' },
+    ];
+    expect(latestEffective(rows, '2026-03-15')!.v).toBe('jan');
+    expect(latestEffective(rows, '2026-06-01')!.v).toBe('jun');
+    expect(latestEffective(rows, '2025-12-31')).toBeNull();
   });
 });
 
