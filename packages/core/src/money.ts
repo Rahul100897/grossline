@@ -13,6 +13,23 @@ export function minorUnitExponent(currency: string): number {
   return MINOR_UNIT_EXPONENTS[currency.toUpperCase()] ?? 2;
 }
 
+/**
+ * Parse a decimal string ("14.00") into integer minor units for the currency.
+ * String arithmetic only — the value never exists as a float.
+ */
+export function decimalToMinorUnits(decimal: string, currency: string): number {
+  const match = /^(-?)(\d+)(?:\.(\d+))?$/.exec(decimal.trim());
+  if (!match) throw new Error(`not a decimal amount: "${decimal}"`);
+  const [, sign, whole, fraction = ''] = match;
+  const exponent = minorUnitExponent(currency);
+  if (fraction.length > exponent) {
+    throw new Error(`"${decimal}" has more precision than ${currency} minor units allow`);
+  }
+  const minor = Number(whole! + fraction.padEnd(exponent, '0'));
+  if (!Number.isSafeInteger(minor)) throw new Error(`amount out of safe range: "${decimal}"`);
+  return sign === '-' ? -minor : minor;
+}
+
 export type ConvertedAmount = {
   amountMinor: number;
   currency: string;

@@ -92,6 +92,20 @@
       "when": 1788622740825,
       "tag": "0012_health_backfill_existing",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1788626209800,
+      "tag": "0013_product_costs",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1788626210182,
+      "tag": "0014_rls_product_costs",
+      "breakpoints": true
     }
   ]
 }

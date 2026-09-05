@@ -22,7 +22,10 @@
     "connect:meta": "pnpm --filter @grossline/worker run connect:meta",
     "connect:google": "pnpm --filter @grossline/worker run connect:google",
     "fx:pull": "pnpm --filter @grossline/worker run fx:pull",
-    "reconcile": "pnpm --filter @grossline/worker run reconcile"
+    "reconcile": "pnpm --filter @grossline/worker run reconcile",
+    "costs:upload": "pnpm --filter @grossline/worker run costs:upload",
+    "costs:import-shopify": "pnpm --filter @grossline/worker run costs:import-shopify",
+    "costs:coverage": "pnpm --filter @grossline/worker run costs:coverage"
   },
   "devDependencies": {
     "@grossline/config": "workspace:*",

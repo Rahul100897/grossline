@@ -7,7 +7,21 @@ export {
   monthWindow,
   type MonthWindow,
 } from './time';
-export { convertMinorUnits, minorUnitExponent, type ConvertedAmount } from './money';
+export {
+  convertMinorUnits,
+  minorUnitExponent,
+  decimalToMinorUnits,
+  type ConvertedAmount,
+} from './money';
+export {
+  resolveUnitCost,
+  computeCostCoverage,
+  type ProductCostRow,
+  type ResolvedCost,
+  type OrderLineForCosting,
+  type CostCoverage,
+} from './costs';
+export { parseCsv } from './csv';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,

@@ -12,7 +12,10 @@
     "connect:meta": "tsx src/cli/connect-meta.ts",
     "connect:google": "tsx src/cli/connect-google-ads.ts",
     "fx:pull": "tsx src/cli/fx-pull.ts",
-    "reconcile": "tsx src/cli/reconcile.ts"
+    "reconcile": "tsx src/cli/reconcile.ts",
+    "costs:upload": "tsx src/cli/costs-upload.ts",
+    "costs:import-shopify": "tsx src/cli/costs-import-shopify.ts",
+    "costs:coverage": "tsx src/cli/costs-coverage.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",

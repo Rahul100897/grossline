@@ -349,6 +349,25 @@ returns only the last 60 days of orders.
   tokens, currently required only for new public apps). Ours is custom
   distribution; revisit if Shopify extends the requirement.
 
+## 2026-09-05 — Task 2.1 product costs
+
+- **Cost rows key on sku and/or variant gid** (both stored, '' = unset, CHECK
+  requires one). Resolution: variant match beats sku match, latest
+  effective_from ≤ order date wins, and on a full tie a merchant `upload`
+  beats the `shopify` sync. Missing stays `null` — never zero.
+- **Shopify unitCost import dating.** Shopify keeps no cost history, so the
+  first sighting of a variant's cost applies from 1970-01-01 (already-synced
+  history resolves); a *changed* cost inserts a new row effective the import
+  date, freezing history. Merchant CSV uploads override via the tie-break.
+- **CSV upload is a CLI** (`pnpm costs:upload`), not an admin page — Rahul is
+  the only user and lives in a terminal; per-row line-numbered error report,
+  valid rows applied, exit 1 when any row fails. Coverage
+  (`pnpm costs:coverage <tenant> <YYYY-MM>`) reports costed-line share plus
+  missing SKUs with units and discounted revenue at stake, cancelled orders
+  excluded; exits 1 when anything is missing so it is cron-visible.
+- Coverage revenue uses the **discounted** line revenue in shop currency —
+  the number closest to what net sales will lose if the line stays uncostable.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
