@@ -36,6 +36,11 @@ async function main(): Promise<void> {
   console.log(
     `  lines: ${coverage.costedLines}/${coverage.totalLines} costed (${(coverage.coverageRate * 100).toFixed(1)}%)`,
   );
+  const p = coverage.provenance;
+  console.log(
+    `  provenance: ${p.uploadLines} from merchant upload, ${p.shopifyDatedLines} shopify (dated), ` +
+      `${p.shopifyEpochAssumedLines} shopify (EPOCH-ASSUMED — applied to all history without a real date)`,
+  );
   console.log(`  revenue at stake: ${fmt(coverage.revenueAtStakeMinor, currency)} of ${fmt(coverage.totalRevenueMinor, currency)}`);
   if (coverage.missing.length > 0) {
     console.log(`  missing costs (${coverage.missing.length} sku/variant key(s)):`);
