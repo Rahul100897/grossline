@@ -371,11 +371,14 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
       { id: '910000000000000002', name: 'demo-retargeting', base: 30 },
     ];
     let accountSpend = 0;
+    let accountPurchases = 0;
+    let accountPurchaseValue = 0;
     for (const c of metaCampaigns) {
       const zero = rand() < 0.03;
       const spend = zero ? 0 : c.base * daily * (0.75 + rand() * 0.5);
       accountSpend += spend;
       const purchases = zero ? 0 : Math.round((spend / 22) * (0.8 + rand() * 0.4));
+      accountPurchases += purchases;
       metaRows.push({
         adAccountId: 'act_demo_910000001',
         level: 'campaign',
@@ -392,10 +395,12 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
           impressions: String(Math.round(spend * 90)),
           clicks: String(Math.round(spend * 2.6)),
           actions: purchases > 0 ? [{ action_type: 'purchase', value: String(purchases) }] : [],
-          action_values:
-            purchases > 0
-              ? [{ action_type: 'purchase', value: (purchases * 82 * (0.9 + rand() * 0.3)).toFixed(2) }]
-              : [],
+          action_values: (() => {
+            if (purchases === 0) return [];
+            const value = purchases * 82 * (0.9 + rand() * 0.3);
+            accountPurchaseValue += value;
+            return [{ action_type: 'purchase', value: value.toFixed(2) }];
+          })(),
           attribution_setting: '7d_click_1d_view',
         },
       });
@@ -411,6 +416,14 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
         date_start: dateStr,
         date_stop: dateStr,
         spend: accountSpend.toFixed(2),
+        // The real API returns account-level actions when requested; the demo
+        // account row is the sum of its campaigns, like Meta's own totals.
+        actions:
+          accountPurchases > 0 ? [{ action_type: 'purchase', value: String(accountPurchases) }] : [],
+        action_values:
+          accountPurchases > 0
+            ? [{ action_type: 'purchase', value: accountPurchaseValue.toFixed(2) }]
+            : [],
         attribution_setting: '7d_click_1d_view',
       },
     });

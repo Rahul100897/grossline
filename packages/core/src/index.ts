@@ -39,6 +39,7 @@ export {
   type AdSpendForMonth,
 } from './metrics/margin';
 export { computeAdPlatformMetrics, type PlatformDay } from './metrics/ad-platforms';
+export { computeChannelMetrics } from './metrics/channels';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,
