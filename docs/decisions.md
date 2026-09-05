@@ -120,6 +120,19 @@ simplest option was chosen. Anything here can be revisited.
   session, generic error on bad credentials, tenant list (empty state and
   populated) after real login, sign-out returns to login.
 
+## 2026-09-05 — Exit criteria pass
+
+- **Non-production env fallbacks** matching docker-compose (DATABASE_URL,
+  REDIS_URL, and a clearly-labeled dev MASTER_KEY) so `pnpm verify` passes on
+  a fresh clone with no `.env`. All refuse to fall back when
+  `NODE_ENV=production`. Verified with an actual clean clone from GitHub.
+- **CI fixes**: removed the pnpm version pin (the `packageManager` field is
+  the single source of truth), replaced the CI test MASTER_KEY with one that
+  really decodes to 32 bytes, and marked that labeled test value
+  `gitleaks:allow`. CI (verify + secrets scan) is green on main.
+- **`getgrossline.com` is NOT live** — the only unmet exit criterion. It needs
+  Rahul's Cloudflare account; the exact steps are in `docs/deploy.md`.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
