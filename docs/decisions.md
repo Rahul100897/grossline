@@ -316,6 +316,39 @@ simplest option was chosen. Anything here can be revisited.
   mints the Shopify demo connection and marks pre-existing matching
   connections `settings.demo = true`.
 
+## 2026-09-05 — Shopify auth strategies (auth model change)
+
+Verified against shopify.dev: admin-created ("legacy") custom apps cannot be
+created since 2026-01-01 (existing shpat_ tokens keep working); Dev Dashboard
+apps authenticate via OAuth — the client credentials grant works only for
+stores in our own Shopify organization and returns ~24-hour tokens; merchant
+stores need custom distribution plus the authorization code grant;
+`read_all_orders` is a restricted scope and without it Shopify silently
+returns only the last 60 days of orders.
+
+- **Strategy per connection** (`settings.authStrategy`): `legacy_static`,
+  `client_credentials`, `authorization_code`. Connections predating this
+  change default to `legacy_static`.
+- **Client-credentials tokens are never persisted or logged** — they are
+  re-derivable, so they live in an in-memory cache and refresh proactively
+  five minutes before expiry. Only the client id/secret are stored
+  (encrypted, like every credential).
+- **Authorization-code offline tokens ARE stored encrypted** — they cannot be
+  re-derived. The install URL is printed by `pnpm connect:shopify …
+  authorization_code` with a signed one-hour state token carrying the tenant;
+  the flow completes in the admin app's `/api/shopify/callback` (hmac +
+  state verified, shop domain anchored), which is exempt from session
+  middleware because it authenticates cryptographically. Redirect URI comes
+  from `SHOPIFY_REDIRECT_URI` (localhost now, getgrossline.com later).
+- **Missing `read_all_orders` is a standing warning, not a silent short
+  backfill**: connect and OAuth completion write `settings.scopeWarning` and
+  degrade the connection naming the 60-day limit; a successful sync keeps the
+  connection degraded (with `last_success_at` still recorded) until the scope
+  is granted and connect is re-run.
+- Not implemented yet: Shopify's *expiring* offline tokens (90-day refresh
+  tokens, currently required only for new public apps). Ours is custom
+  distribution; revisit if Shopify extends the requirement.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

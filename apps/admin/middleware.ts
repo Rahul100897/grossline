@@ -16,5 +16,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ['/((?!login|_next/static|_next/image|favicon.ico).*)'],
+  // /api/shopify/callback is Shopify's OAuth redirect — it authenticates via
+  // hmac + signed state inside the handler, not via an admin session.
+  matcher: ['/((?!login|api/shopify/callback|_next/static|_next/image|favicon.ico).*)'],
 };

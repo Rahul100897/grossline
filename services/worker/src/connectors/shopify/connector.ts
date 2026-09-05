@@ -7,8 +7,10 @@ import {
   upsertRawShopifyProducts,
 } from '@grossline/db';
 import type { Connector, DateWindow, SyncContext } from '../types';
-import { flattenConnections, shopifyGraphQL, shopifyCredentialsSchema } from './client';
+import { flattenConnections, shopifyGraphQL } from './client';
 import type { ShopifyCredentials } from './client';
+import { resolveShopifyAccess, strategyFromConnectionSettings } from './auth';
+import { orderHistoryWarning } from './scopes';
 import { reassembleJsonl, runBulkQuery } from './bulk';
 import {
   SHOP_INFO_QUERY,
@@ -29,7 +31,13 @@ async function loadShopifyContext(ctx: SyncContext): Promise<LoadedContext> {
   if (!connection.credentialRef) throw new Error('shopify connection has no credential');
   const credential = await getCredential(ctx.tenantId, connection.credentialRef);
   if (!credential) throw new Error('shopify credential not found');
-  return { creds: shopifyCredentialsSchema.parse(credential.payload), storeId: connection.storeId };
+  const strategy = strategyFromConnectionSettings(connection.settings);
+  const creds = await resolveShopifyAccess(
+    ctx,
+    strategy,
+    credential.payload as Record<string, unknown>,
+  );
+  return { creds, storeId: connection.storeId };
 }
 
 const nodeWithDates = z
@@ -186,7 +194,8 @@ export const shopifyConnector: Connector = {
     try {
       const { creds } = await loadShopifyContext(ctx);
       await shopifyGraphQL(ctx, creds, SHOP_INFO_QUERY);
-      return { healthy: true };
+      const warning = await orderHistoryWarning(ctx, creds);
+      return warning ? { healthy: true, detail: warning } : { healthy: true };
     } catch (err) {
       return { healthy: false, detail: err instanceof Error ? err.message : String(err) };
     }
