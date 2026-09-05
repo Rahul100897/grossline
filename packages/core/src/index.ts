@@ -16,6 +16,7 @@ export {
 export {
   resolveUnitCost,
   computeCostCoverage,
+  latestEffective,
   type ProductCostRow,
   type ResolvedCost,
   type OrderLineForCosting,

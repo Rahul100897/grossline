@@ -368,6 +368,22 @@ returns only the last 60 days of orders.
 - Coverage revenue uses the **discounted** line revenue in shop currency —
   the number closest to what net sales will lose if the line stays uncostable.
 
+## 2026-09-05 — Task 2.2 merchant cost inputs
+
+- **Whole-row snapshots, not per-field versions.** Each save of
+  `tenant_cost_inputs` is a complete snapshot from its effective date;
+  resolution picks the latest snapshot on/before the date (the same
+  `latestEffective` helper products costs use — one implementation of
+  "historical months never change"). A field a snapshot does not supply is
+  missing for that era — not inherited from the previous snapshot, not zero.
+  Simplest model that is unambiguous about what applied when.
+- **Percentages as integer basis points** (290 = 2.90%): the no-float money
+  rule extends to rates we multiply money by. Fixed fees and targets are
+  integer minor units with the snapshot's currency.
+- **metrics.md updated in the same PR** (packaging cost, monthly targets,
+  effective-from dating documented) with a changelog entry — the spec
+  mandates these inputs and the definitions doc is the single source.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
