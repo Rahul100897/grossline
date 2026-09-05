@@ -294,6 +294,15 @@ simplest option was chosen. Anything here can be revisited.
   (variance 0.000% across three months); the manual read-and-record procedure
   is docs/reconciliation.md.
 
+## 2026-09-05 — Optional TOTP for local development
+
+- **`ADMIN_TOTP_DISABLED=true` skips the authenticator step**, at Rahul's
+  request, for local convenience. Access-control change, so scoped hard:
+  the flag is a no-op when `NODE_ENV=production`, the default is TOTP-on,
+  the secret stays enrolled in the database, and the login page hides the
+  field only when the flag is active. Remove the flag from `.env` to
+  restore two-factor locally.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
