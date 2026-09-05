@@ -50,7 +50,7 @@ const emptyPage = (key: string) => ({
   data: { [key]: { pageInfo: { hasNextPage: false, endCursor: null }, edges: [] } },
 });
 
-function makeRouter(opts: { grantReadAllOrders?: boolean } = {}): typeof fetch {
+function makeRouter(opts: { grantReadAllOrders?: boolean; grantNothing?: boolean } = {}): typeof fetch {
   const grantReadAllOrders = opts.grantReadAllOrders ?? true;
   let lastBulkStream = 'orders';
   return (async (input: unknown, init?: RequestInit) => {
@@ -109,11 +109,20 @@ function makeRouter(opts: { grantReadAllOrders?: boolean } = {}): typeof fetch {
       if (q.includes('grosslineCustomersIncremental')) return json(emptyPage('customers'));
       if (q.includes('grosslineProductsIncremental')) return json(emptyPage('products'));
       if (q.includes('currentAppInstallation')) {
-        const handles = ['read_orders', 'read_customers', 'read_products', 'read_inventory'];
-        if (grantReadAllOrders) handles.push('read_all_orders');
+        const handles = opts.grantNothing
+          ? []
+          : ['read_orders', 'read_customers', 'read_products', 'read_inventory'];
+        if (grantReadAllOrders && !opts.grantNothing) handles.push('read_all_orders');
         return json({
           data: { currentAppInstallation: { accessScopes: handles.map((handle) => ({ handle })) } },
         });
+      }
+      if (q.includes('grosslineOrderRefunds')) {
+        const refundsFixture = JSON.parse(fixture('synthetic-order-refunds.json')) as Record<
+          string,
+          unknown
+        >;
+        return json({ data: { node: refundsFixture[String(body.variables?.id)] ?? null } });
       }
       if (q.includes('shop {')) return json(SHOP_INFO);
       return json({ errors: [{ message: `unrouted query: ${q.slice(0, 60)}` }] });
@@ -198,6 +207,23 @@ describe('connect flow', () => {
     expect(credential!.payload.accessToken).toBeUndefined();
   });
 
+  it('an app version with NO scopes degrades the connection with the no-access warning', async () => {
+    // Seen live 2026-09-05: token grants succeed, every data field is denied.
+    const scopelessRouter = makeRouter({ grantNothing: true });
+    const connected = await connectShopifyStore({
+      tenantId,
+      shopDomain: 'demo-alpha.myshopify.com',
+      strategy: 'client_credentials',
+      clientId: 'cid-noscopes',
+      clientSecret: 'csecret-noscopes', // gitleaks:allow — fake
+      fetchImpl: scopelessRouter,
+    });
+    expect(connected.scopeWarning).toMatch(/NO access scopes/);
+    const connection = await getConnection(tenantId, connected.connectionId);
+    expect(connection!.health).toBe('degraded');
+    expect(connection!.lastError).toMatch(/release it, approve/);
+  });
+
   it('a missing read_all_orders scope degrades the connection with the 60-day warning', async () => {
     const limitedRouter = makeRouter({ grantReadAllOrders: false });
     const connected = await connectShopifyStore({
@@ -249,7 +275,7 @@ describe('shopify backfill', () => {
 
     const shippingRefundOnly = await orderPayload('/Order/5001006');
     const srRefunds = shippingRefundOnly.refunds as Record<string, unknown>[];
-    expect(srRefunds[0]!.refundLineItems).toBeUndefined();
+    expect(srRefunds[0]!.refundLineItems).toEqual([]); // enriched: refund exists, no line items
 
     const products = await withTenant(tenantId, (tx) =>
       tx.select().from(schema.rawShopifyProducts),

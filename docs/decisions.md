@@ -384,6 +384,37 @@ returns only the last 60 days of orders.
   effective-from dating documented) with a changelog entry — the spec
   mandates these inputs and the definitions doc is the single source.
 
+## 2026-09-05 — First live Shopify API contact (rahul-developer-store)
+
+Three real differences from the synthetic fixtures, found and fixed:
+
+1. **`customerJourneySummary.momentsCount` is an object** (`Count { count
+   precision }`), not a scalar, in API 2026-07. Query and fixtures corrected.
+2. **Bulk operations reject a connection nested inside a list field** — the
+   `refunds → refundLineItems` selection is refused live ("Queries that
+   contain a connection field within a list field are not currently
+   supported"). Fix: the bulk query carries refund *headers* only, and the
+   connector enriches refunded orders afterwards with per-order
+   `node(id:){ refunds { refundLineItems(first:100) } }` queries (validated
+   live; supported outside bulk). Final stored payload shape is unchanged.
+3. **A Dev Dashboard app version released without scopes issues tokens with
+   an empty scope set**: the token grant succeeds, `shop` info works, and
+   every data field answers "Access denied". The token's `scope` field and
+   `currentAppInstallation.accessScopes` are readbacks of what the installed
+   version was approved with — both empty here. New `NO_SCOPES_WARNING`
+   distinguishes this from the missing-`read_all_orders` 60-day warning, and
+   a bulk ACCESS_DENIED failure now carries the remediation hint.
+
+State after this session: real tenant `rahul-developer-store` (USD,
+America/New_York — taken from the store at connect time) with a
+client_credentials connection, health honestly `degraded` (no-scopes
+warning), **zero raw rows** — the backfill fails with ACCESS_DENIED until the
+app version is released with scopes and approved on the store (Rahul-side
+Dev Dashboard action). Backfill cursors were reset so the re-run starts
+clean. Fixture replacement with real recordings is blocked on the same.
+Also noted: `read_all_orders` request card does not surface for Dev
+Dashboard apps — the 60-day warning will stand even after scopes land.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

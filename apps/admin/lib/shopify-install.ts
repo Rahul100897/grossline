@@ -5,8 +5,8 @@
 // timezone/currency, store everything encrypted.
 import { z } from 'zod';
 import {
-  READ_ALL_ORDERS_WARNING,
   isValidShopDomain,
+  shopifyScopeWarning,
   verifyShopifyHmac,
   verifySessionToken,
 } from '@grossline/core';
@@ -83,8 +83,11 @@ export async function handleShopifyCallback(
     return { ok: false, status: 502, reason: `token exchange failed: HTTP ${tokenRes.status}` };
   }
   const token = tokenResponseSchema.parse(await tokenRes.json());
-  const grantedScopes = token.scope.split(',').map((s) => s.trim());
-  const scopeWarning = grantedScopes.includes('read_all_orders') ? null : READ_ALL_ORDERS_WARNING;
+  const grantedScopes = token.scope
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+  const scopeWarning = shopifyScopeWarning(grantedScopes);
 
   // Record the store's own timezone and currency at connect time.
   const version = process.env.SHOPIFY_API_VERSION || '2026-07';

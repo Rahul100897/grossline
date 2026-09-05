@@ -2,7 +2,10 @@
   "_synthetic": "hand-authored from Shopify Admin GraphQL docs (2026-07); replace with an anonymised real recording",
   "data": {
     "orders": {
-      "pageInfo": { "hasNextPage": false, "endCursor": null },
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
       "edges": [
         {
           "node": {
@@ -18,17 +21,77 @@
             "currencyCode": "USD",
             "presentmentCurrencyCode": "USD",
             "taxesIncluded": false,
-            "customer": { "id": "gid://shopify/Customer/8001004", "numberOfOrders": "2" },
-            "totalPriceSet": { "shopMoney": { "amount": "24.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" } },
-            "subtotalPriceSet": { "shopMoney": { "amount": "24.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" } },
-            "totalDiscountsSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
-            "totalTaxSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
-            "totalShippingPriceSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
-            "totalRefundedSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
+            "customer": {
+              "id": "gid://shopify/Customer/8001004",
+              "numberOfOrders": "2"
+            },
+            "totalPriceSet": {
+              "shopMoney": {
+                "amount": "24.00",
+                "currencyCode": "USD"
+              },
+              "presentmentMoney": {
+                "amount": "24.00",
+                "currencyCode": "USD"
+              }
+            },
+            "subtotalPriceSet": {
+              "shopMoney": {
+                "amount": "24.00",
+                "currencyCode": "USD"
+              },
+              "presentmentMoney": {
+                "amount": "24.00",
+                "currencyCode": "USD"
+              }
+            },
+            "totalDiscountsSet": {
+              "shopMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              },
+              "presentmentMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              }
+            },
+            "totalTaxSet": {
+              "shopMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              },
+              "presentmentMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              }
+            },
+            "totalShippingPriceSet": {
+              "shopMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              },
+              "presentmentMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              }
+            },
+            "totalRefundedSet": {
+              "shopMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              },
+              "presentmentMoney": {
+                "amount": "0.00",
+                "currencyCode": "USD"
+              }
+            },
             "customerJourneySummary": {
               "daysToConversion": 16,
               "customerOrderIndex": 2,
-              "momentsCount": 4,
+              "momentsCount": {
+                "count": 4,
+                "precision": "EXACT"
+              },
               "firstVisit": {
                 "id": "gid://shopify/CustomerVisit/9101008",
                 "source": "instagram",
@@ -36,7 +99,13 @@
                 "referrerUrl": "https://l.instagram.com/",
                 "landingPage": "https://demo-alpha.example/products/aurora-mug",
                 "occurredAt": "2026-02-14T09:00:00Z",
-                "utmParameters": { "source": "instagram", "medium": "paid", "campaign": "eu-launch", "content": "story-b", "term": null }
+                "utmParameters": {
+                  "source": "instagram",
+                  "medium": "paid",
+                  "campaign": "eu-launch",
+                  "content": "story-b",
+                  "term": null
+                }
               },
               "lastVisit": null
             },
@@ -50,11 +119,42 @@
                     "currentQuantity": 1,
                     "sku": "AUR-MUG-01",
                     "vendor": "Demo Alpha",
-                    "product": { "id": "gid://shopify/Product/7001001" },
-                    "variant": { "id": "gid://shopify/ProductVariant/7101001" },
-                    "originalUnitPriceSet": { "shopMoney": { "amount": "24.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" } },
-                    "discountedUnitPriceSet": { "shopMoney": { "amount": "24.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" } },
-                    "totalDiscountSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
+                    "product": {
+                      "id": "gid://shopify/Product/7001001"
+                    },
+                    "variant": {
+                      "id": "gid://shopify/ProductVariant/7101001"
+                    },
+                    "originalUnitPriceSet": {
+                      "shopMoney": {
+                        "amount": "24.00",
+                        "currencyCode": "USD"
+                      },
+                      "presentmentMoney": {
+                        "amount": "24.00",
+                        "currencyCode": "USD"
+                      }
+                    },
+                    "discountedUnitPriceSet": {
+                      "shopMoney": {
+                        "amount": "24.00",
+                        "currencyCode": "USD"
+                      },
+                      "presentmentMoney": {
+                        "amount": "24.00",
+                        "currencyCode": "USD"
+                      }
+                    },
+                    "totalDiscountSet": {
+                      "shopMoney": {
+                        "amount": "0.00",
+                        "currencyCode": "USD"
+                      },
+                      "presentmentMoney": {
+                        "amount": "0.00",
+                        "currencyCode": "USD"
+                      }
+                    },
                     "discountAllocations": [],
                     "taxLines": []
                   }
