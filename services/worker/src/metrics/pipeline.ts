@@ -1,7 +1,14 @@
 // The compute pipeline: metrics for one tenant and one reporting month,
 // recomputable at any time, any number of times (upserts on the metric key).
 // Later Phase 2 tasks register additional computers here.
-import { logger, monthWindow, type MetricPoint, type MonthWindow, type OrderFacts } from '@grossline/core';
+import {
+  dateInZone,
+  logger,
+  monthWindow,
+  type MetricPoint,
+  type MonthWindow,
+  type OrderFacts,
+} from '@grossline/core';
 import {
   finishMetricRun,
   getTenant,
@@ -55,6 +62,7 @@ export async function computeMetricsForMonth(
   tenantId: string,
   year: number,
   month: number,
+  nowOverride?: Date,
 ): Promise<{ runId: string; metricsWritten: number }> {
   const tenant = await getTenant(tenantId);
   if (!tenant) throw new Error(`tenant ${tenantId} not found`);
@@ -63,7 +71,7 @@ export async function computeMetricsForMonth(
   const runId = await startMetricRun(tenantId, monthPeriod, window.dateStrings.at(-1)!);
 
   try {
-    const now = new Date();
+    const now = nowOverride ?? new Date();
     const { facts: allFacts, watermark } = await loadOrderFactsForWindow(tenantId, {
       startUtc: new Date(0),
       endUtc: new Date(now.getTime() + 86_400_000),
@@ -91,6 +99,26 @@ export async function computeMetricsForMonth(
     });
     throw err;
   }
+}
+
+/**
+ * Nightly entry point: recompute the current and previous reporting month —
+ * platform restatement re-pulls (28/30-day windows) land inside them.
+ */
+export async function computeRecentMonths(
+  tenantId: string,
+  now: Date = new Date(),
+): Promise<{ months: number; metricsWritten: number }> {
+  const tenant = await getTenant(tenantId);
+  if (!tenant) throw new Error(`tenant ${tenantId} not found`);
+  const [y, m] = dateInZone(now, tenant.reportingTimezone).split('-').map(Number) as [number, number];
+  const current = { year: y, month: m };
+  const previous = m === 1 ? { year: y - 1, month: 12 } : { year: y, month: m - 1 };
+  let metricsWritten = 0;
+  for (const { year, month } of [previous, current]) {
+    metricsWritten += (await computeMetricsForMonth(tenantId, year, month)).metricsWritten;
+  }
+  return { months: 2, metricsWritten };
 }
 
 /** Inclusive month range, e.g. recompute('…', '2026-01', '2026-08'). */

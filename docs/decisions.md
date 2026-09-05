@@ -469,6 +469,42 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   incremental update-in-place pages. Real-data quirk kept: amounts trim
   trailing zeros ("8.8", "7.0").
 
+## 2026-09-06 — Metric layer (tasks 2.3–2.10)
+
+- **FLAG — deviation from CLAUDE.md's stack line "Raw SQL for metric
+  queries":** metrics are computed in TypeScript over raw payloads (pure
+  functions in `packages/core/src/metrics/`, orchestrated by the worker),
+  writing to `metric_values` via the tenant-scoped helpers. Line-item money
+  math over jsonb in SQL would be miserable, float-prone and untestable as
+  pure goldens; the integer-minor-unit discipline lives in one place this
+  way. The *storage* contract CLAUDE.md actually protects is intact: raw is
+  never touched, metrics land in `metrics_*`-style tables, recompute is total
+  and idempotent. Say the word and 2.x can be ported to SQL.
+- **One generic `metric_values` table** (metric, grain, period, scope, value,
+  currency, meta) instead of a table per metric family: the comparison engine
+  works over every metric with one implementation, and new metrics need no
+  migrations. Money = integer minor units in `value`; rates = 6-dp decimals;
+  provisional/completeness/FX traces in `meta`.
+- **Two kinds of golden.** Correctness goldens are HAND-CALCULATED expects
+  with derivations in the test headers (per the pre-authorisation, values
+  never come from the implementation). The committed golden FILES
+  (`test/goldens/*.json`, regenerate with `UPDATE_GOLDENS=1`) are the
+  change-visibility mechanism: a definition change turns into a readable
+  per-metric diff in the PR. Demo-scale checks use an independent naive
+  implementation committed inside the test.
+- **Nightly**: the scheduler enqueues a `metrics` job per active tenant with
+  a 30-minute delay after the sync fan-out (crude ordering; revisit with job
+  dependencies if syncs ever run longer). Metrics jobs keep their own
+  bookkeeping in `metric_runs` (with raw watermark), not `sync_runs`.
+- **Pipeline `now` is injectable** so provisional flags and cohort offsets
+  are reproducible in tests and the golden files cannot rot with the
+  calendar.
+- **Genuinely torn on (2.11 flag)**: gift cards — chose Analytics-matching
+  (excluded at purchase) for reconciliation's sake, but it means gift-card
+  cash flow is invisible in net sales until Phase 3 reporting decides how to
+  show it. And COGS-on-net-units — metrics.md was silent; chose consistency
+  with returns recognition over "cost of goods shipped".
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
