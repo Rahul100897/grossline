@@ -78,6 +78,20 @@
       "when": 1788620253937,
       "tag": "0010_fx_rates",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788622740444,
+      "tag": "0011_health_unknown",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788622740825,
+      "tag": "0012_health_backfill_existing",
+      "breakpoints": true
     }
   ]
 }

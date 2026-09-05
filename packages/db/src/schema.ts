@@ -15,7 +15,14 @@ import {
 export const tenantStatus = pgEnum('tenant_status', ['onboarding', 'active', 'paused', 'churned']);
 export const storePlatform = pgEnum('store_platform', ['shopify']);
 export const connectionProvider = pgEnum('connection_provider', ['shopify', 'google_ads', 'meta']);
-export const connectionHealth = pgEnum('connection_health', ['healthy', 'degraded', 'broken']);
+// 'unknown' = never synced. Health only becomes 'healthy' on real evidence
+// (a successful sync); it must never be more optimistic than that.
+export const connectionHealth = pgEnum('connection_health', [
+  'healthy',
+  'degraded',
+  'broken',
+  'unknown',
+]);
 export const syncKind = pgEnum('sync_kind', ['backfill', 'incremental']);
 export const syncStatus = pgEnum('sync_status', ['running', 'success', 'failed']);
 
@@ -68,7 +75,7 @@ export const connections = pgTable('connections', {
   storeId: uuid('store_id').references(() => stores.id),
   provider: connectionProvider('provider').notNull(),
   externalAccountId: text('external_account_id').notNull(),
-  health: connectionHealth('health').notNull().default('healthy'),
+  health: connectionHealth('health').notNull().default('unknown'),
   lastSuccessAt: timestamp('last_success_at', { withTimezone: true }),
   lastError: text('last_error'),
   credentialRef: uuid('credential_ref').references(() => credentials.id),

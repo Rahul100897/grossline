@@ -32,7 +32,17 @@ const HEALTH_STYLES: Record<string, string> = {
   healthy: 'bg-emerald-100 text-emerald-800',
   degraded: 'bg-amber-100 text-amber-800',
   broken: 'bg-red-100 text-red-800',
+  // Never synced: neutral, not green — health is evidence, not a default.
+  unknown: 'bg-neutral-200 text-neutral-600',
+  demo: 'bg-sky-100 text-sky-800',
 };
+
+const HEALTH_LABELS: Record<string, string> = {
+  unknown: 'never synced',
+};
+
+const isDemoConnection = (connection: Connection): boolean =>
+  ((connection.settings ?? {}) as Record<string, unknown>).demo === true;
 
 export default async function ConnectionsPage() {
   await requireSession();
@@ -78,8 +88,10 @@ export default async function ConnectionsPage() {
           </thead>
           <tbody>
             {rows!.map(({ tenant, connection, progress }) => {
+              const demo = isDemoConnection(connection);
               const pct = Math.round(progress.overall * 100);
               const complete = connection.backfillCompletedAt !== null;
+              const healthKey = demo ? 'demo' : connection.health;
               return (
                 <tr key={connection.id} className="border-b border-neutral-100 align-top">
                   <td className="py-2 pr-4">{tenant.name}</td>
@@ -87,23 +99,29 @@ export default async function ConnectionsPage() {
                   <td className="py-2 pr-4 font-mono text-xs">{connection.externalAccountId}</td>
                   <td className="py-2 pr-4">
                     <span
-                      className={`rounded px-1.5 py-0.5 text-xs ${HEALTH_STYLES[connection.health] ?? ''}`}
+                      className={`rounded px-1.5 py-0.5 text-xs ${HEALTH_STYLES[healthKey] ?? ''}`}
                     >
-                      {connection.health}
+                      {demo ? 'demo' : (HEALTH_LABELS[connection.health] ?? connection.health)}
                     </span>
                   </td>
                   <td className="py-2 pr-4">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-24 overflow-hidden rounded bg-neutral-200">
-                        <div
-                          className={`h-full ${complete ? 'bg-emerald-500' : 'bg-blue-500'}`}
-                          style={{ width: `${pct}%` }}
-                        />
+                    {demo ? (
+                      // Seeded data bypasses sync cursors — showing a progress
+                      // figure here would be fiction.
+                      <span className="text-xs text-neutral-600">seeded</span>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-24 overflow-hidden rounded bg-neutral-200">
+                          <div
+                            className={`h-full ${complete ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-neutral-600">
+                          {complete ? 'complete' : progress.windowStart ? `${pct}% (partial)` : 'not started'}
+                        </span>
                       </div>
-                      <span className="text-xs text-neutral-600">
-                        {complete ? 'complete' : progress.windowStart ? `${pct}% (partial)` : 'not started'}
-                      </span>
-                    </div>
+                    )}
                   </td>
                   <td className="py-2 pr-4 text-xs text-neutral-600">
                     {connection.lastSuccessAt

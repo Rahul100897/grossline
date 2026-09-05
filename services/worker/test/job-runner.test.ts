@@ -2,7 +2,15 @@ import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { QueueEvents, Worker } from 'bullmq';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { closeDbPools, createTenant, schema, withTenant } from '@grossline/db';
+import {
+  closeDbPools,
+  createConnection,
+  createTenant,
+  getConnection,
+  schema,
+  withTenant,
+} from '@grossline/db';
+import { registerConnector } from '../src/connectors/registry';
 import { createRedis, queuePrefix } from '../src/redis';
 import {
   SYNC_ATTEMPTS,
@@ -106,6 +114,45 @@ describe('job runner', () => {
     expect(runs).toHaveLength(1);
     expect(runs[0]!.kind).toBe('backfill');
     expect(runs[0]!.durationMs).not.toBeNull();
+  });
+
+  it('health starts unknown and becomes healthy only after a real successful sync', async () => {
+    // A connector that succeeds trivially, registered over the shopify slot.
+    registerConnector({
+      provider: 'shopify',
+      streams: ['events'],
+      chunkDays: 30,
+      backfillChunk: async () => ({ rowsWritten: 0 }),
+      incremental: async () => ({ rowsWritten: 3, newSince: new Date().toISOString() }),
+      health: async () => ({ healthy: true }),
+    });
+    const conn = await createConnection({
+      tenantId,
+      provider: 'shopify',
+      externalAccountId: `health-${randomUUID().slice(0, 8)}`,
+    });
+    expect(conn.health).toBe('unknown'); // no evidence yet — never "healthy" by default
+    expect(conn.lastSuccessAt).toBeNull();
+
+    const events = new QueueEvents(SYNC_QUEUE, {
+      connection: connection.duplicate({ maxRetriesPerRequest: null }),
+      prefix: queuePrefix(),
+    });
+    await events.waitUntilReady();
+    const jobId = await enqueueSync(connection, {
+      tenantId,
+      kind: 'incremental',
+      connectionId: conn.id,
+    });
+    const queue = getSyncQueue(connection);
+    const job = await queue.getJob(jobId);
+    await job!.waitUntilFinished(events);
+    await queue.close();
+    await events.close();
+
+    const after = await getConnection(tenantId, conn.id);
+    expect(after!.health).toBe('healthy');
+    expect(after!.lastSuccessAt).not.toBeNull();
   });
 
   it('a tenant created after the worker started syncs with no restart', async () => {

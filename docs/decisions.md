@@ -303,6 +303,19 @@ simplest option was chosen. Anything here can be revisited.
   field only when the flag is active. Remove the flag from `.env` to
   restore two-factor locally.
 
+## 2026-09-05 — /connections display truthfulness
+
+- **Health gains an `unknown` state ("never synced") and it is the default.**
+  `healthy` now requires evidence — a successful sync sets it, nothing else
+  does. The migration recreates the enum via a text cast (Postgres refuses to
+  use a value added by `ALTER TYPE … ADD VALUE` inside the same transaction)
+  and resets any never-synced/never-errored row from the old optimistic
+  default.
+- **Seeded demo connections render as `demo` / `seeded`** — the seed bypasses
+  sync cursors, so any progress percentage would be fiction. The seed now also
+  mints the Shopify demo connection and marks pre-existing matching
+  connections `settings.demo = true`.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
