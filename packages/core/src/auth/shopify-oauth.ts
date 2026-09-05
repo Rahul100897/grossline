@@ -57,3 +57,22 @@ export const READ_ALL_ORDERS_WARNING =
   'read_all_orders scope not granted: Shopify only returns the last 60 days of orders, ' +
   'so any backfill beyond 60 days is silently incomplete. Request the scope in the Dev ' +
   'Dashboard (API access → Read all orders), then re-run connect and the backfill.';
+
+/**
+ * Live-API finding (2026-09-05): a Dev Dashboard app whose *released version*
+ * carries no scopes issues tokens with an empty scope set — shop info works,
+ * every data field is "Access denied". The token's scope field and
+ * currentAppInstallation.accessScopes both read back what the installed
+ * version was approved with.
+ */
+export const NO_SCOPES_WARNING =
+  'the installed app version has NO access scopes: every data query is denied. ' +
+  'In the Dev Dashboard, select the scopes (read_orders, read_customers, read_products, ' +
+  'read_inventory) on the app version, release it, approve the change on the store, ' +
+  'then re-run connect.';
+
+/** The right warning for a set of granted scopes, or null when all is well. */
+export function shopifyScopeWarning(scopes: string[]): string | null {
+  if (scopes.length === 0) return NO_SCOPES_WARNING;
+  return scopes.includes('read_all_orders') ? null : READ_ALL_ORDERS_WARNING;
+}

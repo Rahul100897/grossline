@@ -16,6 +16,7 @@ import {
   SHOP_INFO_QUERY,
   customersBulkQuery,
   customersIncrementalQuery,
+  orderRefundsQuery,
   ordersBulkQuery,
   ordersIncrementalQuery,
   productsBulkQuery,
@@ -116,6 +117,42 @@ async function persistStream(
   }
 }
 
+const orderRefundsSchema = z.object({
+  node: z
+    .object({
+      id: z.string(),
+      refunds: z.array(z.record(z.string(), z.unknown())),
+    })
+    .nullable(),
+});
+
+/**
+ * Bulk operations cannot nest the refundLineItems connection inside the
+ * refunds list (live-API constraint), so refunded orders get their full
+ * refund detail from per-order queries after the bulk download. Typically a
+ * small share of orders; throttle handling rides the shared client.
+ */
+async function enrichRefundLineItems(
+  ctx: SyncContext,
+  creds: ShopifyCredentials,
+  roots: Record<string, unknown>[],
+): Promise<void> {
+  const refunded = roots.filter(
+    (r) =>
+      typeof r.id === 'string' &&
+      (r.id as string).includes('/Order/') &&
+      Array.isArray(r.refunds) &&
+      (r.refunds as unknown[]).length > 0,
+  );
+  for (const order of refunded) {
+    const data = orderRefundsSchema.parse(
+      await shopifyGraphQL(ctx, creds, orderRefundsQuery(), { id: order.id }),
+    );
+    if (!data.node) continue;
+    order.refunds = (flattenConnections(data.node.refunds) as Record<string, unknown>[]) ?? [];
+  }
+}
+
 const pageSchema = z.object({
   pageInfo: z.object({ hasNextPage: z.boolean(), endCursor: z.string().nullable() }),
   edges: z.array(z.object({ node: z.record(z.string(), z.unknown()) })),
@@ -165,6 +202,7 @@ export const shopifyConnector: Connector = {
     const { creds, storeId } = await loadShopifyContext(ctx);
     const lines = await runBulkQuery(ctx, creds, bulkQueryFor(stream, window));
     const roots = reassembleJsonl(lines);
+    if (stream === 'orders') await enrichRefundLineItems(ctx, creds, roots);
     const rowsWritten = await persistStream(ctx, storeId, stream, roots);
     ctx.log.info('shopify backfill chunk done', {
       stream,

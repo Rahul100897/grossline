@@ -15,3 +15,10 @@ All names, domains, emails and IDs are fictional.
 | `synthetic-bulk-products.jsonl` | Products with variants (flattened) incl. `inventoryItem.unitCost`, one variant with missing cost |
 | `synthetic-orders-incremental-page1.json` | Paginated incremental orders response, page 1 (updated existing order — refund added) |
 | `synthetic-orders-incremental-page2.json` | Page 2 (a new order), `hasNextPage: false` |
+| `synthetic-order-refunds.json` | Per-order refund enrichment responses (bulk ops cannot nest `refundLineItems` in the `refunds` list — live-API constraint, 2026-09-05) |
+
+**Live-API corrections applied 2026-09-05** (first contact with
+rahul-developer-store): `momentsCount` is a `Count` object; bulk JSONL never
+contains `RefundLineItem` child lines (enrichment happens per order after the
+bulk download). Real anonymised recordings are still pending — blocked on the
+app version being released with scopes (see docs/decisions.md).

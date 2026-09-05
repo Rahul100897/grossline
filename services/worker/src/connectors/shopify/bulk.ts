@@ -81,7 +81,12 @@ export async function runBulkQuery(
       return text.split('\n').filter((line) => line.trim().length > 0);
     }
     if (op.status === 'FAILED' || op.status === 'CANCELED' || op.status === 'EXPIRED') {
-      throw new Error(`shopify bulk operation ${op.status}: ${op.errorCode ?? 'unknown error'}`);
+      const hint =
+        op.errorCode === 'ACCESS_DENIED'
+          ? ' — the app token lacks the needed scopes; see the connection scope warning' +
+            ' (Dev Dashboard: select scopes on the app version, release, approve on the store)'
+          : '';
+      throw new Error(`shopify bulk operation ${op.status}: ${op.errorCode ?? 'unknown error'}${hint}`);
     }
     if (Date.now() > deadline) throw new Error('shopify bulk operation timed out');
     await sleep(pollIntervalMs);

@@ -40,7 +40,7 @@ export const ORDER_FIELDS = `
   customerJourneySummary {
     daysToConversion
     customerOrderIndex
-    momentsCount
+    momentsCount { count precision }
     firstVisit ${VISIT_FIELDS}
     lastVisit ${VISIT_FIELDS}
   }
@@ -119,7 +119,15 @@ export const VARIANT_FIELDS = `
 
 const iso = (d: Date) => d.toISOString();
 
-/** Backfill: orders by created_at so a window's coverage is complete. */
+/**
+ * Backfill: orders by created_at so a window's coverage is complete.
+ *
+ * Live-API constraint (2026-09-05): bulk operations reject "a connection
+ * field within a list field", so refunds (a list) cannot spread its
+ * refundLineItems connection here. The bulk payload carries refund headers
+ * only; the connector enriches refunded orders with per-order queries
+ * afterwards (orderRefundsQuery below), which the non-bulk API supports.
+ */
 export function ordersBulkQuery(start: Date, end: Date): string {
   return `{
     orders(query: "created_at:>='${iso(start)}' AND created_at:<'${iso(end)}'") {
@@ -128,9 +136,23 @@ export function ordersBulkQuery(start: Date, end: Date): string {
         lineItems { edges { node { ${LINE_ITEM_FIELDS} } } }
         refunds {
           ${REFUND_FIELDS}
-          refundLineItems { edges { node { ${REFUND_LINE_ITEM_FIELDS} } } }
         }
       } }
+    }
+  }`;
+}
+
+/** Per-order refund detail (post-bulk enrichment for refunded orders). */
+export function orderRefundsQuery(): string {
+  return `query grosslineOrderRefunds($id: ID!) {
+    node(id: $id) {
+      ... on Order {
+        id
+        refunds {
+          ${REFUND_FIELDS}
+          refundLineItems(first: 100) { edges { node { ${REFUND_LINE_ITEM_FIELDS} } } }
+        }
+      }
     }
   }`;
 }
