@@ -1,0 +1,62 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+build/
+.next/
+.astro/
+out/
+*.tsbuildinfo
+
+# environment — never commit real values
+.env
+.env.*
+!.env.example
+
+# credentials and keys — nothing here should ever exist in the repo
+*.pem
+*.key
+*.p12
+*.jks
+service-account*.json
+google-ads.yaml
+credentials.json
+
+# local data
+*.sqlite
+*.db
+pgdata/
+redisdata/
+/tmp/
+docs/scratch/
+
+# generated reports and exports
+reports/
+exports/
+*.pdf
+!docs/**/*.pdf
+
+# test output
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Claude Code local state
+.claude/local/
+.claude/settings.local.json
