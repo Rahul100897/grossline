@@ -38,10 +38,17 @@ function currentKeyVersion(): number {
   return version;
 }
 
+// Non-production fallback so a fresh clone can run `pnpm verify` before
+// writing a .env. Known key — never acceptable outside local dev/tests.
+const DEV_MASTER_KEY = Buffer.from('grossline-local-dev-master-key!!', 'utf8').toString('base64');
+
 function masterKeyForVersion(version: number): Buffer {
   loadRootEnv();
   const envName = version === currentKeyVersion() ? 'MASTER_KEY' : `MASTER_KEY_V${version}`;
-  const raw = process.env[envName];
+  let raw = process.env[envName];
+  if (!raw && envName === 'MASTER_KEY' && process.env.NODE_ENV !== 'production') {
+    raw = DEV_MASTER_KEY;
+  }
   if (!raw) throw new Error(`master key for version ${version} not present (${envName})`);
   const key = Buffer.from(raw, 'base64');
   if (key.length !== 32) throw new Error(`${envName} must be a base64-encoded 32-byte key`);

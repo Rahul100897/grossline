@@ -15,8 +15,13 @@ export function adminDatabaseUrl(): string {
     process.env.NODE_ENV === 'test'
       ? (process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL)
       : process.env.DATABASE_URL;
-  if (!url) throw new Error('DATABASE_URL is not set');
-  return url;
+  if (url) return url;
+  // Outside production, fall back to the docker-compose defaults so a fresh
+  // clone can run `pnpm verify` before writing a .env.
+  if (process.env.NODE_ENV === 'production') throw new Error('DATABASE_URL is not set');
+  return process.env.NODE_ENV === 'test'
+    ? 'postgres://grossline:grossline@localhost:5433/grossline_test'
+    : 'postgres://grossline:grossline@localhost:5433/grossline';
 }
 
 /**

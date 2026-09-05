@@ -3,8 +3,13 @@ import { loadRootEnv } from '@grossline/core';
 
 export function createRedis(): IORedis {
   loadRootEnv();
-  const url = process.env.REDIS_URL;
-  if (!url) throw new Error('REDIS_URL is not set');
+  let url = process.env.REDIS_URL;
+  if (!url) {
+    // Outside production, fall back to the docker-compose default so a fresh
+    // clone can run `pnpm verify` before writing a .env.
+    if (process.env.NODE_ENV === 'production') throw new Error('REDIS_URL is not set');
+    url = 'redis://localhost:6380';
+  }
   // BullMQ requires maxRetriesPerRequest: null on its connections.
   return new IORedis(url, { maxRetriesPerRequest: null });
 }

@@ -5,7 +5,9 @@ import { runMigrations } from '@grossline/db';
 // migrations are applied even when this suite runs on its own.
 export default async function setup(): Promise<void> {
   loadRootEnv();
-  const url = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-  if (!url) throw new Error('TEST_DATABASE_URL or DATABASE_URL must be set for worker tests');
+  const url =
+    process.env.TEST_DATABASE_URL ??
+    process.env.DATABASE_URL ??
+    'postgres://grossline:grossline@localhost:5433/grossline_test';
   await runMigrations(url);
 }

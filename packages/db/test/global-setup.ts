@@ -7,8 +7,10 @@ import { loadRootEnv } from '@grossline/core';
 
 export default async function setup(): Promise<void> {
   loadRootEnv();
-  const url = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
-  if (!url) throw new Error('TEST_DATABASE_URL or DATABASE_URL must be set for db tests');
+  const url =
+    process.env.TEST_DATABASE_URL ??
+    process.env.DATABASE_URL ??
+    'postgres://grossline:grossline@localhost:5433/grossline_test';
 
   const migrationsFolder = join(dirname(fileURLToPath(import.meta.url)), '..', 'drizzle');
   const pool = new pg.Pool({ connectionString: url, max: 1 });
