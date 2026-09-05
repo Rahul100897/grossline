@@ -7,12 +7,13 @@ import { verifyPassword, verifyTotp } from '@grossline/core';
 import { createSessionToken } from '@grossline/core/auth/session';
 import { getAdminUserByEmail, writeAuditLog } from '@grossline/db';
 import { SESSION_COOKIE, SESSION_TTL_MS } from '../../lib/constants';
-import { sessionSecret } from '../../lib/auth';
+import { sessionSecret, totpDisabled } from '../../lib/auth';
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
-  totp: z.string().regex(/^\d{6}$/),
+  // null when the field is hidden by ADMIN_TOTP_DISABLED; verified below.
+  totp: z.string().nullish(),
 });
 
 export async function login(formData: FormData): Promise<void> {
@@ -27,7 +28,7 @@ export async function login(formData: FormData): Promise<void> {
   const { email, password, totp } = parsed.data;
   const user = await getAdminUserByEmail(email);
   const passwordOk = user ? verifyPassword(password, user.passwordHash) : false;
-  const totpOk = user ? verifyTotp(user.totpSecret, totp) : false;
+  const totpOk = totpDisabled() ? true : user ? verifyTotp(user.totpSecret, totp ?? '') : false;
 
   if (!user || !passwordOk || !totpOk) {
     await writeAuditLog({ actor: email, action: 'admin.login_failed' });
