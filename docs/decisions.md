@@ -440,6 +440,35 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   updated_at window and is absent — the documented backfill gap, visible
   here in practice.
 
+## 2026-09-05 — Seeded dev-store orders and real order fixtures
+
+- **The write-to-a-store rule has exactly one sanctioned exception**:
+  `services/worker/scripts/seed-dev-orders.ts`, dev-only, hard-guarded to
+  refuse any store other than rahul-developer-store.myshopify.com (checked
+  against both env and the connection's credential) and to refuse
+  `NODE_ENV=production`. It exists because the metric layer needs real API
+  shapes and the store is ours. Connectors remain strictly read-only.
+- **Live finding #5: `refundCreate` requires `@idempotent(key:)`** on the
+  mutation field in 2026-07 — sent with a fresh UUID per refund.
+- **Live finding #6: order creation is rate-limited separately** ("Too many
+  attempts") — the seed script takes a resume index instead of hammering.
+- **`createdAt` cannot be set via orderCreate.** The 45-day spread lives in
+  `processedAt`; all seeded orders share today's `createdAt`. Flag for task
+  2.3: docs/metrics.md says order count uses "the order's creation
+  timestamp" — Shopify Analytics itself keys on processedAt, and for these
+  test orders only processedAt carries a realistic spread. **The 2.3 PR must
+  resolve this in docs/metrics.md before computing anything** (metrics.md
+  changes need sign-off — ask, do not decide).
+- **Order fixtures are now real anonymised recordings** (10 orders: percent
+  and fixed discount codes with allocations, partial/full refunds, a
+  cancellation with automatic refund, repeat customer with order index 1→2,
+  shipping charged vs free, tax lines, mixed quantities), including the
+  per-order refund enrichment responses and a real incremental page.
+  Synthetic fixtures survive only for multi-currency presentment and
+  shipping-only refunds (impossible to produce in this store) and the
+  incremental update-in-place pages. Real-data quirk kept: amounts trim
+  trailing zeros ("8.8", "7.0").
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

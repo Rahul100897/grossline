@@ -18,6 +18,7 @@ import {
   withTenant,
 } from '@grossline/db';
 import { shopifyConnector } from '../src/connectors/shopify/connector';
+import { reassembleJsonl } from '../src/connectors/shopify/bulk';
 import { connectShopifyStore } from '../src/connectors/shopify/connect';
 import { shopifyGraphQL } from '../src/connectors/shopify/client';
 import { SHOP_INFO_QUERY } from '../src/connectors/shopify/queries';
@@ -118,7 +119,7 @@ function makeRouter(opts: { grantReadAllOrders?: boolean; grantNothing?: boolean
         });
       }
       if (q.includes('grosslineOrderRefunds')) {
-        const refundsFixture = JSON.parse(fixture('synthetic-order-refunds.json')) as Record<
+        const refundsFixture = JSON.parse(fixture('recorded-order-refunds.json')) as Record<
           string,
           unknown
         >;
@@ -129,11 +130,8 @@ function makeRouter(opts: { grantReadAllOrders?: boolean; grantNothing?: boolean
     }
     if (url.startsWith('https://bulk.fixtures.test/')) {
       const stream = url.split('/').pop()!.replace('.jsonl', '');
-      // customers/products are REAL anonymised recordings; orders stay
-      // synthetic (the recording store had zero orders).
-      const file =
-        stream === 'orders' ? `synthetic-bulk-${stream}.jsonl` : `recorded-bulk-${stream}.jsonl`;
-      return new Response(fixture(file), { status: 200 });
+      // All three streams are REAL anonymised recordings.
+      return new Response(fixture(`recorded-bulk-${stream}.jsonl`), { status: 200 });
     }
     throw new Error(`unrouted url: ${url}`);
   }) as typeof fetch;
@@ -253,7 +251,7 @@ describe('shopify backfill', () => {
     };
     await runBackfill(ctx(), shopifyConnector, window);
     const counts = await countRawShopify(tenantId);
-    expect(counts).toEqual({ orders: 6, customers: 4, products: 5 });
+    expect(counts).toEqual({ orders: 10, customers: 4, products: 5 });
 
     // Full re-run over the same window: identical counts, zero duplicates.
     await clearCursors(tenantId, connectionId);
@@ -261,25 +259,46 @@ describe('shopify backfill', () => {
     expect(await countRawShopify(tenantId)).toEqual(counts);
   });
 
-  it('preserves edge-case payloads exactly as the platform sent them', async () => {
-    const partialRefund = await orderPayload('/Order/5001003');
+  it('preserves recorded edge-case payloads exactly as the platform sent them', async () => {
+    // Partial refund (#1056): the refund enrichment attached one refund line item.
+    const partialRefund = await orderPayload('/Order/510000000004');
     const refunds = partialRefund.refunds as Record<string, unknown>[];
     expect(refunds).toHaveLength(1);
     expect(refunds[0]!.refundLineItems).toHaveLength(1);
 
-    const multiCurrency = await orderPayload('/Order/5001004');
-    expect(multiCurrency.presentmentCurrencyCode).toBe('EUR');
-    const total = multiCurrency.totalPriceSet as Record<string, Record<string, string>>;
-    expect(total.presentmentMoney!.currencyCode).toBe('EUR');
-    expect(total.shopMoney!.currencyCode).toBe('USD');
+    // Discount code order (#1054): order-level discount allocated across both lines.
+    const discounted = await orderPayload('/Order/510000000002');
+    const discountTotal = discounted.totalDiscountsSet as { shopMoney: { amount: string } };
+    expect(discountTotal.shopMoney.amount).toBe('8.8'); // real API trims trailing zeros
+    const allocations = (discounted.lineItems as Record<string, unknown>[]).flatMap(
+      (li) => (li.discountAllocations as unknown[]) ?? [],
+    );
+    expect(allocations).toHaveLength(2);
 
-    const cancelled = await orderPayload('/Order/5001005');
-    expect(cancelled.cancelledAt).toBe('2026-02-21T10:00:00Z');
+    // Cancelled order (#1058) with its automatic refund.
+    const cancelled = await orderPayload('/Order/510000000006');
+    expect(cancelled.cancelledAt).toBeTruthy();
     expect(cancelled.cancelReason).toBe('CUSTOMER');
+    expect((cancelled.refunds as Record<string, unknown>[])[0]!.refundLineItems).toHaveLength(1);
 
-    const shippingRefundOnly = await orderPayload('/Order/5001006');
-    const srRefunds = shippingRefundOnly.refunds as Record<string, unknown>[];
-    expect(srRefunds[0]!.refundLineItems).toEqual([]); // enriched: refund exists, no line items
+    // Tax + mixed quantities (#1055); shipping charged vs free (#1053 vs #1060).
+    const taxed = await orderPayload('/Order/510000000003');
+    expect((taxed.totalTaxSet as { shopMoney: { amount: string } }).shopMoney.amount).toBe('24.06');
+    expect(
+      (taxed.lineItems as { quantity: number }[]).map((li) => li.quantity).sort(),
+    ).toEqual([1, 2, 3]);
+    const shipped = await orderPayload('/Order/510000000001');
+    expect((shipped.totalShippingPriceSet as { shopMoney: { amount: string } }).shopMoney.amount).toBe('7.0');
+
+    // Repeat customer: same customer, order index 1 then 2.
+    const first = await orderPayload('/Order/510000000001');
+    const second = await orderPayload('/Order/510000000007');
+    expect((first.customer as { id: string }).id).toBe((second.customer as { id: string }).id);
+    expect((first.customerJourneySummary as { customerOrderIndex: number }).customerOrderIndex).toBe(1);
+    expect((second.customerJourneySummary as { customerOrderIndex: number }).customerOrderIndex).toBe(2);
+
+    // (Shipping-only refunds and multi-currency orders are covered by the
+    // synthetic reassembly test below — the recording store has no such orders.)
 
     // Products/customers below are REAL recorded shapes (anonymised).
     const products = await withTenant(tenantId, (tx) =>
@@ -319,7 +338,7 @@ describe('shopify incremental', () => {
     await runIncremental(ctx(), shopifyConnector);
 
     const counts = await countRawShopify(tenantId);
-    expect(counts.orders).toBe(7); // 6 from backfill + 1 new, updated order replaced not duplicated
+    expect(counts.orders).toBe(12); // 10 recorded from backfill + 2 from the synthetic pages
 
     const updated = await orderPayload('/Order/5001003');
     expect((updated.refunds as unknown[]).length).toBe(2); // shipping refund added later
@@ -327,6 +346,40 @@ describe('shopify incremental', () => {
 
     const cursor = await getCursor<{ since: string }>(tenantId, connectionId, 'incremental');
     expect(cursor?.since).toBeTruthy();
+  });
+});
+
+describe('synthetic edge cases the recording store cannot produce', () => {
+  // Multi-currency presentment and shipping-only refunds do not exist in the
+  // dev store; the hand-authored fixture keeps their shapes covered at the
+  // reassembly level until a store with real examples is connected.
+  it('reassembles multi-currency and cancelled orders from bulk JSONL', () => {
+    const roots = reassembleJsonl(
+      fixture('synthetic-bulk-orders.jsonl')
+        .split('\n')
+        .filter((l) => l.trim().length > 0),
+    );
+    const multiCurrency = roots.find((r) => (r.id as string).endsWith('/Order/5001004'))!;
+    expect(multiCurrency.presentmentCurrencyCode).toBe('EUR');
+    const total = multiCurrency.totalPriceSet as Record<string, Record<string, string>>;
+    expect(total.presentmentMoney!.currencyCode).toBe('EUR');
+    expect(total.shopMoney!.currencyCode).toBe('USD');
+
+    const cancelled = roots.find((r) => (r.id as string).endsWith('/Order/5001005'))!;
+    expect(cancelled.cancelledAt).toBe('2026-02-21T10:00:00Z');
+
+    const journey = (roots.find((r) => (r.id as string).endsWith('/Order/5001001'))!
+      .customerJourneySummary ?? {}) as Record<string, unknown>;
+    expect(journey.momentsCount).toEqual({ count: 3, precision: 'EXACT' }); // Count object, per live API
+  });
+
+  it('a shipping-only refund enriches to an empty refundLineItems array', () => {
+    const refundsFixture = JSON.parse(fixture('synthetic-order-refunds.json')) as Record<
+      string,
+      { refunds: { refundLineItems: { edges: unknown[] } }[] }
+    >;
+    const shippingOnly = refundsFixture['gid://shopify/Order/5001006']!;
+    expect(shippingOnly.refunds[0]!.refundLineItems.edges).toEqual([]);
   });
 });
 

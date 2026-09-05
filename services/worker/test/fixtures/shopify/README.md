@@ -8,11 +8,9 @@ Two kinds of file:
   Shapes, quantities and quirks kept exactly (e.g. `amountSpent: "0.0"`,
   empty `productType`, `unitCost: null`).
 - **`synthetic-`** — hand-authored from Shopify's published Admin GraphQL API
-  docs (2026-07). Still standing in ONLY where the recording store had no
-  data: **orders** (the store has zero orders — `numberOfOrders` on its
-  customers shows they existed once and were deleted). Replace with real
-  recordings when a store with real orders (and its refund/multi-currency
-  edge cases) is connected.
+  docs (2026-07). Retained ONLY for edge cases the recording store cannot
+  produce (multi-currency presentment, shipping-only refunds) and for the
+  incremental update-in-place behaviour pages. Everything else is recorded.
 
 All names, domains and IDs in both kinds are fictional after anonymisation.
 
@@ -27,6 +25,14 @@ All names, domains and IDs in both kinds are fictional after anonymisation.
 | `recorded-bulk-customers.jsonl` | REAL bulk customers export (anonymised, no PII fields) |
 | `recorded-bulk-products.jsonl` | REAL bulk products export with `__parentId` variant children (anonymised) |
 | `recorded-orders-incremental-empty.json` | REAL empty incremental orders page |
+| `recorded-bulk-orders.jsonl` | REAL bulk orders export (anonymised): 10 seeded test orders — discount codes (percent + fixed) with allocations, partial/full refunds, a cancellation with auto-refund, mixed quantities, repeat customer, shipping charged vs free, tax lines |
+| `recorded-order-refunds.json` | REAL per-order refund enrichment responses for the three refunded orders |
+| `recorded-orders-incremental.json` | REAL incremental orders page containing all ten orders |
+
+The seeded orders were created by `scripts/seed-dev-orders.ts` (dev-only,
+hard-guarded to rahul-developer-store). Note: Shopify does not allow setting
+`createdAt` via orderCreate — the seeded orders carry today's `createdAt` and
+a 45-day spread in `processedAt`.
 
 **Live-API corrections applied 2026-09-05** (first contact with
 rahul-developer-store): `momentsCount` is a `Count` object; bulk JSONL never
