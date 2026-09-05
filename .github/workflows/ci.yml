@@ -39,8 +39,8 @@ jobs:
     env:
       DATABASE_URL: postgres://grossline:grossline@localhost:5432/grossline_test
       REDIS_URL: redis://localhost:6379
-      # test-only value, never a real key
-      MASTER_KEY: dGVzdC1rZXktbm90LXVzZWQtaW4tcHJvZHVjdGlvbg==
+      # test-only value ("test-key-not-used-in-production!"), never a real key
+      MASTER_KEY: dGVzdC1rZXktbm90LXVzZWQtaW4tcHJvZHVjdGlvbiE=
 
     steps:
       - uses: actions/checkout@v4
