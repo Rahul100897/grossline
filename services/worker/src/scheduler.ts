@@ -1,7 +1,7 @@
 import { Queue, Worker } from 'bullmq';
 import type IORedis from 'ioredis';
 import { logger } from '@grossline/core';
-import { listActiveTenants } from '@grossline/db';
+import { listActiveTenants, listConnections } from '@grossline/db';
 import { queuePrefix } from './redis';
 import { enqueueSync } from './sync';
 
@@ -11,7 +11,7 @@ const NIGHTLY_CRON = '0 2 * * *';
 
 /**
  * Registers the repeatable nightly job and returns a worker that fans out one
- * incremental sync per active tenant when it fires.
+ * incremental sync per connection of every active tenant when it fires.
  */
 export async function startScheduler(connection: IORedis): Promise<Worker> {
   const queue = new Queue(SCHEDULER_QUEUE, { connection, prefix: queuePrefix() });
@@ -22,10 +22,19 @@ export async function startScheduler(connection: IORedis): Promise<Worker> {
     SCHEDULER_QUEUE,
     async () => {
       const tenants = await listActiveTenants();
-      logger.info('nightly scheduler firing', { activeTenants: tenants.length });
+      let enqueued = 0;
       for (const tenant of tenants) {
-        await enqueueSync(connection, { tenantId: tenant.id, kind: 'incremental' });
+        const connections = await listConnections(tenant.id);
+        for (const conn of connections) {
+          await enqueueSync(connection, {
+            tenantId: tenant.id,
+            kind: 'incremental',
+            connectionId: conn.id,
+          });
+          enqueued++;
+        }
       }
+      logger.info('nightly scheduler fired', { activeTenants: tenants.length, enqueued });
     },
     { connection, prefix: queuePrefix() },
   );

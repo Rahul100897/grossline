@@ -70,7 +70,35 @@ export const connections = pgTable('connections', {
   lastSuccessAt: timestamp('last_success_at', { withTimezone: true }),
   lastError: text('last_error'),
   credentialRef: uuid('credential_ref').references(() => credentials.id),
+  // Recorded at connect time; reporting timezone is applied at query time only.
+  accountTimezone: text('account_timezone'),
+  accountCurrency: text('account_currency'),
+  // Provider-specific configuration (e.g. Meta attribution_spec, Google MCC id).
+  settings: jsonb('settings'),
+  // Null while a backfill has not finished — downstream must treat the history
+  // as partial until this is set.
+  backfillCompletedAt: timestamp('backfill_completed_at', { withTimezone: true }),
 });
+
+// Resumable sync state: one row per (connection, stream). The cursor advances
+// only after a chunk of work has committed, so an interrupted sync resumes
+// instead of restarting.
+export const syncCursors = pgTable(
+  'sync_cursors',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    connectionId: uuid('connection_id')
+      .notNull()
+      .references(() => connections.id),
+    stream: text('stream').notNull(),
+    cursor: jsonb('cursor').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('sync_cursors_conn_stream_idx').on(t.tenantId, t.connectionId, t.stream)],
+);
 
 export const syncRuns = pgTable('sync_runs', {
   id: uuid('id').primaryKey().defaultRandom(),

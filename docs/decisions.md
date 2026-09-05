@@ -133,6 +133,26 @@ simplest option was chosen. Anything here can be revisited.
 - **`getgrossline.com` is NOT live** — the only unmet exit criterion. It needs
   Rahul's Cloudflare account; the exact steps are in `docs/deploy.md`.
 
+## 2026-09-05 — Task 1.1 connector framework
+
+- **Dynamic queues: one shared `sync` queue with the tenant on the job.** Of
+  the two options the spec offers, this is the simpler: no registry, no
+  watchers, no restart — a tenant created a second ago syncs immediately
+  (proven by test). Per-tenant queue fairness matters at hundreds of tenants,
+  not two; revisit if one tenant's backfill ever starves another's nightly
+  sync. Phase 0's queue-per-tenant code is gone.
+- **Cursor model.** `sync_cursors` (tenant-scoped, RLS) holds one row per
+  (connection, stream): backfill cursors advance per committed chunk,
+  incremental holds a provider watermark. A backfill window mismatch is an
+  error, not a silent restart — clearing cursors is the explicit reset.
+- **Rate limiting** is per-response, not fixed sleeps: `fetchWithRetry` takes a
+  platform-specific delay extractor, falls back to `Retry-After`, then jittered
+  exponential backoff.
+- **Connection failure semantics.** A job that exhausts retries marks the
+  connection `degraded` with the error; `healthy` plus `last_success_at` on
+  every success. `broken` is reserved for explicit health-check failures
+  (e.g. Google's unlinked-account state, task 1.4).
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
