@@ -7,7 +7,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "dev": "tsx watch src/index.ts",
-    "sync": "tsx src/cli/sync.ts"
+    "sync": "tsx src/cli/sync.ts",
+    "connect:shopify": "tsx src/cli/connect-shopify.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",

@@ -153,6 +153,30 @@ simplest option was chosen. Anything here can be revisited.
   every success. `broken` is reserved for explicit health-check failures
   (e.g. Google's unlinked-account state, task 1.4).
 
+## 2026-09-05 — Task 1.2 Shopify connector
+
+- **Backfill windows: orders by `created_at`, customers/products by
+  `updated_at`.** Created-at gives complete period coverage for orders (the
+  node is fetched in its *current* state, so later refunds ride along even in
+  old windows). Customers/products have no meaningful creation window; anything
+  touched in the backfill window is captured and incremental keeps them fresh.
+  Known gap: a customer or product untouched for >13 months is absent until
+  its next update — surfaced in Phase 2 as a data issue, not silently zero.
+- **Incremental watermark = sync start minus 5 minutes**, not max(updated_at)
+  seen. Overlap re-fetches a few rows; upserts make that free, and clock skew
+  can never lose rows.
+- **No real store available** — all fixtures are synthetic (filename prefix
+  `synthetic-`, listed in the fixtures README and the phase handover). The
+  fake fetch serves real API shapes (bulk-op lifecycle, JSONL with
+  `__parentId`, paginated incremental); switching to a live store is
+  `pnpm connect:shopify` — configuration only.
+- **JSONL reassembly** indexes every gid-carrying object (including refunds
+  inline in orders) and attaches flattened children by `__parentId`; an
+  orphaned child is kept as a root flagged `__orphaned` rather than dropped.
+- **Raw upsert semantics.** `raw_shopify_*` rows are only ever replaced by a
+  *newer platform payload for the same gid* (that is what idempotent re-sync
+  means); no derived values are ever written into them.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

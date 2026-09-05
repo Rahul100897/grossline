@@ -1,0 +1,84 @@
+{
+  "_synthetic": "hand-authored from Shopify Admin GraphQL docs (2026-07); replace with an anonymised real recording",
+  "data": {
+    "orders": {
+      "pageInfo": { "hasNextPage": true, "endCursor": "cursor-page-1" },
+      "edges": [
+        {
+          "node": {
+            "id": "gid://shopify/Order/5001003",
+            "name": "#1003",
+            "createdAt": "2026-02-02T16:45:00Z",
+            "updatedAt": "2026-03-01T10:00:00Z",
+            "processedAt": "2026-02-02T16:45:00Z",
+            "cancelledAt": null,
+            "cancelReason": null,
+            "closedAt": null,
+            "test": false,
+            "currencyCode": "USD",
+            "presentmentCurrencyCode": "USD",
+            "taxesIncluded": false,
+            "customer": { "id": "gid://shopify/Customer/8001003", "numberOfOrders": "2" },
+            "totalPriceSet": { "shopMoney": { "amount": "96.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "96.00", "currencyCode": "USD" } },
+            "subtotalPriceSet": { "shopMoney": { "amount": "88.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "88.00", "currencyCode": "USD" } },
+            "totalDiscountsSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
+            "totalTaxSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
+            "totalShippingPriceSet": { "shopMoney": { "amount": "8.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "8.00", "currencyCode": "USD" } },
+            "totalRefundedSet": { "shopMoney": { "amount": "52.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "52.00", "currencyCode": "USD" } },
+            "customerJourneySummary": null,
+            "lineItems": {
+              "edges": [
+                {
+                  "node": {
+                    "id": "gid://shopify/LineItem/6101004",
+                    "title": "Trailhead Flask",
+                    "quantity": 2,
+                    "currentQuantity": 1,
+                    "sku": "TRL-FLK-01",
+                    "vendor": "Demo Alpha",
+                    "product": { "id": "gid://shopify/Product/7001003" },
+                    "variant": { "id": "gid://shopify/ProductVariant/7101004" },
+                    "originalUnitPriceSet": { "shopMoney": { "amount": "44.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" } },
+                    "discountedUnitPriceSet": { "shopMoney": { "amount": "44.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" } },
+                    "totalDiscountSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } },
+                    "discountAllocations": [],
+                    "taxLines": []
+                  }
+                }
+              ]
+            },
+            "refunds": [
+              {
+                "id": "gid://shopify/Refund/7300301",
+                "createdAt": "2026-02-10T11:20:00Z",
+                "note": "one flask arrived dented",
+                "totalRefundedSet": { "shopMoney": { "amount": "44.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" } },
+                "refundLineItems": {
+                  "edges": [
+                    {
+                      "node": {
+                        "id": "gid://shopify/RefundLineItem/7400301",
+                        "quantity": 1,
+                        "restockType": "RETURN",
+                        "lineItem": { "id": "gid://shopify/LineItem/6101004" },
+                        "subtotalSet": { "shopMoney": { "amount": "44.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" } },
+                        "totalTaxSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gid://shopify/Refund/7300304",
+                "createdAt": "2026-03-01T10:00:00Z",
+                "note": "goodwill shipping refund",
+                "totalRefundedSet": { "shopMoney": { "amount": "8.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "8.00", "currencyCode": "USD" } },
+                "refundLineItems": { "edges": [] }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -14,6 +14,13 @@ export {
   type CredentialPayload,
 } from './credentials';
 export { getCursor, setCursor, clearCursors } from './cursors';
+export { createStore, listStores, type Store, type CreateStoreInput } from './stores';
+export {
+  upsertRawShopifyOrders,
+  upsertRawShopifyCustomers,
+  upsertRawShopifyProducts,
+  countRawShopify,
+} from './raw-shopify';
 export {
   createConnection,
   listConnections,
