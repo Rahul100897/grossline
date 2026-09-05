@@ -7,11 +7,12 @@ import { getConnection, schema, updateConnectionHealth, withTenant } from '@gros
 import { queuePrefix } from './redis';
 import { getConnector } from './connectors/registry';
 import { runBackfill, runIncremental } from './connectors/engine';
+import { computeRecentMonths } from './metrics/pipeline';
 import type { SyncContext } from './connectors/types';
 
 export const syncJobSchema = z.object({
   tenantId: z.string().uuid(),
-  kind: z.enum(['backfill', 'incremental']),
+  kind: z.enum(['backfill', 'incremental', 'metrics']),
   connectionId: z.string().uuid().optional(),
   windowStart: z.string().datetime().optional(),
   windowEnd: z.string().datetime().optional(),
@@ -56,11 +57,15 @@ export function getDeadLetterQueue(connection: IORedis): Queue {
 export async function enqueueSync(
   connection: IORedis,
   data: Omit<SyncJobData, 'syncRunId'>,
+  opts: { delayMs?: number } = {},
 ): Promise<string> {
   const parsed = syncJobSchema.parse(data);
   const queue = getSyncQueue(connection);
   try {
-    const job = await queue.add(`sync-${parsed.kind}`, parsed, defaultJobOptions());
+    const job = await queue.add(`sync-${parsed.kind}`, parsed, {
+      ...defaultJobOptions(),
+      ...(opts.delayMs ? { delay: opts.delayMs } : {}),
+    });
     return job.id ?? 'unknown';
   } finally {
     await queue.close();
@@ -69,6 +74,8 @@ export async function enqueueSync(
 
 async function ensureSyncRun(job: Job<SyncJobData>): Promise<string> {
   const data = syncJobSchema.parse(job.data);
+  if (data.kind === 'metrics') throw new Error('metrics jobs are bookkept in metric_runs');
+  const kind = data.kind; // narrowed const survives the closure below
   if (data.syncRunId) return data.syncRunId;
   const [row] = await withTenant(data.tenantId, (tx) =>
     tx
@@ -76,7 +83,7 @@ async function ensureSyncRun(job: Job<SyncJobData>): Promise<string> {
       .values({
         tenantId: data.tenantId,
         connectionId: data.connectionId ?? null,
-        kind: data.kind,
+        kind,
         windowStart: data.windowStart ? new Date(data.windowStart) : null,
         windowEnd: data.windowEnd ? new Date(data.windowEnd) : null,
         status: 'running',
@@ -143,8 +150,14 @@ export function createSyncWorker(connection: IORedis): Worker<SyncJobData> {
     SYNC_QUEUE,
     async (job) => {
       const started = Date.now();
-      const syncRunId = await ensureSyncRun(job);
       const data = syncJobSchema.parse(job.data);
+      if (data.kind === 'metrics') {
+        // Metric computes keep their own bookkeeping in metric_runs.
+        if (data.simulateFailure) throw new Error('simulated failure (requested by job data)');
+        await computeRecentMonths(data.tenantId);
+        return;
+      }
+      const syncRunId = await ensureSyncRun(job);
       if (data.simulateFailure) {
         throw new Error('simulated failure (requested by job data)');
       }

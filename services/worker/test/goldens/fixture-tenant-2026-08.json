@@ -1,0 +1,412 @@
+[
+  {
+    "metric": "aov",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 8033,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "break_even_roas",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 1.568653,
+    "currency": null,
+    "meta": {
+      "totalLines": 10,
+      "costedLines": 8,
+      "completeness": 0.8,
+      "contributionMarginRate": "0.637490"
+    }
+  },
+  {
+    "metric": "cancelled_count",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 1,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "cancelled_rate",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0.142857,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "channel_orders_first_touch",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "source:direct",
+    "value": 6,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "channel_orders_last_touch",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "source:direct",
+    "value": 6,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "channel_revenue_first_touch",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "source:direct",
+    "value": 48200,
+    "currency": "USD",
+    "meta": {
+      "storeRecorded": true
+    }
+  },
+  {
+    "metric": "cogs",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 10600,
+    "currency": "USD",
+    "meta": {
+      "totalLines": 10,
+      "costedLines": 8,
+      "completeness": 0.8
+    }
+  },
+  {
+    "metric": "contribution_after_ad_spend",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 37600,
+    "currency": "USD",
+    "meta": {
+      "totalLines": 10,
+      "costedLines": 8,
+      "completeness": 0.8
+    }
+  },
+  {
+    "metric": "customer_order_frequency",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "bucket:1",
+    "value": 1,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "customer_order_frequency",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "bucket:2",
+    "value": 2,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "customer_order_frequency",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "bucket:3",
+    "value": 1,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "customer_order_frequency",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "bucket:4plus",
+    "value": 0,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "discounts",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 500,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "fulfilment_cost",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 1500,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "full_contribution_margin",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 30727,
+    "currency": "USD",
+    "meta": {
+      "totalLines": 10,
+      "costedLines": 8,
+      "completeness": 0.8
+    }
+  },
+  {
+    "metric": "gross_margin_pct",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0.780083,
+    "currency": null,
+    "meta": {
+      "totalLines": 10,
+      "costedLines": 8,
+      "completeness": 0.8
+    }
+  },
+  {
+    "metric": "gross_profit",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 37600,
+    "currency": "USD",
+    "meta": {
+      "totalLines": 10,
+      "costedLines": 8,
+      "completeness": 0.8
+    }
+  },
+  {
+    "metric": "gross_sales",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 70300,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "net_sales",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 48200,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "new_customer_count",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "new_customer_revenue_share",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "new_customer_revenue",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "order_count",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 6,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "packaging_cost",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 600,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "payment_fees",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 2373,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "refund_rate",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0.333333,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "repeat_rate_30d",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": null,
+    "meta": {
+      "cohortSize": 0,
+      "provisional": true
+    }
+  },
+  {
+    "metric": "repeat_rate_60d",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": null,
+    "meta": {
+      "cohortSize": 0,
+      "provisional": true
+    }
+  },
+  {
+    "metric": "repeat_rate_90d",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": null,
+    "meta": {
+      "cohortSize": 0,
+      "provisional": true
+    }
+  },
+  {
+    "metric": "returns",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 21600,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "shipping_cost",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 2400,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "shipping_revenue",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 2950,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "spend_month_to_date",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": "USD",
+    "meta": {
+      "daysElapsed": 31,
+      "daysInMonth": 31,
+      "monthClosed": true,
+      "targetMinor": 6000000
+    }
+  },
+  {
+    "metric": "spend_projected_month_end",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": "USD",
+    "meta": {
+      "daysElapsed": 31,
+      "daysInMonth": 31,
+      "monthClosed": true,
+      "targetMinor": 6000000
+    }
+  },
+  {
+    "metric": "taxes_collected",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 2861,
+    "currency": "USD",
+    "meta": null
+  },
+  {
+    "metric": "time_to_second_order_days",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": null,
+    "meta": {
+      "cohortSize": 0,
+      "provisional": true,
+      "withSecondOrder": 0
+    }
+  },
+  {
+    "metric": "total_ad_spend",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 0,
+    "currency": "USD",
+    "meta": {}
+  },
+  {
+    "metric": "units_per_order",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 2.666667,
+    "currency": null,
+    "meta": null
+  },
+  {
+    "metric": "units",
+    "grain": "month",
+    "period": "2026-08-01",
+    "scope": "",
+    "value": 16,
+    "currency": null,
+    "meta": null
+  }
+]

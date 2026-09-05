@@ -35,7 +35,20 @@ export async function startScheduler(connection: IORedis): Promise<Worker> {
           enqueued++;
         }
       }
-      logger.info('nightly scheduler fired', { activeTenants: tenants.length, enqueued });
+      // Metrics recompute after the syncs have had time to land (restatement
+      // windows make current+previous month recompute part of every night).
+      for (const tenant of tenants) {
+        await enqueueSync(
+          connection,
+          { tenantId: tenant.id, kind: 'metrics' },
+          { delayMs: 30 * 60_000 },
+        );
+      }
+      logger.info('nightly scheduler fired', {
+        activeTenants: tenants.length,
+        enqueued,
+        metricsJobs: tenants.length,
+      });
       try {
         await pullRecentFxRates();
       } catch (err) {
