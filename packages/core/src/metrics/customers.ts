@@ -38,12 +38,26 @@ function median(values: number[]): number {
 }
 
 /**
- * A customer is NEW when their earliest order we hold falls in the month AND
+ * A customer is NEW when their earliest order we hold falls in the window AND
  * Shopify's own customerOrderIndex agrees it is their first ever order (index
  * null counts as new — no evidence otherwise). An earliest-held order with
  * index > 1 is a pre-existing customer whose history predates our data
  * (e.g. the 60-day order window) — never counted as new.
  */
+export function acquisitionCohortIds(
+  facts: OrderFacts[],
+  window: { startUtc: Date; endUtc: Date },
+): Set<string> {
+  const ids = new Set<string>();
+  for (const entry of groupByCustomer(facts).values()) {
+    const first = entry.orders[0]!;
+    const inWindow = first.processedAt >= window.startUtc && first.processedAt < window.endUtc;
+    const trulyFirst = first.customerOrderIndex === 1 || first.customerOrderIndex === null;
+    if (inWindow && trulyFirst) ids.add(entry.customerId);
+  }
+  return ids;
+}
+
 export function computeCustomerMetrics(input: {
   /** ALL of the tenant's order facts, not just the month's. */
   facts: OrderFacts[];
