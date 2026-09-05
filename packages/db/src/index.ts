@@ -51,6 +51,13 @@ export { getBackfillProgress, type BackfillProgress } from './backfill-progress'
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {
+  compareMetric,
+  rollingMetric,
+  type ComparisonKind,
+  type MetricComparison,
+  type RollingWindow,
+} from './comparisons';
+export {
   upsertMetricValues,
   getMetricValues,
   listMetricValuesForPeriod,

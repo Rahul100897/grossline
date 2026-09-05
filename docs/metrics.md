@@ -12,6 +12,10 @@ Every change to this file needs a note in the changelog at the bottom and a reco
 - Converted amounts store the FX rate used and the rate date.
 - A "period" is a calendar month in the tenant's **reporting timezone**, which is chosen at onboarding and stated on every report.
 - Comparisons are against the immediately preceding period unless stated.
+  Year-over-year and rolling 7/28/90-day windows use the same single
+  comparison engine. **Missing history is absent, never zero**, and no
+  percentage is shown against an absent or zero base; a partially covered
+  rolling window reports its coverage.
 - **The order date is Shopify's `processedAt`, everywhere.** Shopify Analytics
   keys on `processedAt`, and reconciliation compares against Analytics —
   keying on `createdAt` would create permanent structural variance on
@@ -179,3 +183,4 @@ the changelog.
 | 2026-09-06 | COGS clarified to net units (ordered − refunded); payment fee base = order total charge; full contribution margin now subtracts packaging cost; break-even "fees" = all merchant per-order costs (task 2.5) | none — first computation |
 | 2026-09-06 | Defined CPM/CPC/CTR, platform-total sourcing, budget pacing; platform ROAS clarified as value÷spend from platform rows (task 2.6) | none — first computation |
 | 2026-09-06 | Defined spend share vs revenue share by platform (store-recorded first touch) and the zero-denominator rule for blended ratios (task 2.7) | none — first computation |
+| 2026-09-06 | Comparison semantics: one engine for MoM/YoY/rolling; absent history stays absent, no Δ% against zero or absent base, rolling windows expose coverage (task 2.9) | none |
