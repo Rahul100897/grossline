@@ -5,6 +5,9 @@ export {
   wallTimeToUtc,
   dateInZone,
   monthWindow,
+  previousMonthPeriod,
+  yearAgoPeriod,
+  lastNDates,
   type MonthWindow,
 } from './time';
 export {

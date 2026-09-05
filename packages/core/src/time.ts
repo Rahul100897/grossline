@@ -39,6 +39,27 @@ export function dateInZone(at: Date, timeZone: string): string {
   }).format(at);
 }
 
+/** '2026-08-01' → '2026-07-01' */
+export function previousMonthPeriod(period: string): string {
+  const [y, m] = period.split('-').map(Number) as [number, number];
+  const [py, pm] = m === 1 ? [y - 1, 12] : [y, m - 1];
+  return `${py}-${String(pm).padStart(2, '0')}-01`;
+}
+
+/** '2026-08-01' → '2025-08-01' */
+export function yearAgoPeriod(period: string): string {
+  const [y] = period.split('-').map(Number) as [number];
+  return `${y - 1}${period.slice(4)}`;
+}
+
+/** The n calendar date labels ending at endDate (inclusive). */
+export function lastNDates(endDate: string, n: number): string[] {
+  const end = Date.parse(`${endDate}T00:00:00Z`);
+  return Array.from({ length: n }, (_, i) =>
+    new Date(end - (n - 1 - i) * 86_400_000).toISOString().slice(0, 10),
+  );
+}
+
 export type MonthWindow = {
   /** First instant of the month in the reporting timezone, as UTC. */
   startUtc: Date;
