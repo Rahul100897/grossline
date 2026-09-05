@@ -34,6 +34,16 @@ export async function listTenants(): Promise<Tenant[]> {
   return adminDb().select().from(tenants).orderBy(asc(tenants.createdAt));
 }
 
+export async function getTenant(tenantId: string): Promise<Tenant | null> {
+  const [row] = await adminDb().select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  return row ?? null;
+}
+
+export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
+  const [row] = await adminDb().select().from(tenants).where(eq(tenants.slug, slug)).limit(1);
+  return row ?? null;
+}
+
 export async function listActiveTenants(): Promise<Tenant[]> {
   return adminDb()
     .select()
