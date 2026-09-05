@@ -276,6 +276,24 @@ simplest option was chosen. Anything here can be revisited.
 - Scale: ~3.4k orders / ~2.1k customers / ~2.7k ad-day rows over 18 months —
   believable for a small DTC brand and fast enough to seed in tests.
 
+## 2026-09-05 — Task 1.7 reconciliation harness
+
+- **Totals follow docs/metrics.md, computed in TypeScript over raw payloads.**
+  This is deliberately not the Phase 2 metric layer (which will be raw SQL
+  into `metrics_*`); it is the independent yardstick the metric layer will be
+  checked against. Noted in docs/phase-2-notes.md.
+- **Comparisons happen in each platform's own currency** — the platform UI
+  shows its own currency, so converting first would smuggle FX noise into
+  every variance.
+- **Tolerances**: orders and new customers exact; net sales 0.5%; Google 1%
+  and Meta 2% (the tasks' own exit criteria). An out-of-tolerance variance
+  passes only with a written explanation in the expected file; the harness
+  exits non-zero otherwise.
+- **"Matches the live UI" is not satisfiable without real accounts.** The
+  harness logic is proven against the demo tenant with golden values
+  (variance 0.000% across three months); the manual read-and-record procedure
+  is docs/reconciliation.md.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

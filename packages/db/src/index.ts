@@ -2,11 +2,14 @@ export * as schema from './schema';
 export { withTenant, type ScopedDb } from './tenant-scope';
 export {
   createTenant,
+  getTenant,
+  getTenantBySlug,
   listTenants,
   listActiveTenants,
   type CreateTenantInput,
   type Tenant,
 } from './admin';
+export { seedDemoTenant, type SeedSummary } from './seed-demo';
 export {
   putCredential,
   getCredential,
