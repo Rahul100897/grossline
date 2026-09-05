@@ -58,6 +58,7 @@ export const LINE_ITEM_FIELDS = `
   title
   quantity
   currentQuantity
+  isGiftCard
   sku
   vendor
   product { id }

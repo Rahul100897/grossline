@@ -51,6 +51,17 @@ export { getBackfillProgress, type BackfillProgress } from './backfill-progress'
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {
+  upsertMetricValues,
+  getMetricValues,
+  listMetricValuesForPeriod,
+  startMetricRun,
+  finishMetricRun,
+  type MetricGrain,
+  type MetricValueInput,
+  type MetricValueRow,
+  type MetricRun,
+} from './metric-values';
+export {
   upsertTenantCostInputs,
   listTenantCostInputs,
   getCostInputsEffectiveOn,
