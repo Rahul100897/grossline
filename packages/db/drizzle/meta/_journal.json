@@ -71,6 +71,13 @@
       "when": 1788619448205,
       "tag": "0009_rls_raw_google_ads",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788620253937,
+      "tag": "0010_fx_rates",
+      "breakpoints": true
     }
   ]
 }

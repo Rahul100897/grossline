@@ -3,6 +3,7 @@ import {
   date,
   integer,
   jsonb,
+  numeric,
   pgEnum,
   pgTable,
   text,
@@ -235,6 +236,23 @@ export const rawGoogleAdsInsights = pgTable(
       t.date,
     ),
   ],
+);
+
+// Global reference data (no tenant_id, like admin_users): daily ECB FX rates,
+// base EUR. Not tenant data — one rate serves every tenant, and every
+// converted amount records which rate row it used (rate + rate_date).
+export const fxRates = pgTable(
+  'fx_rates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    base: text('base').notNull().default('EUR'),
+    quote: text('quote').notNull(),
+    rate: numeric('rate', { precision: 20, scale: 10 }).notNull(),
+    rateDate: date('rate_date', { mode: 'string' }).notNull(),
+    source: text('source').notNull().default('frankfurter/ecb'),
+    fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('fx_rates_uniq').on(t.base, t.quote, t.rateDate)],
 );
 
 // The one table without tenant_id: the analyst's own login, not tenant data.

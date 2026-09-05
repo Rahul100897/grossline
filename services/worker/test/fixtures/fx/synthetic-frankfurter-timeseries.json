@@ -1,0 +1,13 @@
+{
+  "_synthetic": "hand-authored from the Frankfurter API docs (ECB reference rates); replace with a real recording",
+  "base": "EUR",
+  "start_date": "2026-08-03",
+  "end_date": "2026-08-07",
+  "rates": {
+    "2026-08-03": { "USD": 1.085, "INR": 93.1 },
+    "2026-08-04": { "USD": 1.0871, "INR": 93.22 },
+    "2026-08-05": { "USD": 1.0844, "INR": 92.98 },
+    "2026-08-06": { "USD": 1.0898, "INR": 93.41 },
+    "2026-08-07": { "USD": 1.0912, "INR": 93.55 }
+  }
+}
