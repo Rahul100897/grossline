@@ -1,0 +1,12 @@
+{
+  "data": {
+    "orders": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "edges": []
+    }
+  },
+  "_recorded": "real response from a development store, 2026-09-05, anonymised (store had zero orders)"
+}

@@ -1,0 +1,4 @@
+{"id":"gid://shopify/Customer/810000000001","createdAt":"2025-11-10T14:33:57Z","updatedAt":"2026-03-20T12:43:37Z","numberOfOrders":"1","amountSpent":{"amount":"27.25","currencyCode":"USD"}}
+{"id":"gid://shopify/Customer/810000000002","createdAt":"2025-11-10T14:53:39Z","updatedAt":"2026-03-24T11:10:38Z","numberOfOrders":"1","amountSpent":{"amount":"121.38","currencyCode":"USD"}}
+{"id":"gid://shopify/Customer/810000000003","createdAt":"2026-03-26T19:04:09Z","updatedAt":"2026-06-17T11:57:34Z","numberOfOrders":"48","amountSpent":{"amount":"2720.93","currencyCode":"USD"}}
+{"id":"gid://shopify/Customer/810000000004","createdAt":"2026-05-04T13:16:39Z","updatedAt":"2026-05-04T13:17:00Z","numberOfOrders":"0","amountSpent":{"amount":"0.0","currencyCode":"USD"}}

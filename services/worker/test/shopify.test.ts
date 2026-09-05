@@ -129,7 +129,11 @@ function makeRouter(opts: { grantReadAllOrders?: boolean; grantNothing?: boolean
     }
     if (url.startsWith('https://bulk.fixtures.test/')) {
       const stream = url.split('/').pop()!.replace('.jsonl', '');
-      return new Response(fixture(`synthetic-bulk-${stream}.jsonl`), { status: 200 });
+      // customers/products are REAL anonymised recordings; orders stay
+      // synthetic (the recording store had zero orders).
+      const file =
+        stream === 'orders' ? `synthetic-bulk-${stream}.jsonl` : `recorded-bulk-${stream}.jsonl`;
+      return new Response(fixture(file), { status: 200 });
     }
     throw new Error(`unrouted url: ${url}`);
   }) as typeof fetch;
@@ -249,7 +253,7 @@ describe('shopify backfill', () => {
     };
     await runBackfill(ctx(), shopifyConnector, window);
     const counts = await countRawShopify(tenantId);
-    expect(counts).toEqual({ orders: 6, customers: 4, products: 3 });
+    expect(counts).toEqual({ orders: 6, customers: 4, products: 5 });
 
     // Full re-run over the same window: identical counts, zero duplicates.
     await clearCursors(tenantId, connectionId);
@@ -277,23 +281,36 @@ describe('shopify backfill', () => {
     const srRefunds = shippingRefundOnly.refunds as Record<string, unknown>[];
     expect(srRefunds[0]!.refundLineItems).toEqual([]); // enriched: refund exists, no line items
 
+    // Products/customers below are REAL recorded shapes (anonymised).
     const products = await withTenant(tenantId, (tx) =>
       tx.select().from(schema.rawShopifyProducts),
     );
-    const flask = products.find((p) => p.productId.endsWith('/Product/7001003'))!;
-    const flaskVariants = (flask.payload as Record<string, unknown>).variants as Record<
-      string,
-      unknown
-    >[];
-    expect((flaskVariants[0]!.inventoryItem as Record<string, unknown>).unitCost).toBeNull();
+    expect(products).toHaveLength(5);
+    for (const product of products) {
+      const variants = (product.payload as Record<string, unknown>).variants as Record<
+        string,
+        unknown
+      >[];
+      expect(variants).toHaveLength(1); // reassembled from real __parentId children
+      // This store maintains no unit costs — null must survive as null.
+      expect((variants[0]!.inventoryItem as Record<string, unknown>).unitCost).toBeNull();
+    }
 
-    const mug = products.find((p) => p.productId.endsWith('/Product/7001001'))!;
-    const mugVariants = (mug.payload as Record<string, unknown>).variants as Record<
-      string,
-      unknown
-    >[];
-    const mugCost = mugVariants[0]!.inventoryItem as { unitCost: { amount: string } };
-    expect(mugCost.unitCost.amount).toBe('6.50');
+    const customers = await withTenant(tenantId, (tx) =>
+      tx.select().from(schema.rawShopifyCustomers),
+    );
+    const zeroSpend = customers.find(
+      (c) => (c.payload as Record<string, unknown>).numberOfOrders === '0',
+    )!;
+    // Real API quirk kept exactly: zero amountSpent serialises as "0.0".
+    expect((zeroSpend.payload as { amountSpent: { amount: string } }).amountSpent.amount).toBe(
+      '0.0',
+    );
+    // No PII is ever fetched, so none can land at rest.
+    for (const customer of customers) {
+      expect(customer.payload as Record<string, unknown>).not.toHaveProperty('email');
+      expect(customer.payload as Record<string, unknown>).not.toHaveProperty('displayName');
+    }
   });
 });
 
