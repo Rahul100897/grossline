@@ -1,5 +1,6 @@
 import {
   boolean,
+  date,
   integer,
   jsonb,
   pgEnum,
@@ -176,6 +177,37 @@ export const rawShopifyProducts = pgTable(
     syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex('raw_shopify_products_uniq').on(t.tenantId, t.storeId, t.productId)],
+);
+
+export const rawMetaInsights = pgTable(
+  'raw_meta_insights',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    connectionId: uuid('connection_id')
+      .notNull()
+      .references(() => connections.id),
+    adAccountId: text('ad_account_id').notNull(),
+    /** 'account' or 'campaign' */
+    level: text('level').notNull(),
+    /** Empty string for account-level rows (keeps one plain unique index). */
+    campaignId: text('campaign_id').notNull().default(''),
+    /** Insights date_start, a date string in the ad account's own timezone. */
+    date: date('date', { mode: 'string' }).notNull(),
+    payload: jsonb('payload').notNull(),
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('raw_meta_insights_uniq').on(
+      t.tenantId,
+      t.connectionId,
+      t.level,
+      t.campaignId,
+      t.date,
+    ),
+  ],
 );
 
 // The one table without tenant_id: the analyst's own login, not tenant data.

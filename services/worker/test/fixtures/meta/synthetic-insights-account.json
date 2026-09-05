@@ -1,0 +1,52 @@
+{
+  "_synthetic": "hand-authored from Meta Marketing API docs (v21.0); replace with an anonymised real recording",
+  "data": [
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "date_start": "2026-02-01",
+      "date_stop": "2026-02-01",
+      "spend": "168.60",
+      "impressions": "16104",
+      "clicks": "437",
+      "reach": "11930",
+      "frequency": "1.349874",
+      "actions": [
+        { "action_type": "purchase", "value": "12" },
+        { "action_type": "link_click", "value": "410" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "1005.30" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "5.962574" }],
+      "attribution_setting": "7d_click_1d_view"
+    },
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "date_start": "2026-02-02",
+      "date_stop": "2026-02-02",
+      "spend": "128.05",
+      "impressions": "10974",
+      "clicks": "305",
+      "reach": "8890",
+      "frequency": "1.234420",
+      "actions": [
+        { "action_type": "purchase", "value": "6" },
+        { "action_type": "link_click", "value": "287" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "521.90" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "4.075767" }],
+      "attribution_setting": "7d_click_1d_view"
+    },
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "date_start": "2026-02-04",
+      "date_stop": "2026-02-04",
+      "spend": "0.00",
+      "impressions": "0",
+      "clicks": "0",
+      "attribution_setting": "7d_click_1d_view"
+    }
+  ],
+  "paging": { "cursors": { "before": "MAZDZD", "after": "MQZDZD" } }
+}

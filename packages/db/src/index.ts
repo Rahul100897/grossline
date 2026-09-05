@@ -22,6 +22,11 @@ export {
   countRawShopify,
 } from './raw-shopify';
 export {
+  upsertRawMetaInsights,
+  countRawMetaInsights,
+  type MetaInsightRow,
+} from './raw-meta';
+export {
   createConnection,
   listConnections,
   getConnection,

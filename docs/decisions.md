@@ -177,6 +177,27 @@ simplest option was chosen. Anything here can be revisited.
   *newer platform payload for the same gid* (that is what idempotent re-sync
   means); no derived values are ever written into them.
 
+## 2026-09-05 — Task 1.3 Meta connector
+
+- **Account-level rows use `campaign_id = ''`**, not NULL, so one plain unique
+  index (tenant, connection, level, campaign_id, date) covers both levels.
+- **Incremental ignores the watermark on purpose**: every sync re-pulls the
+  trailing 28 days at both levels because Meta restates recent figures — a
+  fetch-once design silently drifts. Proven by test (restated day replaced in
+  place, row count unchanged).
+- **Attribution setting stored twice, deliberately**: `attribution_setting`
+  requested on every insights row (travels in the payload), and the account's
+  `attribution_spec` snapshot on `connections.settings` at connect time.
+- **Unique-metric caps**: chunks whose window ends more than 13 months ago
+  drop `reach`/`frequency` from the field list (Meta caps unique counts at 13
+  months, frequency at 6); totals fields are pulled for the full 37 months.
+- **Rate limits**: Meta signals throttling as HTTP 400 + error codes
+  (4/17/32/613/80000/80004) and the `X-Business-Use-Case-Usage` header's
+  `estimated_time_to_regain_access` — the client honours that signal first,
+  exponential backoff only as fallback.
+- **No real ad account available** — all fixtures synthetic and marked;
+  switching to a live account is `pnpm connect:meta` — configuration only.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

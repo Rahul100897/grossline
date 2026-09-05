@@ -1,0 +1,90 @@
+{
+  "_synthetic": "hand-authored from Meta Marketing API docs (v21.0); replace with an anonymised real recording",
+  "data": [
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "campaign_id": "120210000000000001",
+      "campaign_name": "prospecting-q1",
+      "date_start": "2026-02-01",
+      "date_stop": "2026-02-01",
+      "spend": "132.40",
+      "impressions": "11893",
+      "clicks": "341",
+      "reach": "9421",
+      "frequency": "1.262392",
+      "actions": [
+        { "action_type": "purchase", "value": "8" },
+        { "action_type": "link_click", "value": "322" },
+        { "action_type": "add_to_cart", "value": "31" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "704.20" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "5.318731" }],
+      "attribution_setting": "7d_click_1d_view"
+    },
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "campaign_id": "120210000000000001",
+      "campaign_name": "prospecting-q1",
+      "date_start": "2026-02-02",
+      "date_stop": "2026-02-02",
+      "spend": "128.05",
+      "impressions": "10974",
+      "clicks": "305",
+      "reach": "8890",
+      "frequency": "1.234420",
+      "actions": [
+        { "action_type": "purchase", "value": "6" },
+        { "action_type": "link_click", "value": "287" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "521.90" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "4.075767" }],
+      "attribution_setting": "7d_click_1d_view"
+    },
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "campaign_id": "120210000000000001",
+      "campaign_name": "prospecting-q1",
+      "date_start": "2026-02-03",
+      "date_stop": "2026-02-03",
+      "spend": "120.50",
+      "impressions": "10432",
+      "clicks": "312",
+      "reach": "8611",
+      "frequency": "1.211474",
+      "actions": [
+        { "action_type": "purchase", "value": "9" },
+        { "action_type": "link_click", "value": "298" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "812.40" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "6.741701" }],
+      "attribution_setting": "7d_click_1d_view"
+    },
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "campaign_id": "120210000000000002",
+      "campaign_name": "retargeting-q1",
+      "date_start": "2026-02-01",
+      "date_stop": "2026-02-01",
+      "spend": "36.20",
+      "impressions": "4211",
+      "clicks": "96",
+      "reach": "2871",
+      "frequency": "1.466736",
+      "actions": [
+        { "action_type": "purchase", "value": "4" },
+        { "action_type": "link_click", "value": "88" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "301.10" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "8.317680" }],
+      "attribution_setting": "7d_click_1d_view"
+    }
+  ],
+  "paging": {
+    "cursors": { "before": "MAZDZD", "after": "NAZDZD" },
+    "next": "https://graph.facebook.com/v21.0/act_123456789012345/insights?after=page2"
+  }
+}
