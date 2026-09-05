@@ -25,6 +25,8 @@ export {
   type CostProvenance,
 } from './costs';
 export { parseCsv } from './csv';
+export { orderFactsFromPayload, type OrderFacts, type OrderLineFact } from './metrics/order-facts';
+export { computeRevenueMetrics, rate, type MetricPoint } from './metrics/revenue';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,

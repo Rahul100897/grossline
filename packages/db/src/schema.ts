@@ -302,6 +302,54 @@ export const tenantCostInputs = pgTable(
   (t) => [uniqueIndex('tenant_cost_inputs_uniq').on(t.tenantId, t.effectiveFrom)],
 );
 
+// ---- metric layer (Phase 2) ----
+// Computed FROM raw_*, recomputable at any time; raw is never touched.
+
+export const metricRunStatus = pgEnum('metric_run_status', ['running', 'success', 'failed']);
+
+export const metricRuns = pgTable('metric_runs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenants.id),
+  periodStart: date('period_start', { mode: 'string' }).notNull(),
+  periodEnd: date('period_end', { mode: 'string' }).notNull(),
+  status: metricRunStatus('status').notNull().default('running'),
+  error: text('error'),
+  metricsWritten: integer('metrics_written').notNull().default(0),
+  /** Latest raw synced_at seen by this run — what the numbers were computed from. */
+  rawWatermark: timestamp('raw_watermark', { withTimezone: true }),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  finishedAt: timestamp('finished_at', { withTimezone: true }),
+});
+
+// One row per (metric, grain, period, scope). Money values are integer minor
+// units in `currency`; counts are integers; rates are decimals. `meta` carries
+// completeness/provisional flags and FX traceability where applicable.
+export const metricValues = pgTable(
+  'metric_values',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    metric: text('metric').notNull(),
+    grain: text('grain').notNull(), // 'day' | 'month'
+    /** Day: the reporting-timezone date label. Month: its first day. */
+    period: date('period', { mode: 'string' }).notNull(),
+    /** '' for tenant-level; e.g. 'platform:meta', 'campaign:google:123'. */
+    scope: text('scope').notNull().default(''),
+    value: numeric('value', { precision: 24, scale: 8 }).notNull(),
+    currency: text('currency'),
+    meta: jsonb('meta'),
+    computedAt: timestamp('computed_at', { withTimezone: true }).notNull().defaultNow(),
+    runId: uuid('run_id').references(() => metricRuns.id),
+  },
+  (t) => [
+    uniqueIndex('metric_values_uniq').on(t.tenantId, t.metric, t.grain, t.period, t.scope),
+  ],
+);
+
 // Global reference data (no tenant_id, like admin_users): daily ECB FX rates,
 // base EUR. Not tenant data — one rate serves every tenant, and every
 // converted amount records which rate row it used (rate + rate_date).

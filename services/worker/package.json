@@ -15,7 +15,9 @@
     "reconcile": "tsx src/cli/reconcile.ts",
     "costs:upload": "tsx src/cli/costs-upload.ts",
     "costs:import-shopify": "tsx src/cli/costs-import-shopify.ts",
-    "costs:coverage": "tsx src/cli/costs-coverage.ts"
+    "costs:coverage": "tsx src/cli/costs-coverage.ts",
+    "metrics:compute": "tsx src/cli/metrics-compute.ts",
+    "metrics:recompute": "tsx src/cli/metrics-recompute.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",
