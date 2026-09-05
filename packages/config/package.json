@@ -1,0 +1,15 @@
+{
+  "name": "@grossline/config",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint": "./eslint.mjs",
+    "./prettier": "./prettier.json"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.17.0",
+    "typescript-eslint": "^8.19.0"
+  }
+}

@@ -1,0 +1,31 @@
+# Local development services. Host ports are non-standard (5433/6380) because
+# this machine runs other Postgres/Redis instances on the defaults.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: grossline
+      POSTGRES_PASSWORD: grossline
+      POSTGRES_DB: grossline
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U grossline']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports:
+      - '6380:6379'
+    volumes:
+      - ./redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10

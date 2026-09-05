@@ -1,0 +1,25 @@
+{
+  "name": "@grossline/worker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "dev": "tsx watch src/index.ts",
+    "sync": "tsx src/cli/sync.ts"
+  },
+  "dependencies": {
+    "@grossline/core": "workspace:*",
+    "@grossline/db": "workspace:*",
+    "bullmq": "^5.34.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@grossline/config": "workspace:*",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  }
+}
