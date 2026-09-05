@@ -1,0 +1,165 @@
+{
+  "gid://shopify/Order/510000000004": {
+    "id": "gid://shopify/Order/510000000004",
+    "refunds": [
+      {
+        "id": "gid://shopify/Refund/730000000001",
+        "createdAt": "2026-09-05T18:10:43Z",
+        "note": "one item came back",
+        "totalRefundedSet": {
+          "shopMoney": {
+            "amount": "0.0",
+            "currencyCode": "USD"
+          },
+          "presentmentMoney": {
+            "amount": "0.0",
+            "currencyCode": "USD"
+          }
+        },
+        "refundLineItems": {
+          "edges": [
+            {
+              "node": {
+                "id": "gid://shopify/RefundLineItem/740000000001",
+                "quantity": 1,
+                "restockType": "NO_RESTOCK",
+                "lineItem": {
+                  "id": "gid://shopify/LineItem/610000000007"
+                },
+                "subtotalSet": {
+                  "shopMoney": {
+                    "amount": "18.0",
+                    "currencyCode": "USD"
+                  },
+                  "presentmentMoney": {
+                    "amount": "18.0",
+                    "currencyCode": "USD"
+                  }
+                },
+                "totalTaxSet": {
+                  "shopMoney": {
+                    "amount": "0.0",
+                    "currencyCode": "USD"
+                  },
+                  "presentmentMoney": {
+                    "amount": "0.0",
+                    "currencyCode": "USD"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "gid://shopify/Order/510000000005": {
+    "id": "gid://shopify/Order/510000000005",
+    "refunds": [
+      {
+        "id": "gid://shopify/Refund/730000000002",
+        "createdAt": "2026-09-05T18:10:48Z",
+        "note": "entire order returned",
+        "totalRefundedSet": {
+          "shopMoney": {
+            "amount": "0.0",
+            "currencyCode": "USD"
+          },
+          "presentmentMoney": {
+            "amount": "0.0",
+            "currencyCode": "USD"
+          }
+        },
+        "refundLineItems": {
+          "edges": [
+            {
+              "node": {
+                "id": "gid://shopify/RefundLineItem/740000000002",
+                "quantity": 2,
+                "restockType": "NO_RESTOCK",
+                "lineItem": {
+                  "id": "gid://shopify/LineItem/610000000009"
+                },
+                "subtotalSet": {
+                  "shopMoney": {
+                    "amount": "198.0",
+                    "currencyCode": "USD"
+                  },
+                  "presentmentMoney": {
+                    "amount": "198.0",
+                    "currencyCode": "USD"
+                  }
+                },
+                "totalTaxSet": {
+                  "shopMoney": {
+                    "amount": "0.0",
+                    "currencyCode": "USD"
+                  },
+                  "presentmentMoney": {
+                    "amount": "0.0",
+                    "currencyCode": "USD"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "gid://shopify/Order/510000000006": {
+    "id": "gid://shopify/Order/510000000006",
+    "refunds": [
+      {
+        "id": "gid://shopify/Refund/730000000003",
+        "createdAt": "2026-09-05T18:10:51Z",
+        "note": "Order canceled",
+        "totalRefundedSet": {
+          "shopMoney": {
+            "amount": "0.0",
+            "currencyCode": "USD"
+          },
+          "presentmentMoney": {
+            "amount": "0.0",
+            "currencyCode": "USD"
+          }
+        },
+        "refundLineItems": {
+          "edges": [
+            {
+              "node": {
+                "id": "gid://shopify/RefundLineItem/740000000003",
+                "quantity": 1,
+                "restockType": "NO_RESTOCK",
+                "lineItem": {
+                  "id": "gid://shopify/LineItem/610000000010"
+                },
+                "subtotalSet": {
+                  "shopMoney": {
+                    "amount": "35.0",
+                    "currencyCode": "USD"
+                  },
+                  "presentmentMoney": {
+                    "amount": "35.0",
+                    "currencyCode": "USD"
+                  }
+                },
+                "totalTaxSet": {
+                  "shopMoney": {
+                    "amount": "0.0",
+                    "currencyCode": "USD"
+                  },
+                  "presentmentMoney": {
+                    "amount": "0.0",
+                    "currencyCode": "USD"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "_recorded": "real per-order refund enrichment responses from a development store, 2026-09-05, anonymised"
+}
