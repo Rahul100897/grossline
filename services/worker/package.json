@@ -10,7 +10,8 @@
     "sync": "tsx src/cli/sync.ts",
     "connect:shopify": "tsx src/cli/connect-shopify.ts",
     "connect:meta": "tsx src/cli/connect-meta.ts",
-    "connect:google": "tsx src/cli/connect-google-ads.ts"
+    "connect:google": "tsx src/cli/connect-google-ads.ts",
+    "fx:pull": "tsx src/cli/fx-pull.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",

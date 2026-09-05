@@ -31,6 +31,8 @@ export {
   countRawGoogleAdsInsights,
   type GoogleAdsInsightRow,
 } from './raw-google-ads';
+export { upsertFxRates, getFxRate, type FxRateInput, type FxRate } from './fx';
+export { listCurrenciesInUse } from './currencies';
 export {
   createConnection,
   listConnections,

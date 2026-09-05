@@ -222,6 +222,29 @@ simplest option was chosen. Anything here can be revisited.
 - **OAuth**: one refresh token per tenant (credential), client id/secret and
   developer token from env, access tokens cached in memory until expiry.
 
+## 2026-09-05 — Task 1.5 timezone & currency normalisation
+
+- **FX source: Frankfurter (ECB daily reference rates).** Free, keyless,
+  reliable, and the rates are the ECB's own. Stored base-EUR in the global
+  `fx_rates` table; any pair converts via the EUR cross rate. Weekends and
+  holidays use the most recent prior business day (≤7 days back) and the
+  returned `rateDate` says which one — every converted amount carries
+  `{ rate, rateDate, source }` and is reproducible.
+- **`fx_rates` is global reference data** — the one new exception (alongside
+  `admin_users`) to "every table has tenant_id". A rate is a fact about the
+  world, not about a tenant; duplicating rows per tenant would add risk, not
+  isolation.
+- **One boundary source**: `monthWindow(reportingTz, y, m)` returns the UTC
+  instants (for timestamped data) *and* the date labels (for platform daily
+  rows) of a reporting month. A platform day is never re-cut into another
+  timezone — it belongs to the month whose label it carries; the residual
+  difference is a documented structural variance for reconciliation.
+- **Conversion is exponent-aware** (JPY/KRW 0-decimal, KWD 3-decimal) over
+  integer minor units; floats are rejected loudly.
+- **Nightly FX pull** refreshes the trailing 7 days for every currency in use;
+  `pnpm fx:pull [days]` backfills (needed once before Phase 2 computes
+  anything over history).
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

@@ -20,7 +20,8 @@
     "worker:sync": "pnpm --filter @grossline/worker run sync",
     "connect:shopify": "pnpm --filter @grossline/worker run connect:shopify",
     "connect:meta": "pnpm --filter @grossline/worker run connect:meta",
-    "connect:google": "pnpm --filter @grossline/worker run connect:google"
+    "connect:google": "pnpm --filter @grossline/worker run connect:google",
+    "fx:pull": "pnpm --filter @grossline/worker run fx:pull"
   },
   "devDependencies": {
     "@grossline/config": "workspace:*",

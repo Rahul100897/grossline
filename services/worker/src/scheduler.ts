@@ -4,6 +4,7 @@ import { logger } from '@grossline/core';
 import { listActiveTenants, listConnections } from '@grossline/db';
 import { queuePrefix } from './redis';
 import { enqueueSync } from './sync';
+import { pullRecentFxRates } from './fx';
 
 export const SCHEDULER_QUEUE = 'scheduler';
 /** 02:00 UTC nightly — before any merchant's business morning. */
@@ -35,6 +36,14 @@ export async function startScheduler(connection: IORedis): Promise<Worker> {
         }
       }
       logger.info('nightly scheduler fired', { activeTenants: tenants.length, enqueued });
+      try {
+        await pullRecentFxRates();
+      } catch (err) {
+        // FX is reference data; a failed pull must not block tenant syncs.
+        logger.error('nightly fx pull failed', {
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
     },
     { connection, prefix: queuePrefix() },
   );
