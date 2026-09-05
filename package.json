@@ -16,7 +16,7 @@
     "db:studio": "pnpm --filter @grossline/db run studio",
     "db:check": "pnpm --filter @grossline/db run check",
     "seed:admin": "pnpm --filter @grossline/db run seed:admin",
-    "seed:demo": "echo 'seed:demo needs connector-shaped sample data and arrives with Phase 1' && exit 1",
+    "seed:demo": "pnpm --filter @grossline/db run seed:demo",
     "worker:sync": "pnpm --filter @grossline/worker run sync",
     "connect:shopify": "pnpm --filter @grossline/worker run connect:shopify",
     "connect:meta": "pnpm --filter @grossline/worker run connect:meta",
