@@ -109,7 +109,7 @@ effective-from dated. Not metrics; reference lines for pacing (Phase 2.6).
 
 ## Ad platforms
 
-**Ad spend** — platform-reported cost. Google `metrics.cost_micros` ÷ 1,000,000. Meta `spend`. Always in the ad account's billing currency, converted at the daily rate.
+**Ad spend** — platform-reported cost. Google `metrics.cost_micros` ÷ 1,000,000, converted to integer minor units **per raw row (campaign × day), rounded once**; every aggregate sums those row values. Meta `spend` (a decimal string, exact in minor units). Always in the ad account's billing currency, converted at the daily rate.
 
 **Platform-reported conversions** — what the platform claims. Always labelled as platform-reported. **Never summed across platforms** — they overlap.
 
@@ -184,3 +184,4 @@ the changelog.
 | 2026-09-06 | Defined CPM/CPC/CTR, platform-total sourcing, budget pacing; platform ROAS clarified as value÷spend from platform rows (task 2.6) | none — first computation |
 | 2026-09-06 | Defined spend share vs revenue share by platform (store-recorded first touch) and the zero-denominator rule for blended ratios (task 2.7) | none — first computation |
 | 2026-09-06 | Comparison semantics: one engine for MoM/YoY/rolling; absent history stays absent, no Δ% against zero or absent base, rolling windows expose coverage (task 2.9) | none |
+| 2026-09-06 | Cohort anchor clarified: the customerOrderIndex-1 order is the first order even where processedAt ordering disagrees; Google cost rounding canonicalised to per-raw-row. Both divergences found by the metric-layer-vs-reconciliation agreement test | fixture goldens regenerated |

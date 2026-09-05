@@ -44,16 +44,30 @@ function median(values: number[]): number {
  * index > 1 is a pre-existing customer whose history predates our data
  * (e.g. the 60-day order window) — never counted as new.
  */
+/**
+ * The customer's first-ever order, by the store's own record: the order
+ * Shopify marks customerOrderIndex 1 when present (the store's truth even if
+ * processedAt ordering disagrees, e.g. backdated processing), else the
+ * earliest held order when it carries no index. An earliest order with
+ * index > 1 means the real first order predates our data — no anchor.
+ */
+export function cohortAnchor(orders: OrderFacts[]): OrderFacts | null {
+  const explicit = orders.find((o) => o.customerOrderIndex === 1);
+  if (explicit) return explicit;
+  const earliest = orders[0]!;
+  return earliest.customerOrderIndex === null ? earliest : null;
+}
+
 export function acquisitionCohortIds(
   facts: OrderFacts[],
   window: { startUtc: Date; endUtc: Date },
 ): Set<string> {
   const ids = new Set<string>();
   for (const entry of groupByCustomer(facts).values()) {
-    const first = entry.orders[0]!;
-    const inWindow = first.processedAt >= window.startUtc && first.processedAt < window.endUtc;
-    const trulyFirst = first.customerOrderIndex === 1 || first.customerOrderIndex === null;
-    if (inWindow && trulyFirst) ids.add(entry.customerId);
+    const anchor = cohortAnchor(entry.orders);
+    if (anchor && anchor.processedAt >= window.startUtc && anchor.processedAt < window.endUtc) {
+      ids.add(entry.customerId);
+    }
   }
   return ids;
 }
@@ -72,15 +86,15 @@ export function computeCustomerMetrics(input: {
   const customers = groupByCustomer(input.facts);
   const points: MetricPoint[] = [];
 
-  // ---- cohort membership ----
-  const cohort: CustomerOrders[] = [];
+  // ---- cohort membership (anchored on the store's own first-order record) ----
+  const cohort: { entry: CustomerOrders; anchor: OrderFacts }[] = [];
   for (const entry of customers.values()) {
-    const first = entry.orders[0]!;
-    const inMonth = first.processedAt >= window.startUtc && first.processedAt < window.endUtc;
-    const trulyFirst = first.customerOrderIndex === 1 || first.customerOrderIndex === null;
-    if (inMonth && trulyFirst) cohort.push(entry);
+    const anchor = cohortAnchor(entry.orders);
+    if (anchor && anchor.processedAt >= window.startUtc && anchor.processedAt < window.endUtc) {
+      cohort.push({ entry, anchor });
+    }
   }
-  const cohortIds = new Set(cohort.map((c) => c.customerId));
+  const cohortIds = new Set(cohort.map((c) => c.entry.customerId));
 
   // ---- new customer count / revenue / share ----
   let monthNet = 0;
@@ -98,12 +112,14 @@ export function computeCustomerMetrics(input: {
   );
 
   // ---- repeat rates (30/60/90) and time to second order ----
+  const nextAfterAnchor = (c: { entry: CustomerOrders; anchor: OrderFacts }): OrderFacts | undefined =>
+    c.entry.orders.find((o) => o.processedAt > c.anchor.processedAt);
+
   for (const days of [30, 60, 90]) {
     const windowMs = days * DAY_MS;
     const repeated = cohort.filter((c) => {
-      const first = c.orders[0]!;
-      const second = c.orders[1];
-      return second !== undefined && second.processedAt.getTime() - first.processedAt.getTime() <= windowMs;
+      const second = nextAfterAnchor(c);
+      return second !== undefined && second.processedAt.getTime() - c.anchor.processedAt.getTime() <= windowMs;
     }).length;
     // The N-day figure is final only once every cohort member's window closed.
     const provisional = window.endUtc.getTime() + windowMs > input.now.getTime();
@@ -116,8 +132,11 @@ export function computeCustomerMetrics(input: {
     });
   }
   const gaps = cohort
-    .filter((c) => c.orders.length >= 2)
-    .map((c) => (c.orders[1]!.processedAt.getTime() - c.orders[0]!.processedAt.getTime()) / DAY_MS);
+    .map((c) => {
+      const second = nextAfterAnchor(c);
+      return second ? (second.processedAt.getTime() - c.anchor.processedAt.getTime()) / DAY_MS : null;
+    })
+    .filter((g): g is number => g !== null);
   points.push({
     metric: 'time_to_second_order_days',
     grain: 'month',
@@ -160,7 +179,7 @@ export function computeCustomerMetrics(input: {
       if (offsetWindow.startUtc > input.now) break; // future offsets don't exist yet
       let cumulative = 0;
       for (const member of cohort) {
-        for (const order of member.orders) {
+        for (const order of member.entry.orders) {
           if (order.processedAt < offsetWindow.endUtc) cumulative += orderNet(order);
         }
       }
