@@ -1,2 +1,3 @@
-// Tenant-scoped query helpers land in tasks 0.2/0.3. Nothing exported yet.
-export {};
+export * as schema from './schema';
+// Tenant-scoped query helpers land in task 0.3. Direct client access stays
+// inside packages/db (enforced by lint).

@@ -49,6 +49,27 @@ simplest option was chosen. Anything here can be revisited.
 - **`--passWithNoTests`** on packages whose test suites land in later tasks,
   so `pnpm verify` is meaningful from the first commit.
 
+## 2026-09-05 — Task 0.2 core schema
+
+- **`credentials.provider` added.** The phase spec's column list omits it, but
+  `putCredential(tenantId, provider, payload)` (task 0.4) needs to record which
+  provider a credential belongs to. Not a `raw_*` table, so this did not need
+  sign-off, but flagging it: one enum column, nothing else changed.
+- **`audit_log.tenant_id` is nullable.** Admin-level events (login, tenant
+  creation) have no tenant. RLS still applies: a tenant context only sees its
+  own rows; tenant-less rows are visible only to the admin connection.
+- **RLS enforcement model.** The app connects as `grossline_app`
+  (`NOBYPASSRLS`, owns nothing, no access to `admin_users`); policies key on
+  `current_setting('app.tenant_id', true)`, which is NULL outside a tenant
+  context, so unscoped queries return zero rows. The migration/admin
+  connection (`DATABASE_URL`) is for migrations and explicit cross-tenant
+  admin reads inside `packages/db` only. The `grossline_app` role is created
+  in a migration with a fixed local password — acceptable for local/CI;
+  production must set `APP_DATABASE_URL` with a managed secret.
+- **`sync_runs.connection_id` nullable** so a run can be recorded even when a
+  job fails before resolving its connection (task 0.5 writes a failed row in
+  every path).
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

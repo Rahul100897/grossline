@@ -1,1 +1,20 @@
-{"version":"7","dialect":"postgresql","entries":[]}
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788604510291,
+      "tag": "0000_core_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788604510698,
+      "tag": "0001_rls_and_app_role",
+      "breakpoints": true
+    }
+  ]
+}
