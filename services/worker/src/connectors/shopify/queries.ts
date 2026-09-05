@@ -83,14 +83,15 @@ export const REFUND_LINE_ITEM_FIELDS = `
   totalTaxSet ${MONEY_BAG}
 `;
 
+// No PII on purpose: email/displayName are protected customer data needing
+// separate Shopify approval, and no metric in docs/metrics.md uses them
+// ("new customer" keys on the store's own customer record, never email).
 export const CUSTOMER_FIELDS = `
   id
   createdAt
   updatedAt
   numberOfOrders
   amountSpent { amount currencyCode }
-  email
-  displayName
 `;
 
 export const PRODUCT_FIELDS = `

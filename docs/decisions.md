@@ -415,6 +415,31 @@ clean. Fixture replacement with real recordings is blocked on the same.
 Also noted: `read_all_orders` request card does not surface for Dev
 Dashboard apps — the 60-day warning will stand even after scopes land.
 
+## 2026-09-05 — Live backfill of rahul-developer-store
+
+- **Scopes landed** (read_orders, read_customers, read_products,
+  read_inventory — confirmed in the token readback); the connection's warning
+  correctly downgraded from NO_SCOPES to the 60-day read_all_orders warning.
+- **Live finding #4: protected customer data.** `email`/`displayName` are PII
+  fields needing separate Shopify approval ("This app is not approved to use
+  the displayName field"), denied even with read_customers granted — and the
+  denial only fires on chunks that actually contain rows, which is why seven
+  empty chunks passed first. **Decision: stop fetching customer PII
+  entirely.** No metric in docs/metrics.md uses it ("new customer" keys on
+  the store's customer record, never email), fixtures were being anonymised
+  anyway, and less PII at rest is strictly better. Revisit only if a future
+  phase genuinely needs it, via the protected-data approval process.
+- **The interrupted live backfill resumed from cursors exactly as designed**
+  (21 chunks skipped, 21 run) — the Phase 1 resume test held up against
+  reality.
+- **The store has zero orders** (`ordersCount: 0`; its customers'
+  `numberOfOrders` show orders once existed and were deleted). Order fixtures
+  therefore remain synthetic; customers/products fixtures are now REAL
+  anonymised recordings, which also validated JSONL reassembly against
+  genuine bulk output. One of five customers predates the 13-month
+  updated_at window and is absent — the documented backfill gap, visible
+  here in practice.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
