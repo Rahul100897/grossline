@@ -17,7 +17,8 @@
     "db:check": "pnpm --filter @grossline/db run check",
     "seed:admin": "pnpm --filter @grossline/db run seed:admin",
     "seed:demo": "echo 'seed:demo needs connector-shaped sample data and arrives with Phase 1' && exit 1",
-    "worker:sync": "pnpm --filter @grossline/worker run sync"
+    "worker:sync": "pnpm --filter @grossline/worker run sync",
+    "connect:shopify": "pnpm --filter @grossline/worker run connect:shopify"
   },
   "devDependencies": {
     "@grossline/config": "workspace:*",

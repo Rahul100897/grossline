@@ -29,6 +29,20 @@
       "when": 1788617959018,
       "tag": "0003_rls_sync_cursors",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788618429830,
+      "tag": "0004_raw_shopify",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788618430183,
+      "tag": "0005_rls_raw_shopify",
+      "breakpoints": true
     }
   ]
 }

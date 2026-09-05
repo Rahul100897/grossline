@@ -117,6 +117,67 @@ export const syncRuns = pgTable('sync_runs', {
   finishedAt: timestamp('finished_at', { withTimezone: true }),
 });
 
+// ---- raw platform data ----
+// Immutable landing zone: payloads exactly as the platform sent them, upserted
+// on the platform's own ID (idempotent re-syncs), never edited with derived
+// values. Metrics are computed elsewhere and can always be rebuilt from here.
+
+export const rawShopifyOrders = pgTable(
+  'raw_shopify_orders',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    storeId: uuid('store_id')
+      .notNull()
+      .references(() => stores.id),
+    /** Shopify gid, e.g. gid://shopify/Order/123 */
+    orderId: text('order_id').notNull(),
+    payload: jsonb('payload').notNull(),
+    orderCreatedAt: timestamp('order_created_at', { withTimezone: true }).notNull(),
+    orderUpdatedAt: timestamp('order_updated_at', { withTimezone: true }).notNull(),
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('raw_shopify_orders_uniq').on(t.tenantId, t.storeId, t.orderId)],
+);
+
+export const rawShopifyCustomers = pgTable(
+  'raw_shopify_customers',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    storeId: uuid('store_id')
+      .notNull()
+      .references(() => stores.id),
+    customerId: text('customer_id').notNull(),
+    payload: jsonb('payload').notNull(),
+    customerUpdatedAt: timestamp('customer_updated_at', { withTimezone: true }),
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('raw_shopify_customers_uniq').on(t.tenantId, t.storeId, t.customerId)],
+);
+
+export const rawShopifyProducts = pgTable(
+  'raw_shopify_products',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    storeId: uuid('store_id')
+      .notNull()
+      .references(() => stores.id),
+    productId: text('product_id').notNull(),
+    payload: jsonb('payload').notNull(),
+    productUpdatedAt: timestamp('product_updated_at', { withTimezone: true }),
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('raw_shopify_products_uniq').on(t.tenantId, t.storeId, t.productId)],
+);
+
 // The one table without tenant_id: the analyst's own login, not tenant data.
 export const adminUsers = pgTable('admin_users', {
   id: uuid('id').primaryKey().defaultRandom(),
