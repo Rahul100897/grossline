@@ -17,10 +17,12 @@ export {
   resolveUnitCost,
   computeCostCoverage,
   latestEffective,
+  EPOCH_EFFECTIVE_FROM,
   type ProductCostRow,
   type ResolvedCost,
   type OrderLineForCosting,
   type CostCoverage,
+  type CostProvenance,
 } from './costs';
 export { parseCsv } from './csv';
 export { hashPassword, verifyPassword } from './auth/password';

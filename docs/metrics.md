@@ -12,6 +12,13 @@ Every change to this file needs a note in the changelog at the bottom and a reco
 - Converted amounts store the FX rate used and the rate date.
 - A "period" is a calendar month in the tenant's **reporting timezone**, which is chosen at onboarding and stated on every report.
 - Comparisons are against the immediately preceding period unless stated.
+- **The order date is Shopify's `processedAt`, everywhere.** Shopify Analytics
+  keys on `processedAt`, and reconciliation compares against Analytics —
+  keying on `createdAt` would create permanent structural variance on
+  backdated, imported, draft-converted and POS orders. Every rule that says
+  "order date" (period assignment, returns recognition, cost resolution,
+  cohort membership) means the order's `processedAt` in the reporting
+  timezone.
 
 ---
 
@@ -21,11 +28,12 @@ Every change to this file needs a note in the changelog at the bottom and a reco
 
 **Discounts** — total discount allocated to line items, including order-level discounts allocated proportionally. Positive number, subtracted.
 
-**Returns** — refunded line item value. **Recognised on the original order date, not the refund date.** This is deliberate: it keeps a month's margin honest rather than pushing losses into a later period.
+**Returns** — refunded line item value. **Recognised on the original order date (the order's `processedAt`), not the refund date.** This is deliberate: it keeps a month's margin honest rather than pushing losses into a later period.
 
 **Net sales** — gross sales − discounts − returns. Excludes shipping charged and taxes collected.
 
-**Shipping revenue** — shipping charged to the customer. Reported separately, not part of net sales.
+**Shipping revenue** — shipping charged to the customer, minus shipping-only
+refund amounts. Reported separately, not part of net sales.
 
 **Taxes collected** — reported separately. Never revenue.
 
@@ -33,7 +41,19 @@ Every change to this file needs a note in the changelog at the bottom and a reco
 
 **AOV** — net sales ÷ order count.
 
-**Order count** — orders with at least one non-cancelled line item, in the period, by the order's creation timestamp in reporting timezone.
+**Order count** — orders with at least one non-cancelled line item, in the period, by the order's `processedAt` timestamp in reporting timezone.
+
+**Units per order** — units sold (sum of non-cancelled orders' line quantities, gift-card lines excluded) ÷ order count.
+
+**Refund rate** — orders with at least one refund line item ÷ order count, both by the order's period. Shipping-only refunds do not count.
+
+**Cancelled rate** — cancelled orders ÷ (order count + cancelled orders), by the order's period. The denominator adds cancellations back because cancelled orders are excluded from order count.
+
+**Gift cards** — gift-card line items are excluded from gross sales, net sales and units at purchase (a gift card sale is a liability, and Shopify Analytics excludes it); nothing is recognised at redemption, which is a payment method. Matches Shopify Analytics, which reconciliation compares against.
+
+**Multi-store merchants** — new/returning customers are counted **per store**, by the store's own customer record. Cross-store deduplication would require email matching, which these definitions explicitly reject.
+
+**Subscription orders** — combined with one-time revenue in v1. No subscription platform is connected, so any split would be inferred, not sourced. Revisit when a subscriptions connector exists.
 
 ---
 
@@ -121,12 +141,9 @@ This is a measurement signal, not a correction. We do not claim either number is
 
 ## Open questions
 
-Decide before Phase 2 ends. Do not guess in code.
-
-- [ ] Multi-store merchants: are new customers deduplicated across their stores, or counted per store? Currently per store.
-- [ ] Subscription orders: separate from one-time in revenue reporting, or combined?
-- [ ] Gift card sales: excluded from net sales at purchase and counted at redemption, or the reverse?
-- [ ] Partial refunds where only shipping is refunded — currently reduces shipping revenue, not net sales. Confirm.
+None. The four Phase 1 questions were decided 2026-09-05 — see the Revenue
+section (gift cards, shipping-only refunds, multi-store, subscriptions) and
+the changelog.
 
 ---
 
@@ -136,3 +153,9 @@ Decide before Phase 2 ends. Do not guess in code.
 |---|---|---|
 | — | Initial version | — |
 | 2026-09-05 | Added packaging cost and monthly revenue/spend targets to merchant-supplied inputs; documented effective-from dating for all cost inputs (Phase 2 tasks 2.1/2.2) | none — no metrics computed yet |
+| 2026-09-05 | **Order date is `processedAt` everywhere** (period assignment, returns recognition, cost resolution, cohorts). Rationale: Shopify Analytics keys on processedAt; createdAt would create permanent structural variance on backdated/imported/draft-converted/POS orders. Decided by Rahul. | none — no metrics computed yet |
+| 2026-09-05 | Defined units per order, refund rate, cancelled rate (required by Phase 2 task 2.3) | none |
+| 2026-09-05 | Open question closed — **gift cards**: gift-card lines excluded from gross/net/units at purchase, nothing at redemption. Matches Shopify Analytics (the reconciliation target). | none |
+| 2026-09-05 | Open question closed — **shipping-only refunds**: reduce shipping revenue, never net sales (confirmed existing behaviour). | none |
+| 2026-09-05 | Open question closed — **multi-store**: new customers counted per store, by the store's own customer record; cross-store dedupe would be email matching, which we reject. | none |
+| 2026-09-05 | Open question closed — **subscriptions**: combined with one-time revenue in v1; no subscription source is connected, a split would be inferred not sourced. Revisit with a subscriptions connector. | none |

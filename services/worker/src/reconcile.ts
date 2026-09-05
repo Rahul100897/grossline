@@ -4,7 +4,7 @@
 //
 // These are reconciliation *reference totals* computed per docs/metrics.md
 // definitions, not the Phase 2 metric layer.
-import { and, eq, gte, inArray, lt } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { monthWindow } from '@grossline/core';
 import { getTenant, getTenantBySlug, listConnections, schema, withTenant, type Tenant } from '@grossline/db';
@@ -118,14 +118,16 @@ export async function computeOurTotals(
 ): Promise<OurTotals> {
   const window = monthWindow(tenant.reportingTimezone, year, month);
 
+  // The order date is processedAt everywhere (docs/metrics.md, 2026-09-05) —
+  // Shopify Analytics keys on it, and Analytics is what we reconcile against.
   const orderRows = await withTenant(tenant.id, (tx) =>
     tx
       .select({ payload: schema.rawShopifyOrders.payload })
       .from(schema.rawShopifyOrders)
       .where(
         and(
-          gte(schema.rawShopifyOrders.orderCreatedAt, window.startUtc),
-          lt(schema.rawShopifyOrders.orderCreatedAt, window.endUtc),
+          sql`(${schema.rawShopifyOrders.payload}->>'processedAt')::timestamptz >= ${window.startUtc}`,
+          sql`(${schema.rawShopifyOrders.payload}->>'processedAt')::timestamptz < ${window.endUtc}`,
         ),
       ),
   );

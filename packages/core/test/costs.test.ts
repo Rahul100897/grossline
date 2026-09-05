@@ -86,6 +86,29 @@ describe('computeCostCoverage', () => {
     ...over,
   });
 
+  it('splits covered lines by provenance so epoch-assumed costs cannot hide', () => {
+    const rows = [
+      cost({ effectiveFrom: '1970-01-01', source: 'shopify', sku: 'EPOCH-01' }),
+      cost({ effectiveFrom: '2026-01-01', source: 'shopify', sku: 'DATED-01' }),
+      cost({ effectiveFrom: '2026-01-01', source: 'upload', sku: 'UPLOAD-01' }),
+    ];
+    const coverage = computeCostCoverage(
+      [
+        line({ sku: 'EPOCH-01' }),
+        line({ orderId: 'o2', sku: 'EPOCH-01' }),
+        line({ orderId: 'o3', sku: 'DATED-01' }),
+        line({ orderId: 'o4', sku: 'UPLOAD-01' }),
+      ],
+      rows,
+    );
+    expect(coverage.coverageRate).toBe(1); // 100% covered…
+    expect(coverage.provenance).toEqual({
+      uploadLines: 1,
+      shopifyDatedLines: 1,
+      shopifyEpochAssumedLines: 2, // …but half of it is an assumption, visibly
+    });
+  });
+
   it('reports missing keys with line count, units and revenue at stake', () => {
     const rows = [cost({ effectiveFrom: '2026-01-01' })];
     const coverage = computeCostCoverage(
