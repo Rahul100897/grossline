@@ -210,6 +210,33 @@ export const rawMetaInsights = pgTable(
   ],
 );
 
+export const rawGoogleAdsInsights = pgTable(
+  'raw_google_ads_insights',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    connectionId: uuid('connection_id')
+      .notNull()
+      .references(() => connections.id),
+    customerId: text('customer_id').notNull(),
+    campaignId: text('campaign_id').notNull(),
+    /** segments.date — a date string in the ad account's own timezone. */
+    date: date('date', { mode: 'string' }).notNull(),
+    payload: jsonb('payload').notNull(),
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('raw_google_ads_insights_uniq').on(
+      t.tenantId,
+      t.connectionId,
+      t.campaignId,
+      t.date,
+    ),
+  ],
+);
+
 // The one table without tenant_id: the analyst's own login, not tenant data.
 export const adminUsers = pgTable('admin_users', {
   id: uuid('id').primaryKey().defaultRandom(),

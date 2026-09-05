@@ -27,6 +27,11 @@ export {
   type MetaInsightRow,
 } from './raw-meta';
 export {
+  upsertRawGoogleAdsInsights,
+  countRawGoogleAdsInsights,
+  type GoogleAdsInsightRow,
+} from './raw-google-ads';
+export {
   createConnection,
   listConnections,
   getConnection,
