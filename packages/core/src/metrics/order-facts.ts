@@ -37,6 +37,21 @@ const refundSchema = z
   })
   .passthrough();
 
+const visitSchema = z
+  .object({
+    source: z.string().nullish(),
+    referrerUrl: z.string().nullish(),
+    landingPage: z.string().nullish(),
+    utmParameters: z
+      .object({
+        source: z.string().nullish(),
+        medium: z.string().nullish(),
+        campaign: z.string().nullish(),
+      })
+      .nullish(),
+  })
+  .passthrough();
+
 const orderPayloadSchema = z
   .object({
     id: z.string(),
@@ -50,13 +65,38 @@ const orderPayloadSchema = z
     totalTaxSet: shopMoney.optional(),
     customer: z.object({ id: z.string() }).nullish(),
     customerJourneySummary: z
-      .object({ customerOrderIndex: z.number().nullish() })
+      .object({
+        customerOrderIndex: z.number().nullish(),
+        daysToConversion: z.number().nullish(),
+        firstVisit: visitSchema.nullish(),
+        lastVisit: visitSchema.nullish(),
+      })
       .passthrough()
       .nullish(),
     lineItems: z.array(lineItemSchema).optional(),
     refunds: z.array(refundSchema).optional(),
   })
   .passthrough();
+
+export type TouchFacts = {
+  /** UTM source, falling back to the visit's own source. Null = untagged. */
+  source: string | null;
+  medium: string | null;
+  campaign: string | null;
+  landingPage: string | null;
+  referrerUrl: string | null;
+};
+
+function touchFromVisit(visit: z.infer<typeof visitSchema> | null | undefined): TouchFacts | null {
+  if (!visit) return null;
+  return {
+    source: visit.utmParameters?.source ?? visit.source ?? null,
+    medium: visit.utmParameters?.medium ?? null,
+    campaign: visit.utmParameters?.campaign ?? null,
+    landingPage: visit.landingPage ?? null,
+    referrerUrl: visit.referrerUrl ?? null,
+  };
+}
 
 export type OrderLineFact = {
   lineItemId: string;
@@ -90,6 +130,9 @@ export type OrderFacts = {
   refundedUnits: number;
   customerId: string | null;
   customerOrderIndex: number | null;
+  firstTouch: TouchFacts | null;
+  lastTouch: TouchFacts | null;
+  daysToConversion: number | null;
   lines: OrderLineFact[];
 };
 
@@ -159,6 +202,9 @@ export function orderFactsFromPayload(payload: unknown): OrderFacts {
     refundedUnits,
     customerId: order.customer?.id ?? null,
     customerOrderIndex: order.customerJourneySummary?.customerOrderIndex ?? null,
+    firstTouch: touchFromVisit(order.customerJourneySummary?.firstVisit),
+    lastTouch: touchFromVisit(order.customerJourneySummary?.lastVisit),
+    daysToConversion: order.customerJourneySummary?.daysToConversion ?? null,
     lines,
   };
 }

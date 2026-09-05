@@ -137,6 +137,10 @@ Meta restates recent days. Re-pull a trailing 28-day window on every sync. Anyth
 
 **Ad spend as % of net sales** — total ad spend ÷ net sales.
 
+**Spend share / revenue share by platform** — a platform's share of total ad spend, beside its share of net sales from store-recorded first-touch orders (UTM source mapped to the platform). The revenue side is store-recorded, never platform-claimed.
+
+**Zero denominators** — blended ratios (MER, aMER, blended CAC) are absent when their denominator is zero, never reported as zero.
+
 ---
 
 ## Channel attribution
@@ -174,3 +178,4 @@ the changelog.
 | 2026-09-06 | Defined order frequency distribution and acquisition-cohort revenue per customer; scoped time-to-second-order to the period cohort; documented the customerOrderIndex cohort caveat (task 2.4) | none — first computation |
 | 2026-09-06 | COGS clarified to net units (ordered − refunded); payment fee base = order total charge; full contribution margin now subtracts packaging cost; break-even "fees" = all merchant per-order costs (task 2.5) | none — first computation |
 | 2026-09-06 | Defined CPM/CPC/CTR, platform-total sourcing, budget pacing; platform ROAS clarified as value÷spend from platform rows (task 2.6) | none — first computation |
+| 2026-09-06 | Defined spend share vs revenue share by platform (store-recorded first touch) and the zero-denominator rule for blended ratios (task 2.7) | none — first computation |

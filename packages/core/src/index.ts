@@ -27,7 +27,12 @@ export {
 export { parseCsv } from './csv';
 export { orderFactsFromPayload, type OrderFacts, type OrderLineFact } from './metrics/order-facts';
 export { computeRevenueMetrics, rate, type MetricPoint } from './metrics/revenue';
-export { computeCustomerMetrics } from './metrics/customers';
+export { computeCustomerMetrics, acquisitionCohortIds } from './metrics/customers';
+export {
+  computeBlendedMetrics,
+  platformForSource,
+  PLATFORM_SOURCES,
+} from './metrics/blended';
 export {
   computeMarginMetrics,
   type CostInputsSnapshot,
