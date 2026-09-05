@@ -8,7 +8,8 @@
     "test": "vitest run --passWithNoTests",
     "dev": "tsx watch src/index.ts",
     "sync": "tsx src/cli/sync.ts",
-    "connect:shopify": "tsx src/cli/connect-shopify.ts"
+    "connect:shopify": "tsx src/cli/connect-shopify.ts",
+    "connect:meta": "tsx src/cli/connect-meta.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",

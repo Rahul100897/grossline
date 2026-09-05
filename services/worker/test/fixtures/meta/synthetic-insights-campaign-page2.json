@@ -1,0 +1,38 @@
+{
+  "_synthetic": "hand-authored from Meta Marketing API docs (v21.0); replace with an anonymised real recording",
+  "data": [
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "campaign_id": "120210000000000002",
+      "campaign_name": "retargeting-q1",
+      "date_start": "2026-02-02",
+      "date_stop": "2026-02-02",
+      "spend": "0.00",
+      "impressions": "0",
+      "clicks": "0",
+      "attribution_setting": "7d_click_1d_view"
+    },
+    {
+      "account_id": "123456789012345",
+      "account_currency": "USD",
+      "campaign_id": "120210000000000002",
+      "campaign_name": "retargeting-q1",
+      "date_start": "2026-02-03",
+      "date_stop": "2026-02-03",
+      "spend": "41.75",
+      "impressions": "4890",
+      "clicks": "112",
+      "reach": "3305",
+      "frequency": "1.479576",
+      "actions": [
+        { "action_type": "purchase", "value": "5" },
+        { "action_type": "link_click", "value": "101" }
+      ],
+      "action_values": [{ "action_type": "purchase", "value": "377.85" }],
+      "purchase_roas": [{ "action_type": "purchase", "value": "9.050299" }],
+      "attribution_setting": "7d_click_1d_view"
+    }
+  ],
+  "paging": { "cursors": { "before": "NAZDZD", "after": "OAZDZD" } }
+}

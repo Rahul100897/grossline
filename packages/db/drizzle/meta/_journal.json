@@ -43,6 +43,20 @@
       "when": 1788618430183,
       "tag": "0005_rls_raw_shopify",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788619080006,
+      "tag": "0006_raw_meta",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788619080372,
+      "tag": "0007_rls_raw_meta",
+      "breakpoints": true
     }
   ]
 }
