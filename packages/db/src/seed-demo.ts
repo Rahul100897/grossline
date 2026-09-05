@@ -452,6 +452,7 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
   // connections, so we mint one deterministic *internal* connection per
   // platform, flagged in settings as demo. It has no credential and no health
   // expectations; it exists so demo rows live in the same tables and shapes.
+  await ensureDemoConnection(tenant.id, 'shopify', 'demo-brand.myshopify.com', store.id);
   const metaConn = await ensureDemoConnection(tenant.id, 'meta', 'act_demo_910000001');
   const googleConn = await ensureDemoConnection(tenant.id, 'google_ads', '9200000001');
 

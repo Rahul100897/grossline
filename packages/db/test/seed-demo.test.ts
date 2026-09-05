@@ -113,6 +113,29 @@ describe('seed:demo', () => {
     expect(roasFor('920000000001')).toBeGreaterThan(3); // search-brand
   });
 
+  it('demo connections are flagged demo and carry no fabricated sync state', async () => {
+    const connections = await withTenant(summary.tenantId, (tx) =>
+      tx.select().from(schema.connections),
+    );
+    expect(connections.length).toBeGreaterThanOrEqual(3); // shopify + meta + google anchors
+    for (const conn of connections) {
+      expect(((conn.settings ?? {}) as Record<string, unknown>).demo).toBe(true);
+      expect(conn.lastSuccessAt).toBeNull(); // never synced — no fake evidence
+    }
+    const shopify = connections.find((c) => c.provider === 'shopify')!;
+    expect(shopify.storeId).toBe(summary.storeId);
+  });
+
+  it('a freshly created connection has unknown health until a sync succeeds', async () => {
+    const { createConnection } = await import('../src/connections');
+    const conn = await createConnection({
+      tenantId: summary.tenantId,
+      provider: 'meta',
+      externalAccountId: 'act_health_check_1',
+    });
+    expect(conn.health).toBe('unknown');
+  });
+
   it('flags the tenant as demo', async () => {
     const [tenant] = await withTenant(summary.tenantId, (tx) => tx.select().from(schema.tenants));
     expect(tenant!.isDemo).toBe(true);
