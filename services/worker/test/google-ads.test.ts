@@ -52,7 +52,7 @@ function makeRouter(opts: { unlinked?: boolean } = {}): {
     if (url.startsWith('https://oauth2.googleapis.com/token')) {
       tokenCalls++;
       return new Response(
-        JSON.stringify({ access_token: 'ya29.synthetic', expires_in: 3600, token_type: 'Bearer' }),
+        JSON.stringify({ access_token: 'ya29.synthetic', expires_in: 3600, token_type: 'Bearer' }), // gitleaks:allow
         { status: 200 },
       );
     }
