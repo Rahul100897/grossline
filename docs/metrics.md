@@ -109,7 +109,13 @@ effective-from dated. Not metrics; reference lines for pacing (Phase 2.6).
 
 **Platform-reported conversions** — what the platform claims. Always labelled as platform-reported. **Never summed across platforms** — they overlap.
 
-**Platform ROAS** — the platform's own figure. Meta on 7-day click. Google on last click. Recorded for reference only, never used in a blended calculation.
+**Platform ROAS** — platform-reported conversion value ÷ platform-reported spend, both from the platform's own rows (Meta on its account attribution setting, Google on last click). Recorded for reference only, never used in a blended calculation.
+
+**CPM / CPC / CTR** — spend ÷ impressions × 1000, spend ÷ clicks, clicks ÷ impressions — per platform and per campaign, from platform-reported rows.
+
+**Platform totals** — taken from the platform's own account-level rows where it publishes them (Meta); the sum of campaign rows where the platform's total is that sum (Google). Stored totals must match the raw tables exactly.
+
+**Budget pacing** — spend month-to-date against the merchant's monthly spend target, with projected month-end spend at the current daily run rate. For a closed month the projection is the actual.
 
 Note: since 12 January 2026, Meta no longer returns 7-day view or 28-day view attribution windows. Meta insights totals are available for 37 months; unique-count and hourly breakdowns for 13 months; frequency breakdowns for 6 months. Store everything on first pull — our own database is the only long history we will have.
 
@@ -167,3 +173,4 @@ the changelog.
 | 2026-09-05 | Open question closed — **subscriptions**: combined with one-time revenue in v1; no subscription source is connected, a split would be inferred not sourced. Revisit with a subscriptions connector. | none |
 | 2026-09-06 | Defined order frequency distribution and acquisition-cohort revenue per customer; scoped time-to-second-order to the period cohort; documented the customerOrderIndex cohort caveat (task 2.4) | none — first computation |
 | 2026-09-06 | COGS clarified to net units (ordered − refunded); payment fee base = order total charge; full contribution margin now subtracts packaging cost; break-even "fees" = all merchant per-order costs (task 2.5) | none — first computation |
+| 2026-09-06 | Defined CPM/CPC/CTR, platform-total sourcing, budget pacing; platform ROAS clarified as value÷spend from platform rows (task 2.6) | none — first computation |
