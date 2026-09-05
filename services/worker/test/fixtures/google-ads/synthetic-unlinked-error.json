@@ -1,0 +1,19 @@
+{
+  "_synthetic": "hand-authored from Google Ads API docs (v18); replace with an anonymised real recording",
+  "error": {
+    "code": 403,
+    "message": "The caller does not have permission",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.ads.googleads.v18.errors.GoogleAdsFailure",
+        "errors": [
+          {
+            "errorCode": { "authorizationError": "USER_PERMISSION_DENIED" },
+            "message": "User doesn't have permission to access customer. Note: If you're accessing a client customer, the manager's customer id must be set in the 'login-customer-id' header and the client account must be linked to the manager account."
+          }
+        ]
+      }
+    ]
+  }
+}

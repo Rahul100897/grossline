@@ -1,0 +1,38 @@
+[
+  {
+    "_synthetic": "hand-authored from Google Ads API docs (v18); replace with an anonymised real recording",
+    "results": [
+      {
+        "campaign": { "resourceName": "customers/9876543210/campaigns/22222222221", "id": "22222222221", "name": "search-brand", "advertisingChannelType": "SEARCH" },
+        "metrics": { "costMicros": "48210000", "impressions": "1874", "clicks": "213", "conversions": 11.5, "conversionsValue": 942.7 },
+        "segments": { "date": "2026-02-01" }
+      },
+      {
+        "campaign": { "resourceName": "customers/9876543210/campaigns/22222222221", "id": "22222222221", "name": "search-brand", "advertisingChannelType": "SEARCH" },
+        "metrics": { "costMicros": "5193000", "impressions": "2011", "clicks": "241", "conversions": 9.0, "conversionsValue": 704.1 },
+        "segments": { "date": "2026-02-02" }
+      },
+      {
+        "campaign": { "resourceName": "customers/9876543210/campaigns/22222222221", "id": "22222222221", "name": "search-brand", "advertisingChannelType": "SEARCH" },
+        "metrics": { "costMicros": "47750000", "impressions": "1799", "clicks": "198", "conversions": 12.0, "conversionsValue": 1088.4 },
+        "segments": { "date": "2026-02-03" }
+      },
+      {
+        "campaign": { "resourceName": "customers/9876543210/campaigns/22222222222", "id": "22222222222", "name": "pmax-underperformer", "advertisingChannelType": "PERFORMANCE_MAX" },
+        "metrics": { "costMicros": "89340000", "impressions": "42110", "clicks": "1204", "conversions": 2.0, "conversionsValue": 96.2 },
+        "segments": { "date": "2026-02-01" }
+      },
+      {
+        "campaign": { "resourceName": "customers/9876543210/campaigns/22222222222", "id": "22222222222", "name": "pmax-underperformer", "advertisingChannelType": "PERFORMANCE_MAX" },
+        "metrics": { "costMicros": "0", "impressions": "0", "clicks": "0", "conversions": 0.0, "conversionsValue": 0.0 },
+        "segments": { "date": "2026-02-02" }
+      },
+      {
+        "campaign": { "resourceName": "customers/9876543210/campaigns/22222222222", "id": "22222222222", "name": "pmax-underperformer", "advertisingChannelType": "PERFORMANCE_MAX" },
+        "metrics": { "costMicros": "91020000", "impressions": "44873", "clicks": "1250", "conversions": 3.0, "conversionsValue": 141.0 },
+        "segments": { "date": "2026-02-03" }
+      }
+    ],
+    "fieldMask": "campaign.id,campaign.name,campaign.advertisingChannelType,metrics.costMicros,metrics.impressions,metrics.clicks,metrics.conversions,metrics.conversionsValue,segments.date"
+  }
+]

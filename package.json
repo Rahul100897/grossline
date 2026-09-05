@@ -19,7 +19,8 @@
     "seed:demo": "echo 'seed:demo needs connector-shaped sample data and arrives with Phase 1' && exit 1",
     "worker:sync": "pnpm --filter @grossline/worker run sync",
     "connect:shopify": "pnpm --filter @grossline/worker run connect:shopify",
-    "connect:meta": "pnpm --filter @grossline/worker run connect:meta"
+    "connect:meta": "pnpm --filter @grossline/worker run connect:meta",
+    "connect:google": "pnpm --filter @grossline/worker run connect:google"
   },
   "devDependencies": {
     "@grossline/config": "workspace:*",

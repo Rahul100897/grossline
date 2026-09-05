@@ -1,0 +1,17 @@
+[
+  {
+    "_synthetic": "hand-authored from Google Ads API docs (v18); replace with an anonymised real recording",
+    "results": [
+      {
+        "customer": {
+          "resourceName": "customers/9876543210",
+          "id": "9876543210",
+          "descriptiveName": "Demo Alpha Ads (test)",
+          "currencyCode": "USD",
+          "timeZone": "America/New_York"
+        }
+      }
+    ],
+    "fieldMask": "customer.id,customer.descriptiveName,customer.currencyCode,customer.timeZone"
+  }
+]

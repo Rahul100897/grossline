@@ -198,6 +198,30 @@ simplest option was chosen. Anything here can be revisited.
 - **No real ad account available** — all fixtures synthetic and marked;
   switching to a live account is `pnpm connect:meta` — configuration only.
 
+## 2026-09-05 — Task 1.4 Google Ads connector
+
+- **REST `googleAds:searchStream`, not the gRPC client library.** Zero new
+  dependencies, plain fetch, easy to fixture. Revisit only if we need
+  services beyond reporting queries.
+- **Incremental re-pulls a trailing 30-day window** (mirroring Meta's 28):
+  Google conversions restate for weeks after the click. Upserts on
+  (campaign, date) make the re-pull free.
+- **Unlinked accounts are connection state, not crashes.** A
+  PERMISSION_DENIED/USER_PERMISSION_DENIED response raises a typed error;
+  the connection is marked `broken` with the exact linking instruction, and
+  `pnpm connect:google` still records everything so re-linking needs no
+  reconfiguration. Linking is a per-account onboarding step.
+- **Developer token at Test access → Basic Access switch-over** (config only):
+  1. While at Test access, only *test* MCC hierarchies answer; connect the
+     test MCC id via `GOOGLE_ADS_LOGIN_CUSTOMER_ID` and a test client account.
+  2. When Basic Access is granted (needs getgrossline.com live and the
+     application approved), change `GOOGLE_ADS_LOGIN_CUSTOMER_ID` (or the
+     per-connection `settings.loginCustomerId`) to the production MCC, link
+     each client account to that MCC, and run `pnpm connect:google` per real
+     account. No code changes.
+- **OAuth**: one refresh token per tenant (credential), client id/secret and
+  developer token from env, access tokens cached in memory until expiry.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
