@@ -12,6 +12,7 @@ import {
 import { loadOrderFactsForWindow } from './load';
 import { revenueComputer } from './computers/revenue';
 import { customersComputer } from './computers/customers';
+import { marginComputer } from './computers/margin';
 
 export type MonthContext = {
   tenant: Tenant;
@@ -30,7 +31,7 @@ export type MetricComputer = {
   compute(ctx: MonthContext): Promise<MetricPoint[]>;
 };
 
-const computers: MetricComputer[] = [revenueComputer, customersComputer];
+const computers: MetricComputer[] = [revenueComputer, customersComputer, marginComputer];
 
 export function registerComputer(computer: MetricComputer): void {
   computers.push(computer);
