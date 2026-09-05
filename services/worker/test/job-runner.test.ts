@@ -54,7 +54,9 @@ describe('job runner', () => {
     await vi.waitFor(
       async () => {
         const counts = await dlq.getJobCounts('waiting', 'active', 'completed', 'delayed');
-        expect(counts.waiting + counts.active + counts.completed + counts.delayed).toBe(1);
+        const total =
+          (counts.waiting ?? 0) + (counts.active ?? 0) + (counts.completed ?? 0) + (counts.delayed ?? 0);
+        expect(total).toBe(1);
       },
       { timeout: 20_000, interval: 100 },
     );
