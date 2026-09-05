@@ -44,6 +44,7 @@ const orderPayloadSchema = z
     createdAt: z.string(),
     cancelledAt: z.string().nullish(),
     currencyCode: z.string(),
+    totalPriceSet: shopMoney.optional(),
     totalDiscountsSet: shopMoney.optional(),
     totalShippingPriceSet: shopMoney.optional(),
     totalTaxSet: shopMoney.optional(),
@@ -62,6 +63,8 @@ export type OrderLineFact = {
   sku: string | null;
   variantId: string | null;
   quantity: number;
+  /** Units refunded against this line (for net-unit COGS). */
+  refundedQuantity: number;
   isGiftCard: boolean;
   originalUnitPriceMinor: number;
   discountedUnitPriceMinor: number;
@@ -73,6 +76,8 @@ export type OrderFacts = {
   processedAt: Date;
   cancelled: boolean;
   currency: string;
+  /** The order's total charge (what a payment processor sees a fee on). */
+  totalPriceMinor: number;
   grossMinor: number;
   discountsMinor: number;
   returnsMinor: number;
@@ -94,11 +99,21 @@ const minor = (m: { shopMoney: { amount: string; currencyCode: string } } | unde
 export function orderFactsFromPayload(payload: unknown): OrderFacts {
   const order = orderPayloadSchema.parse(payload);
 
+  const refundedByLine = new Map<string, number>();
+  for (const refund of order.refunds ?? []) {
+    for (const rli of refund.refundLineItems ?? []) {
+      const lineId = rli.lineItem?.id;
+      if (!lineId) continue;
+      refundedByLine.set(lineId, (refundedByLine.get(lineId) ?? 0) + rli.quantity);
+    }
+  }
+
   const lines: OrderLineFact[] = (order.lineItems ?? []).map((li) => ({
     lineItemId: li.id,
     sku: li.sku ?? null,
     variantId: li.variant?.id ?? null,
     quantity: li.quantity,
+    refundedQuantity: refundedByLine.get(li.id) ?? 0,
     isGiftCard: li.isGiftCard ?? false,
     originalUnitPriceMinor: minor(li.originalUnitPriceSet),
     discountedUnitPriceMinor: li.discountedUnitPriceSet ? minor(li.discountedUnitPriceSet) : minor(li.originalUnitPriceSet),
@@ -132,6 +147,7 @@ export function orderFactsFromPayload(payload: unknown): OrderFacts {
     processedAt: new Date(order.processedAt ?? order.createdAt),
     cancelled: order.cancelledAt != null,
     currency: order.currencyCode,
+    totalPriceMinor: minor(order.totalPriceSet),
     grossMinor: saleLines.reduce((sum, l) => sum + l.originalUnitPriceMinor * l.quantity, 0),
     discountsMinor: minor(order.totalDiscountsSet),
     returnsMinor,

@@ -59,12 +59,12 @@ refund amounts. Reported separately, not part of net sales.
 
 ## Cost and margin
 
-**COGS** — unit cost × quantity, using the cost **effective on the order date**. Costs carry effective-from dates so historical margins never change when a new cost is uploaded. If a SKU has no cost for that date, it is counted as missing, not as zero, and surfaced as a data issue.
+**COGS** — unit cost × **net units** (ordered minus refunded, consistent with returns recognition), using the cost **effective on the order date**. Costs carry effective-from dates so historical margins never change when a new cost is uploaded. If a SKU has no cost for that date, it is counted as missing, not as zero, and surfaced as a data issue; every margin metric carries a completeness rate.
 
 **Gross profit** — net sales − COGS.
 **Gross margin %** — gross profit ÷ net sales.
 
-**Payment fees** — merchant-supplied percentage and fixed fee per order.
+**Payment fees** — merchant-supplied percentage and fixed fee per order. The percentage applies to the order's total charge (what the processor sees: items + shipping + tax). Fees are not returned on refunds.
 **Shipping cost** — merchant-supplied, per order or monthly total allocated per order.
 **Fulfilment cost** — merchant-supplied, per order.
 **Packaging cost** — merchant-supplied, per order.
@@ -77,9 +77,9 @@ zero, and surface as reduced completeness.
 effective-from dated. Not metrics; reference lines for pacing (Phase 2.6).
 
 **Contribution margin after ad spend** — net sales − COGS − ad spend.
-**Full contribution margin** — net sales − COGS − ad spend − payment fees − shipping cost − fulfilment cost.
+**Full contribution margin** — net sales − COGS − ad spend − payment fees − shipping cost − fulfilment cost − packaging cost. Only computed when the merchant has supplied every cost input for the period — missing inputs are missing, never zero.
 
-**Break-even ROAS** — 1 ÷ contribution margin rate, where contribution margin rate = (net sales − COGS − fees) ÷ net sales.
+**Break-even ROAS** — 1 ÷ contribution margin rate, where contribution margin rate = (net sales − COGS − fees) ÷ net sales and "fees" is all merchant-supplied per-order costs (payment, shipping, fulfilment, packaging) — i.e. the margin before ad spend.
 
 ---
 
@@ -166,3 +166,4 @@ the changelog.
 | 2026-09-05 | Open question closed — **multi-store**: new customers counted per store, by the store's own customer record; cross-store dedupe would be email matching, which we reject. | none |
 | 2026-09-05 | Open question closed — **subscriptions**: combined with one-time revenue in v1; no subscription source is connected, a split would be inferred not sourced. Revisit with a subscriptions connector. | none |
 | 2026-09-06 | Defined order frequency distribution and acquisition-cohort revenue per customer; scoped time-to-second-order to the period cohort; documented the customerOrderIndex cohort caveat (task 2.4) | none — first computation |
+| 2026-09-06 | COGS clarified to net units (ordered − refunded); payment fee base = order total charge; full contribution margin now subtracts packaging cost; break-even "fees" = all merchant per-order costs (task 2.5) | none — first computation |

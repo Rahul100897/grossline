@@ -28,6 +28,11 @@ export { parseCsv } from './csv';
 export { orderFactsFromPayload, type OrderFacts, type OrderLineFact } from './metrics/order-facts';
 export { computeRevenueMetrics, rate, type MetricPoint } from './metrics/revenue';
 export { computeCustomerMetrics } from './metrics/customers';
+export {
+  computeMarginMetrics,
+  type CostInputsSnapshot,
+  type AdSpendForMonth,
+} from './metrics/margin';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,
