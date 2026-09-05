@@ -11,13 +11,18 @@ import {
 } from '@grossline/db';
 import { loadOrderFactsForWindow } from './load';
 import { revenueComputer } from './computers/revenue';
+import { customersComputer } from './computers/customers';
 
 export type MonthContext = {
   tenant: Tenant;
   year: number;
   month: number;
   window: MonthWindow;
+  /** Facts whose processedAt falls inside the month window. */
   facts: OrderFacts[];
+  /** Every order fact the tenant has — cohort metrics need full history. */
+  allFacts: OrderFacts[];
+  now: Date;
 };
 
 export type MetricComputer = {
@@ -25,7 +30,7 @@ export type MetricComputer = {
   compute(ctx: MonthContext): Promise<MetricPoint[]>;
 };
 
-const computers: MetricComputer[] = [revenueComputer];
+const computers: MetricComputer[] = [revenueComputer, customersComputer];
 
 export function registerComputer(computer: MetricComputer): void {
   computers.push(computer);
@@ -47,8 +52,15 @@ export async function computeMetricsForMonth(
   const runId = await startMetricRun(tenantId, monthPeriod, window.dateStrings.at(-1)!);
 
   try {
-    const { facts, watermark } = await loadOrderFactsForWindow(tenantId, window);
-    const ctx: MonthContext = { tenant, year, month, window, facts };
+    const now = new Date();
+    const { facts: allFacts, watermark } = await loadOrderFactsForWindow(tenantId, {
+      startUtc: new Date(0),
+      endUtc: new Date(now.getTime() + 86_400_000),
+    });
+    const facts = allFacts.filter(
+      (f) => f.processedAt >= window.startUtc && f.processedAt < window.endUtc,
+    );
+    const ctx: MonthContext = { tenant, year, month, window, facts, allFacts, now };
     let written = 0;
     for (const computer of computers) {
       const points = await computer.compute(ctx);

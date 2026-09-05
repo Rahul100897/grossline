@@ -93,7 +93,13 @@ effective-from dated. Not metrics; reference lines for pacing (Phase 2.6).
 
 **Repeat rate, N days** — of customers whose first order fell in the period, the share who placed a second order within N days. Cohort-based, so the 90-day figure for a month is only final 90 days after that month ends. Mark provisional until then.
 
-**Time to second order** — median days between first and second order, for customers who placed a second.
+**Time to second order** — median days between first and second order, for customers of the period's acquisition cohort who placed a second. Provisional while the cohort's 90-day window is open.
+
+**Order frequency distribution** — of customers with at least one non-cancelled order on or before the period end, the count by lifetime order count to date, bucketed 1 / 2 / 3 / 4+.
+
+**Acquisition cohort revenue per customer** — for the cohort of customers whose first-ever order falls in the period: cumulative net sales from those customers through the end of period + k months, divided by cohort size. Provisional until the k-month window closes.
+
+**Cohort membership caveat** — a customer whose earliest order in our data carries a Shopify `customerOrderIndex` greater than 1 predates our data (e.g. the 60-day order window without `read_all_orders`) and is never counted as new.
 
 ---
 
@@ -159,3 +165,4 @@ the changelog.
 | 2026-09-05 | Open question closed — **shipping-only refunds**: reduce shipping revenue, never net sales (confirmed existing behaviour). | none |
 | 2026-09-05 | Open question closed — **multi-store**: new customers counted per store, by the store's own customer record; cross-store dedupe would be email matching, which we reject. | none |
 | 2026-09-05 | Open question closed — **subscriptions**: combined with one-time revenue in v1; no subscription source is connected, a split would be inferred not sourced. Revisit with a subscriptions connector. | none |
+| 2026-09-06 | Defined order frequency distribution and acquisition-cohort revenue per customer; scoped time-to-second-order to the period cohort; documented the customerOrderIndex cohort caveat (task 2.4) | none — first computation |
