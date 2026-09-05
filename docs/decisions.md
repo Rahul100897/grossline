@@ -84,6 +84,24 @@ simplest option was chosen. Anything here can be revisited.
   default 1) and superseded keys will be provided as `MASTER_KEY_V<n>` during
   a rotation window.
 
+## 2026-09-05 — Task 0.5 job runner
+
+- **Queue names are `sync-<tenantId>`** (BullMQ forbids `:` in queue names).
+  Redis keys are prefixed `grossline` (`grossline-test` under tests) so suites
+  never collide with a running worker.
+- **New tenants need a worker restart.** The worker creates one BullMQ worker
+  per tenant queue at startup. Watching for new tenants at runtime is
+  deliberately out of scope for Phase 0; restart the worker after creating a
+  tenant. Revisit when tenant creation stops being a manual act.
+- **`drizzle-orm` (query builders only) is allowed outside packages/db.** The
+  lint ban covers the client entrypoints (`pg`, `drizzle-orm/node-postgres`),
+  not operators like `eq` used against the transaction that `withTenant`
+  hands out — that is the intended way to write tenant-scoped queries.
+- **One `sync_runs` row per job, not per attempt.** The run id is written back
+  into the job data on the first attempt; retries reuse it, and the final
+  failure marks the row `failed` before the job is copied to the `dead-letter`
+  queue.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

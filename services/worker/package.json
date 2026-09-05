@@ -13,6 +13,8 @@
     "@grossline/core": "workspace:*",
     "@grossline/db": "workspace:*",
     "bullmq": "^5.34.0",
+    "drizzle-orm": "^0.44.0",
+    "ioredis": "^5.4.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {

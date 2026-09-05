@@ -2,7 +2,7 @@
 // scripts. These run on the admin connection, which RLS does not constrain —
 // which is exactly why each one is a named function with a narrow shape
 // instead of an exported database handle.
-import { asc } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { adminDb } from './client';
 import { tenants } from './schema';
@@ -32,4 +32,12 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
 
 export async function listTenants(): Promise<Tenant[]> {
   return adminDb().select().from(tenants).orderBy(asc(tenants.createdAt));
+}
+
+export async function listActiveTenants(): Promise<Tenant[]> {
+  return adminDb()
+    .select()
+    .from(tenants)
+    .where(eq(tenants.status, 'active'))
+    .orderBy(asc(tenants.createdAt));
 }
