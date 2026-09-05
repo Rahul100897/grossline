@@ -124,8 +124,10 @@ describe('shopify oauth callback', () => {
       state: await validState(),
       timestamp: '1757100002',
     });
+    // Flip the first hex char to a guaranteed-different value.
+    const flipped = (good.hmac![0] === '0' ? '1' : '0') + good.hmac!.slice(1);
     const tampered = await handleShopifyCallback(
-      { ...good, hmac: good.hmac!.replace(/^./, '0') },
+      { ...good, hmac: flipped },
       makeFetch({ scope: 'read_orders' }),
     );
     expect(tampered).toMatchObject({ ok: false, status: 401 });
