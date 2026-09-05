@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./auth/session": "./src/auth/session.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

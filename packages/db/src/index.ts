@@ -15,3 +15,9 @@ export {
 } from './credentials';
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
+export {
+  getAdminUserByEmail,
+  upsertAdminUser,
+  writeAuditLog,
+  type AdminUser,
+} from './admin-users';

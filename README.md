@@ -17,7 +17,8 @@ pnpm install
 cp .env.example .env      # fill in what you need
 docker compose up -d      # postgres + redis
 pnpm db:migrate
-pnpm seed:demo            # demo tenant, 18 months of sample data
+pnpm seed:admin           # create the admin login from .env (prints TOTP enrolment once)
+pnpm seed:demo            # demo tenant with sample data (arrives with Phase 1)
 pnpm dev
 ```
 

@@ -102,6 +102,24 @@ simplest option was chosen. Anything here can be revisited.
   failure marks the row `failed` before the job is copied to the `dead-letter`
   queue.
 
+## 2026-09-05 — Task 0.6 admin auth
+
+- **No auth dependencies.** Password hashing is node `scrypt` (OWASP params),
+  TOTP is RFC 6238 implemented on node `crypto` (verified against the RFC test
+  vector), sessions are HMAC-SHA256 tokens over Web Crypto so the same code
+  verifies in Next.js edge middleware. Avoids adding bcrypt/otplib/jose, which
+  CLAUDE.md says to ask about.
+- **Seed accepts `ADMIN_PASSWORD_HASH` (preferred) or `ADMIN_PASSWORD`**
+  (hashed on the spot, minimum 12 chars) and generates + prints the TOTP
+  secret once when `ADMIN_TOTP_SECRET` is absent. Re-running the seed updates
+  the same single admin row (upsert on email).
+- **Sessions last 12 hours**, cookie `grossline_admin_session`, httpOnly,
+  SameSite=Lax, Secure in production. Login failures are indistinguishable
+  (wrong email vs password vs TOTP) and both outcomes are audit-logged.
+- **Live verification done**: redirect-to-login on every route without a
+  session, generic error on bad credentials, tenant list (empty state and
+  populated) after real login, sign-out returns to login.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
