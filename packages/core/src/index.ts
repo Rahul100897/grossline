@@ -24,6 +24,17 @@ export {
 } from './auth/session';
 
 export type Provider = 'shopify' | 'google_ads' | 'meta';
+
+/**
+ * The data streams each provider syncs. Shared so the admin console can
+ * compute backfill progress without importing worker code; the worker's
+ * connectors assert against this map in tests.
+ */
+export const PROVIDER_STREAMS: Record<Provider, string[]> = {
+  shopify: ['orders', 'customers', 'products'],
+  meta: ['account', 'campaign'],
+  google_ads: ['campaign'],
+};
 export type TenantStatus = 'onboarding' | 'active' | 'paused' | 'churned';
 export type ConnectionHealth = 'healthy' | 'degraded' | 'broken';
 export type SyncKind = 'backfill' | 'incremental';

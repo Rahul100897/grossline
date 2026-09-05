@@ -245,6 +245,21 @@ simplest option was chosen. Anything here can be revisited.
   `pnpm fx:pull [days]` backfills (needed once before Phase 2 computes
   anything over history).
 
+## 2026-09-05 — Task 1.6 backfill orchestration
+
+- **Default backfill windows**: Shopify 13 months (the spec's requirement;
+  more is possible later by re-running with a wider window), Meta 37 months
+  (its totals cap — our own database becomes the only long history), Google
+  Ads 37 months for parity. `pnpm worker:sync <tenant> backfill` computes the
+  window per provider; nothing is hand-passed.
+- **Progress lives in the cursor rows** — no extra state to drift. The db-level
+  `getBackfillProgress` is shared by worker and admin console;
+  `PROVIDER_STREAMS` in core keeps the console from importing worker code and
+  is asserted against the connectors in tests.
+- **Partial histories are visible**: `backfill_completed_at` stays NULL until
+  every stream finishes (the console shows "N% (partial)"); `resetBackfill`
+  is the explicit way to change windows.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

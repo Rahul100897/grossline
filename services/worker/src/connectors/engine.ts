@@ -2,7 +2,7 @@
 // a stream advances only after that chunk's rows have committed, so an
 // interrupted backfill resumes at the next chunk and produces exactly the rows
 // an uninterrupted run would have.
-import { getCursor, markBackfillComplete, setCursor } from '@grossline/db';
+import { getBackfillProgress, getCursor, markBackfillComplete, setCursor } from '@grossline/db';
 import type { Connector, DateWindow, SyncContext } from './types';
 
 type BackfillStreamCursor = { completedThrough: string };
@@ -87,22 +87,5 @@ export async function backfillProgress(
   ctx: Pick<SyncContext, 'tenantId' | 'connectionId'>,
   connector: Pick<Connector, 'streams'>,
 ): Promise<{ overall: number; byStream: Record<string, number> }> {
-  const meta = await getCursor<BackfillMetaCursor>(ctx.tenantId, ctx.connectionId, BACKFILL_META_STREAM);
-  if (!meta) return { overall: 0, byStream: {} };
-  const start = new Date(meta.windowStart).getTime();
-  const end = new Date(meta.windowEnd).getTime();
-  const span = Math.max(1, end - start);
-  const byStream: Record<string, number> = {};
-  for (const stream of connector.streams) {
-    const cursor = await getCursor<BackfillStreamCursor>(
-      ctx.tenantId,
-      ctx.connectionId,
-      `backfill:${stream}`,
-    );
-    const done = cursor ? new Date(cursor.completedThrough).getTime() - start : 0;
-    byStream[stream] = Math.min(1, Math.max(0, done / span));
-  }
-  const values = Object.values(byStream);
-  const overall = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-  return { overall, byStream };
+  return getBackfillProgress(ctx.tenantId, ctx.connectionId, connector.streams);
 }

@@ -5,6 +5,7 @@ import { logger } from '@grossline/core';
 import { listConnections } from '@grossline/db';
 import { createRedis } from '../redis';
 import { enqueueSync } from '../sync';
+import { backfillWindowFor } from '../backfill';
 
 const args = z
   .tuple([z.string().uuid()])
@@ -26,8 +27,25 @@ async function main(): Promise<void> {
     return;
   }
   for (const conn of connections) {
-    const jobId = await enqueueSync(connection, { tenantId, kind, connectionId: conn.id });
-    logger.info('sync enqueued', { tenantId, kind, provider: conn.provider, jobId });
+    const window =
+      kind === 'backfill' ? backfillWindowFor(conn.provider) : undefined;
+    const jobId = await enqueueSync(connection, {
+      tenantId,
+      kind,
+      connectionId: conn.id,
+      ...(window
+        ? { windowStart: window.start.toISOString(), windowEnd: window.end.toISOString() }
+        : {}),
+    });
+    logger.info('sync enqueued', {
+      tenantId,
+      kind,
+      provider: conn.provider,
+      jobId,
+      ...(window
+        ? { windowStart: window.start.toISOString(), windowEnd: window.end.toISOString() }
+        : {}),
+    });
   }
 }
 
