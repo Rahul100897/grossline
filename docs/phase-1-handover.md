@@ -92,17 +92,40 @@ names, emails, addresses), keep the edge cases, and replace:
   `pnpm db:studio`) — slug, reporting currency, reporting timezone. Set
   status `active` so the nightly scheduler picks it up.
 
-### 1. Shopify (no approvals needed — unblocks everything)
-1. In the merchant's Shopify admin: Settings → Apps and sales channels →
-   Develop apps → Create app → Configure Admin API scopes: `read_orders`,
-   `read_customers`, `read_products`, `read_inventory` only → Install →
-   reveal the Admin API access token (`shpat_…`).
-2. `SHOPIFY_STORE_TOKEN=shpat_… pnpm connect:shopify <tenantId> <store>.myshopify.com`
-   (verifies the token, records store timezone/currency, encrypts the token).
-3. Start the worker (`pnpm dev`) and run `pnpm worker:sync <tenantId> backfill`.
-   Watch progress at `localhost:3000/connections`.
-4. Record real fixtures from the first responses; replace the synthetic ones.
-5. Reconcile three months against Shopify Analytics (docs/reconciliation.md).
+### 1. Shopify (unblocks everything)
+
+Admin-created custom apps cannot be created since 2026-01-01, so the path
+depends on the store (full detail: docs/decisions.md, "Shopify auth
+strategies"):
+
+**a. Store already has a legacy custom app** (created before 2026): reveal its
+`shpat_` token and
+`SHOPIFY_STORE_TOKEN=shpat_… pnpm connect:shopify <tenantId> <store>.myshopify.com legacy_static`.
+
+**b. Store in OUR OWN Shopify organization** (dev/test stores): create an app
+in the Dev Dashboard, grab client id/secret, then
+`SHOPIFY_CLIENT_ID=… SHOPIFY_CLIENT_SECRET=… pnpm connect:shopify <tenantId> <store>.myshopify.com client_credentials`.
+Tokens are short-lived and derived on demand — nothing token-shaped is stored.
+
+**c. Merchant store** (the real case): in the Dev Dashboard give the app
+**custom distribution** for that store, set the redirect URI to
+`SHOPIFY_REDIRECT_URI` (must match exactly), make sure the admin app is
+running at that URI, then
+`SHOPIFY_CLIENT_ID=… pnpm connect:shopify <tenantId> <store>.myshopify.com authorization_code`
+and send the printed install URL to the store owner. Approval lands on
+`/api/shopify/callback`, which stores the offline token encrypted and creates
+the connection.
+
+**Scopes**: request `read_orders`, `read_all_orders`, `read_customers`,
+`read_products`, `read_inventory`. `read_all_orders` is restricted — request
+access in the Dev Dashboard (API access → Read all orders) *before*
+installing; without it the connection is marked degraded with a warning that
+only 60 days of orders are reachable, and a 13-month backfill will be
+incomplete until the scope is granted and connect is re-run.
+
+Then: start the worker (`pnpm dev`), `pnpm worker:sync <tenantId> backfill`,
+watch `localhost:3000/connections`, record real fixtures, reconcile three
+months against Shopify Analytics (docs/reconciliation.md).
 
 ### 2. Meta
 1. Business settings → System user (admin of the ad account's Business) →

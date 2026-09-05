@@ -10,6 +10,8 @@ import {
   closeDbPools,
   countRawShopify,
   createTenant,
+  getConnection,
+  getCredential,
   getCursor,
   listStores,
   schema,
@@ -48,10 +50,18 @@ const emptyPage = (key: string) => ({
   data: { [key]: { pageInfo: { hasNextPage: false, endCursor: null }, edges: [] } },
 });
 
-function makeRouter(): typeof fetch {
+function makeRouter(opts: { grantReadAllOrders?: boolean } = {}): typeof fetch {
+  const grantReadAllOrders = opts.grantReadAllOrders ?? true;
   let lastBulkStream = 'orders';
   return (async (input: unknown, init?: RequestInit) => {
     const url = String(input);
+    if (url.endsWith('/admin/oauth/access_token')) {
+      return json({
+        access_token: 'shpca_synthetic_cc', // gitleaks:allow — fake
+        expires_in: 86_399,
+        scope: 'read_orders,read_customers,read_products,read_inventory',
+      });
+    }
     if (url.includes('/graphql.json')) {
       const body = JSON.parse(String(init?.body)) as {
         query: string;
@@ -98,6 +108,13 @@ function makeRouter(): typeof fetch {
       }
       if (q.includes('grosslineCustomersIncremental')) return json(emptyPage('customers'));
       if (q.includes('grosslineProductsIncremental')) return json(emptyPage('products'));
+      if (q.includes('currentAppInstallation')) {
+        const handles = ['read_orders', 'read_customers', 'read_products', 'read_inventory'];
+        if (grantReadAllOrders) handles.push('read_all_orders');
+        return json({
+          data: { currentAppInstallation: { accessScopes: handles.map((handle) => ({ handle })) } },
+        });
+      }
       if (q.includes('shop {')) return json(SHOP_INFO);
       return json({ errors: [{ message: `unrouted query: ${q.slice(0, 60)}` }] });
     }
@@ -138,6 +155,7 @@ beforeAll(async () => {
   const connected = await connectShopifyStore({
     tenantId,
     shopDomain: 'demo-alpha.myshopify.com',
+    strategy: 'legacy_static',
     accessToken: 'shpat_synthetic_test_token', // gitleaks:allow — fake token for fixtures
     fetchImpl: router,
   });
@@ -154,6 +172,46 @@ describe('connect flow', () => {
     expect(stores).toHaveLength(1);
     expect(stores[0]!.storeTimezone).toBe('America/New_York');
     expect(stores[0]!.storeCurrency).toBe('USD');
+  });
+
+  it('records the auth strategy on the connection', async () => {
+    const connection = await getConnection(tenantId, connectionId);
+    expect((connection!.settings as Record<string, unknown>).authStrategy).toBe('legacy_static');
+  });
+
+  it('client_credentials stores only what derives tokens — never a token itself', async () => {
+    const connected = await connectShopifyStore({
+      tenantId,
+      shopDomain: 'demo-alpha.myshopify.com',
+      strategy: 'client_credentials',
+      clientId: 'cid123',
+      clientSecret: 'csecret456', // gitleaks:allow — fake
+      fetchImpl: router,
+    });
+    const connection = await getConnection(tenantId, connected.connectionId);
+    expect((connection!.settings as Record<string, unknown>).authStrategy).toBe(
+      'client_credentials',
+    );
+    const credential = await getCredential(tenantId, connection!.credentialRef!);
+    expect(credential!.payload.clientId).toBe('cid123');
+    expect(credential!.payload.clientSecret).toBe('csecret456');
+    expect(credential!.payload.accessToken).toBeUndefined();
+  });
+
+  it('a missing read_all_orders scope degrades the connection with the 60-day warning', async () => {
+    const limitedRouter = makeRouter({ grantReadAllOrders: false });
+    const connected = await connectShopifyStore({
+      tenantId,
+      shopDomain: 'demo-alpha.myshopify.com',
+      strategy: 'legacy_static',
+      accessToken: 'shpat_synthetic_limited', // gitleaks:allow — fake
+      fetchImpl: limitedRouter,
+    });
+    expect(connected.scopeWarning).toMatch(/60 days/);
+    const connection = await getConnection(tenantId, connected.connectionId);
+    expect(connection!.health).toBe('degraded');
+    expect(connection!.lastError).toMatch(/60 days/);
+    expect((connection!.settings as Record<string, unknown>).scopeWarning).toMatch(/60 days/);
   });
 });
 

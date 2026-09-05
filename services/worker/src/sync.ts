@@ -155,11 +155,18 @@ export function createSyncWorker(connection: IORedis): Worker<SyncJobData> {
         durationMs: Date.now() - started,
       });
       if (data.connectionId) {
-        await updateConnectionHealth(data.tenantId, data.connectionId, {
-          health: 'healthy',
-          lastError: null,
-          lastSuccessAt: new Date(),
-        });
+        // A successful sync proves connectivity, but a standing scope warning
+        // (e.g. missing read_all_orders → 60-day order window) keeps the
+        // connection degraded until the scope is actually granted.
+        const conn = await getConnection(data.tenantId, data.connectionId);
+        const scopeWarning = ((conn?.settings ?? {}) as Record<string, unknown>).scopeWarning;
+        await updateConnectionHealth(
+          data.tenantId,
+          data.connectionId,
+          typeof scopeWarning === 'string'
+            ? { health: 'degraded', lastError: `warning: ${scopeWarning}`, lastSuccessAt: new Date() }
+            : { health: 'healthy', lastError: null, lastSuccessAt: new Date() },
+        );
       }
     },
     { connection, prefix: queuePrefix(), concurrency: 2 },

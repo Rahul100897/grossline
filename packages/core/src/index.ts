@@ -22,6 +22,13 @@ export {
   verifySessionToken,
   type SessionPayload,
 } from './auth/session';
+export {
+  buildShopifyInstallUrl,
+  verifyShopifyHmac,
+  isValidShopDomain,
+  SHOPIFY_OAUTH_SCOPES,
+  READ_ALL_ORDERS_WARNING,
+} from './auth/shopify-oauth';
 
 export type Provider = 'shopify' | 'google_ads' | 'meta';
 

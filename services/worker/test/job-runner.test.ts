@@ -155,6 +155,35 @@ describe('job runner', () => {
     expect(after!.lastSuccessAt).not.toBeNull();
   });
 
+  it('a standing scope warning keeps a connection degraded even after a successful sync', async () => {
+    const conn = await createConnection({
+      tenantId,
+      provider: 'shopify',
+      externalAccountId: `scoped-${randomUUID().slice(0, 8)}`,
+      settings: { authStrategy: 'legacy_static', scopeWarning: 'read_all_orders not granted: 60 days only' },
+    });
+    const events = new QueueEvents(SYNC_QUEUE, {
+      connection: connection.duplicate({ maxRetriesPerRequest: null }),
+      prefix: queuePrefix(),
+    });
+    await events.waitUntilReady();
+    const jobId = await enqueueSync(connection, {
+      tenantId,
+      kind: 'incremental',
+      connectionId: conn.id,
+    });
+    const queue = getSyncQueue(connection);
+    const job = await queue.getJob(jobId);
+    await job!.waitUntilFinished(events);
+    await queue.close();
+    await events.close();
+
+    const after = await getConnection(tenantId, conn.id);
+    expect(after!.health).toBe('degraded'); // sync worked, but history is capped
+    expect(after!.lastError).toMatch(/60 days/);
+    expect(after!.lastSuccessAt).not.toBeNull(); // the success itself is recorded
+  });
+
   it('a tenant created after the worker started syncs with no restart', async () => {
     // The worker from beforeAll is already running; this tenant did not exist then.
     const lateTenant = await makeTenant('late');
