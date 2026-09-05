@@ -5,7 +5,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { convertMinorUnits, decimalToMinorUnits, minorUnitExponent, type AdSpendForMonth } from '@grossline/core';
 import { getFxRate, listConnections, schema, withTenant } from '@grossline/db';
 
-type FxTrace = { platform: string; from: string; to: string; date: string; rate: string; rateDate: string };
+export type FxTrace = { platform: string; from: string; to: string; date: string; rate: string; rateDate: string };
 
 async function eurRateFor(currency: string, date: string): Promise<{ rate: number; rateDate: string }> {
   if (currency === 'EUR') return { rate: 1, rateDate: date };
@@ -16,6 +16,28 @@ async function eurRateFor(currency: string, date: string): Promise<{ rate: numbe
     );
   }
   return { rate: Number(row.rate), rateDate: row.rateDate };
+}
+
+/** Convert one amount on one date, recording the rate used. */
+export async function convertMinorOnDate(
+  platform: string,
+  amountMinor: number,
+  from: string,
+  to: string,
+  date: string,
+  trace: FxTrace[],
+): Promise<number> {
+  if (from === to || amountMinor === 0) return amountMinor;
+  const [fromRate, toRate] = [await eurRateFor(from, date), await eurRateFor(to, date)];
+  const converted = convertMinorUnits({
+    amountMinor,
+    from,
+    to,
+    eurRates: { [from]: fromRate.rate, [to]: toRate.rate },
+    rateDate: fromRate.rateDate,
+  });
+  trace.push({ platform, from, to, date, rate: converted.rate, rateDate: converted.rateDate });
+  return converted.amountMinor;
 }
 
 async function convertDaily(

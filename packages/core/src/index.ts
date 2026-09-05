@@ -33,6 +33,7 @@ export {
   type CostInputsSnapshot,
   type AdSpendForMonth,
 } from './metrics/margin';
+export { computeAdPlatformMetrics, type PlatformDay } from './metrics/ad-platforms';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,
