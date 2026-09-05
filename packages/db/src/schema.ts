@@ -245,6 +245,35 @@ export const rawGoogleAdsInsights = pgTable(
   ],
 );
 
+// ---- merchant-supplied inputs (Phase 2) ----
+
+export const productCostSource = pgEnum('product_cost_source', ['shopify', 'upload']);
+
+// Unit costs with effective-from dates: a later upload NEVER changes a
+// historical month's margin — resolution picks the latest row whose
+// effective_from is on or before the order date. Missing cost stays missing.
+export const productCosts = pgTable(
+  'product_costs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    /** '' when the row is keyed by variant only. One of sku/variantId is set (CHECK). */
+    sku: text('sku').notNull().default(''),
+    /** Shopify ProductVariant gid, '' when keyed by sku only. */
+    variantId: text('variant_id').notNull().default(''),
+    unitCostMinor: integer('unit_cost_minor').notNull(),
+    currency: text('currency').notNull(),
+    effectiveFrom: date('effective_from', { mode: 'string' }).notNull(),
+    source: productCostSource('source').notNull(),
+    uploadedAt: timestamp('uploaded_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('product_costs_uniq').on(t.tenantId, t.sku, t.variantId, t.effectiveFrom),
+  ],
+);
+
 // Global reference data (no tenant_id, like admin_users): daily ECB FX rates,
 // base EUR. Not tenant data — one rate serves every tenant, and every
 // converted amount records which rate row it used (rate + rate_date).

@@ -51,6 +51,13 @@ export { getBackfillProgress, type BackfillProgress } from './backfill-progress'
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {
+  upsertProductCosts,
+  listProductCosts,
+  listCostableOrderLines,
+  importShopifyCosts,
+  type ProductCostInput,
+} from './product-costs';
+export {
   getAdminUserByEmail,
   upsertAdminUser,
   writeAuditLog,
