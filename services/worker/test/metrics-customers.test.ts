@@ -210,9 +210,12 @@ describe('demo tenant cohort cross-check (independent naive implementation)', ()
     const cohort: string[] = [];
     for (const [customerId, orders] of byCustomer) {
       orders.sort((a, b) => a.processedAt.getTime() - b.processedAt.getTime());
-      const first = orders[0]!;
-      const isFirstEver = first.customerOrderIndex === 1 || first.customerOrderIndex === null;
-      if (isFirstEver && first.processedAt >= window.startUtc && first.processedAt < window.endUtc) {
+      // The store's own record: the customerOrderIndex 1 order anchors the
+      // cohort; earliest-held only counts when it carries no index at all.
+      const anchor =
+        orders.find((o) => o.customerOrderIndex === 1) ??
+        (orders[0]!.customerOrderIndex === null ? orders[0] : undefined);
+      if (anchor && anchor.processedAt >= window.startUtc && anchor.processedAt < window.endUtc) {
         cohort.push(customerId);
       }
     }

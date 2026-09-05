@@ -185,10 +185,12 @@ export async function computeOurTotals(
       .from(schema.rawGoogleAdsInsights)
       .where(inArray(schema.rawGoogleAdsInsights.date, window.dateStrings)),
   );
-  let googleCostMicros = 0;
+  // Per docs/metrics.md: micros → minor units rounded once per raw row
+  // (campaign × day); aggregates sum those row values.
+  let googleCostCents = 0;
   for (const row of googleRows) {
     const micros = (row.payload as { metrics?: { costMicros?: string } }).metrics?.costMicros;
-    if (micros) googleCostMicros += Number(micros);
+    if (micros) googleCostCents += Math.round(Number(micros) / 10_000);
   }
 
   return {
@@ -196,7 +198,7 @@ export async function computeOurTotals(
     shopifyOrders: orders,
     newCustomers,
     metaSpendCents,
-    googleCostCents: Math.round(googleCostMicros / 10_000),
+    googleCostCents,
   };
 }
 

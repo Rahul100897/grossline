@@ -1,28 +1,58 @@
 {
-  "_comment": "Demo tenant golden values — computed from the deterministic seed (seedDemoTenant at 2026-09-05T12:00:00Z). For real merchants, copy this file's shape and fill values read from the platform UIs per docs/reconciliation.md.",
+  "_comment": "Demo tenant golden values \u2014 computed from the deterministic seed (seedDemoTenant at 2026-09-05T12:00:00Z). For real merchants, copy this file's shape and fill values read from the platform UIs per docs/reconciliation.md.",
   "tenant": "demo-brand",
   "currency": "USD",
   "months": {
     "2026-06": {
-      "shopifyNetSales": { "value": 20178.99 },
-      "shopifyOrders": { "value": 225 },
-      "newCustomers": { "value": 143 },
-      "metaSpend": { "value": 4262.03 },
-      "googleCost": { "value": 3523.33 }
+      "shopifyNetSales": {
+        "value": 20178.99
+      },
+      "shopifyOrders": {
+        "value": 225
+      },
+      "newCustomers": {
+        "value": 143
+      },
+      "metaSpend": {
+        "value": 4262.03
+      },
+      "googleCost": {
+        "value": 3523.32
+      }
     },
     "2026-07": {
-      "shopifyNetSales": { "value": 20239.42 },
-      "shopifyOrders": { "value": 231 },
-      "newCustomers": { "value": 142 },
-      "metaSpend": { "value": 4472.95 },
-      "googleCost": { "value": 3626.23 }
+      "shopifyNetSales": {
+        "value": 20239.42
+      },
+      "shopifyOrders": {
+        "value": 231
+      },
+      "newCustomers": {
+        "value": 142
+      },
+      "metaSpend": {
+        "value": 4472.95
+      },
+      "googleCost": {
+        "value": 3626.22
+      }
     },
     "2025-11": {
-      "shopifyNetSales": { "value": 23803.34 },
-      "shopifyOrders": { "value": 273 },
-      "newCustomers": { "value": 177 },
-      "metaSpend": { "value": 6041.57 },
-      "googleCost": { "value": 4941.83 }
+      "shopifyNetSales": {
+        "value": 23803.34
+      },
+      "shopifyOrders": {
+        "value": 273
+      },
+      "newCustomers": {
+        "value": 177
+      },
+      "metaSpend": {
+        "value": 6041.57
+      },
+      "googleCost": {
+        "value": 4941.84
+      }
     }
   }
 }
