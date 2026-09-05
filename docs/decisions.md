@@ -260,6 +260,22 @@ simplest option was chosen. Anything here can be revisited.
   every stream finishes (the console shows "N% (partial)"); `resetBackfill`
   is the explicit way to change windows.
 
+## 2026-09-05 — Task 1.8 demo tenant seed
+
+- **Deterministic generator** (fixed-seed PRNG, stable gids): re-running
+  `pnpm seed:demo` upserts the identical rows — idempotency for free, proven
+  by test. Payload shapes mirror the connector fixtures so downstream code
+  cannot tell demo data from synced data.
+- **Demo "connections" exist but are internal**: the raw ad tables hang off
+  `connection_id`, so the seed mints credential-less connections flagged
+  `settings.demo = true`. No external account, no credential, nothing to sync.
+- **Narrative encoded in the curve and proven by test**: Q4 spike (Nov 1.9×),
+  discount-heavy month (month 3, ~70% of orders discounted), Trailhead Flask
+  ~25% refund rate, Aurora Mug stockout (month 8, days 5–25), Google
+  `pmax-underperformer` with ROAS < 1 next to `search-brand` above 3.
+- Scale: ~3.4k orders / ~2.1k customers / ~2.7k ad-day rows over 18 months —
+  believable for a small DTC brand and fast enough to seed in tests.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per

@@ -13,7 +13,8 @@
     "generate": "drizzle-kit generate",
     "studio": "drizzle-kit studio",
     "check": "drizzle-kit check && tsx scripts/check-migrations.ts",
-    "seed:admin": "tsx scripts/seed-admin.ts"
+    "seed:admin": "tsx scripts/seed-admin.ts",
+    "seed:demo": "tsx scripts/seed-demo.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",
