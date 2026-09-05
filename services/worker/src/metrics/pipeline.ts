@@ -15,6 +15,7 @@ import { customersComputer } from './computers/customers';
 import { marginComputer } from './computers/margin';
 import { adPlatformsComputer } from './computers/ad-platforms';
 import { blendedComputer } from './computers/blended';
+import { channelsComputer } from './computers/channels';
 
 export type MonthContext = {
   tenant: Tenant;
@@ -39,6 +40,7 @@ const computers: MetricComputer[] = [
   marginComputer,
   adPlatformsComputer,
   blendedComputer,
+  channelsComputer,
 ];
 
 export function registerComputer(computer: MetricComputer): void {
