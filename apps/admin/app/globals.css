@@ -1,1 +1,33 @@
 @import 'tailwindcss';
+
+/* Design tokens — docs/design/admin-mockup.html is the visual target.
+   Grey is the default; colour appears only where a number needs a verdict. */
+@theme {
+  --color-ink: #14181f;
+  --color-paper: #fafaf7;
+  --color-slate: #5c6470;
+  --color-hairline: #e6e5df;
+  --color-good: #1f7a5c;
+  --color-attn: #b4472b;
+  --color-panel: #ffffff;
+  --color-hover: #fbfaf5;
+  --color-navactive: #f1f0ea;
+  --color-attn-soft: #fbf3f0;
+  --color-attn-line: #e4c7bc;
+  --color-good-soft: #f1f7f4;
+  --color-good-line: #c4dcd2;
+
+  /* Sidebar goes off-canvas below this. */
+  --breakpoint-desk: 900px;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 13px;
+  line-height: 1.45;
+  /* One family, tabular figures mandatory — money columns must align. */
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}

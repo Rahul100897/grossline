@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { decimalToMinorUnits } from '@grossline/core';
 import { upsertTenantCostInputs } from '@grossline/db';
-import { requireSession } from '../../../../lib/auth';
+import { requireSession } from '../../../../../lib/auth';
 
 const formSchema = z.object({
   tenantId: z.string().uuid(),
