@@ -148,6 +148,20 @@
       "when": 1788669007410,
       "tag": "0020_tenant_notes",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1788698572710,
+      "tag": "0021_issue_log",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1788698573710,
+      "tag": "0022_rls_issue_log",
+      "breakpoints": true
     }
   ]
 }

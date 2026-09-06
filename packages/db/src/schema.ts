@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   bigint,
   boolean,
@@ -381,6 +382,37 @@ export const adminUsers = pgTable('admin_users', {
   totpSecret: text('totp_secret').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Issues are DERIVED, never authored (admin lib/issues.ts). This table is not
+// the source of truth for what is open — it is the transition log that gives
+// the Issues page a resolved history. Reconciled against the derived set:
+// currently-open issues keep an unresolved row (last_seen_at bumped); a row
+// whose issue is no longer derived gets resolved_at set. One unresolved row
+// per (tenant_id, issue_key); a recurrence after resolution opens a new row.
+export const issueLog = pgTable(
+  'issue_log',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    /** The derived issue's stable id (e.g. 'conn-broken-<connId>'). */
+    issueKey: text('issue_key').notNull(),
+    severity: text('severity').notNull(), // 'blocking' | 'attention'
+    type: text('type').notNull(),
+    summary: text('summary').notNull(),
+    action: text('action').notNull(),
+    openedAt: timestamp('opened_at', { withTimezone: true }).notNull().defaultNow(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+  },
+  (t) => [
+    // At most one unresolved row per issue; partial so resolved history piles up.
+    uniqueIndex('issue_log_open_uniq')
+      .on(t.tenantId, t.issueKey)
+      .where(sql`${t.resolvedAt} is null`),
+  ],
+);
 
 export const auditLog = pgTable('audit_log', {
   id: uuid('id').primaryKey().defaultRandom(),
