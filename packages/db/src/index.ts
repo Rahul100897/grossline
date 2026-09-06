@@ -106,6 +106,19 @@ export {
   type AdminUser,
 } from './admin-users';
 export {
+  createTicket,
+  listTickets,
+  countOpenTickets,
+  getTicketWithMessages,
+  addTicketReply,
+  updateTicket,
+  type Ticket,
+  type TicketMessage,
+  type TicketWithMessages,
+  type CreateTicketInput,
+  type TicketFilter,
+} from './tickets';
+export {
   createInvoice,
   getInvoiceWithLines,
   updateInvoiceStatus,
