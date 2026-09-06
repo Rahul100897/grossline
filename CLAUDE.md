@@ -8,7 +8,7 @@ Grossline is a reporting product for Shopify DTC brands. It pulls Shopify orders
 
 The business model is analyst-with-a-tool. Rahul is the only application user in v1. Merchants receive a PDF and, later, a read-only portal.
 
-**Current phase: Phase 3 — Admin console.** Phases 0–2 are complete — see `docs/phase-2.md` and `docs/phase-2-handover.md` for the metric layer (every metric in `docs/metrics.md` computes, golden-tested, reconciliation-agreed), and `docs/phase-1-handover.md` for connector state (one real dev store connected; Meta/Google still on fixtures). The Phase 3 spec is not written yet; do not start console work without it. Do not build ahead of the current phase.
+**Current phase: Phase 4 — Findings engine.** Phases 0–3 are complete. See `docs/phase-2-handover.md` for the metric layer (every metric in `docs/metrics.md` computes, golden-tested, reconciliation-agreed), `docs/phase-1-handover.md` for connector state (one real dev store connected; Meta/Google still on fixtures), and `docs/phase-3-handover.md` for the admin console (overview, merchants, issues, metrics explorer, billing + invoice PDFs, support inbox, settings, reconciliation panel). The Phase 4 spec is not written yet; do not start findings work without it. Do not build ahead of the current phase.
 
 ## Stack
 
