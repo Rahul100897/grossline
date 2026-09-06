@@ -59,6 +59,13 @@ export {
   type LatestSyncRun,
 } from './issues-data';
 export {
+  reconcileIssueLog,
+  listResolvedIssues,
+  type OpenIssueInput,
+  type ResolvedIssue,
+  type IssueLogRow,
+} from './issue-log';
+export {
   compareMetric,
   rollingMetric,
   type ComparisonKind,

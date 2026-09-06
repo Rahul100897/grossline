@@ -8,8 +8,11 @@ import {
   latestCostCompleteness,
   latestSyncRun,
   listConnections,
+  listResolvedIssues,
   listTenants,
+  reconcileIssueLog,
   type Connection,
+  type ResolvedIssue,
   type Tenant,
 } from '@grossline/db';
 import { formatMinor } from './format';
@@ -91,8 +94,11 @@ function connectionIssues(tenant: Tenant, connection: Connection): Issue[] {
   return issues;
 }
 
-export async function deriveIssues(now: Date = new Date()): Promise<Issue[]> {
-  const tenants = await listTenants();
+export async function deriveIssues(
+  now: Date = new Date(),
+  preloadedTenants?: Tenant[],
+): Promise<Issue[]> {
+  const tenants = preloadedTenants ?? (await listTenants());
   const issues: Issue[] = [];
 
   for (const tenant of tenants) {
@@ -178,6 +184,62 @@ export async function deriveIssues(now: Date = new Date()): Promise<Issue[]> {
   return issues.sort((a, b) => {
     if (a.severity !== b.severity) return a.severity === 'blocking' ? -1 : 1;
     return b.weight - a.weight;
+  });
+}
+
+export type { ResolvedIssue };
+
+/**
+ * The full Issues page (task 3.4): derive the open set, reconcile it against
+ * the log so this load records any openings/resolutions, and read back the
+ * 90-day resolved history. One clock (`now`) drives derivation, reconciliation
+ * and the history cutoff. This is the one place a GET deliberately writes — an
+ * internal single-user console, so page load is a fine trigger for the diff.
+ */
+export async function loadIssuesPage(
+  now: Date = new Date(),
+): Promise<{ open: Issue[]; resolved: (ResolvedIssue & { tenant: string })[] }> {
+  const tenants = await listTenants();
+  const open = await deriveIssues(now, tenants);
+
+  const byTenant = new Map<string, Issue[]>();
+  for (const tenant of tenants) byTenant.set(tenant.id, []);
+  for (const issue of open) byTenant.get(issue.tenantId)?.push(issue);
+
+  const tenantName = new Map(tenants.map((t) => [t.id, t.name]));
+  const resolved: (ResolvedIssue & { tenant: string })[] = [];
+  for (const tenant of tenants) {
+    await reconcileIssueLog(
+      tenant.id,
+      (byTenant.get(tenant.id) ?? []).map((i) => ({
+        issueKey: i.id,
+        severity: i.severity,
+        type: i.type,
+        summary: i.summary,
+        action: i.action,
+      })),
+      now,
+    );
+    for (const row of await listResolvedIssues(tenant.id, now)) {
+      resolved.push({ ...row, tenant: tenantName.get(row.tenantId) ?? row.tenantId });
+    }
+  }
+  resolved.sort((a, b) => b.resolvedAt.getTime() - a.resolvedAt.getTime());
+  return { open, resolved };
+}
+
+export function filterIssues(
+  issues: Issue[],
+  query: { q?: string; severity?: string; type?: string },
+): Issue[] {
+  const q = query.q?.trim().toLowerCase();
+  return issues.filter((issue) => {
+    if (query.severity && issue.severity !== query.severity) return false;
+    if (query.type && issue.type !== query.type) return false;
+    if (q && !`${issue.tenant} ${issue.summary} ${issue.action}`.toLowerCase().includes(q)) {
+      return false;
+    }
+    return true;
   });
 }
 

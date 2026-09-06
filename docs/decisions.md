@@ -553,3 +553,21 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - **Backfill still starts from the CLI.** The 'never synced' issue row carries
   the exact command. Running syncs from the browser is worker-queue plumbing
   that belongs with the reconciliation-panel work (3.9) at the earliest.
+
+## 2026-09-06 — Task 3.4: Issues
+
+- **`issue_log` is a transition log, not a source of truth.** Issues stay
+  derived (admin `lib/issues.ts`); the table exists only so the page can show
+  a 90-day resolved history. `reconcileIssueLog` compares the derived open set
+  against unresolved rows: new issues insert, still-open issues bump
+  `last_seen_at`, and rows no longer derived get `resolved_at` set. A partial
+  unique index (`resolved_at is null`) allows at most one open row per issue
+  while letting a recurrence open a fresh row alongside the resolved history.
+- **The Issues page load triggers reconciliation** — the one place a GET
+  deliberately writes. This is a single-user internal console with no worker
+  cron wired for issue reconciliation, so page load is the simplest honest
+  trigger. If a scheduled reconcile is added later, it calls the same function.
+- **Reconciliation-variance and overdue-invoice issue types are declared but
+  not yet emitted** — their sources (the 1.7 harness surfaced in 3.9, invoices
+  in 3.6) land in later tasks and add cases to the same derivation, consistent
+  with issues being derived from whatever state exists.
