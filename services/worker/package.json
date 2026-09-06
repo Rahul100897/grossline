@@ -6,7 +6,8 @@
   "exports": {
     "./shopify-connect": "./src/connectors/shopify/connect.ts",
     "./invoice-html": "./src/billing/invoice-html.ts",
-    "./pdf": "./src/pdf/render.ts"
+    "./pdf": "./src/pdf/render.ts",
+    "./reconcile": "./src/reconcile.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
