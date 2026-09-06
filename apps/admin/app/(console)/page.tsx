@@ -2,9 +2,10 @@
 // not a stat wall. MRR comes from tenant fee columns; "collected this quarter"
 // stays absent until invoices exist (3.6); "reports due" stays absent until
 // report generation exists (Phase 5). Absent stays absent — words, never zero.
-import { listTenants, type Tenant } from '@grossline/db';
+import { listAllPayments, listTenants, type Tenant } from '@grossline/db';
 import { requireSession } from '../../lib/auth';
 import { deriveIssues, issueCounts, type Issue } from '../../lib/issues';
+import { currentQuarter, quarterRange, sumPayments } from '../../lib/billing';
 import { ageDays, formatCount, formatMinor } from '../../lib/format';
 import {
   Absent,
@@ -49,10 +50,18 @@ export default async function OverviewPage() {
 
   let tenants: Tenant[] | null = null;
   let issues: Issue[] | null = null;
+  let collectedText: string | null = null;
   let loadError = false;
   try {
     tenants = await listTenants();
     issues = await deriveIssues();
+    const q = currentQuarter();
+    const range = quarterRange(q.year, q.q);
+    const collected = sumPayments(await listAllPayments(), range.start, range.end);
+    collectedText =
+      collected.grossByCurrency.size === 0
+        ? null
+        : [...collected.grossByCurrency.entries()].map(([c, m]) => formatMinor(m, c)).join(' + ');
   } catch {
     loadError = true;
   }
@@ -80,7 +89,7 @@ export default async function OverviewPage() {
           },
           {
             label: 'collected this quarter',
-            value: <Absent reason="no invoices yet" />,
+            value: collectedText ?? <Absent reason="nothing collected yet" />,
           },
           {
             label: counts.blocking > 0 ? `open issues (${counts.blocking} blocking)` : 'open issues',

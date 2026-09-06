@@ -597,3 +597,36 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   they are never summed with blended figures.
 - **Uncatalogued metrics still show** under an "Other" group, so a metric added
   in a later phase is never silently hidden from the explorer.
+
+## 2026-09-06 — Task 3.6: Billing
+
+- **Playwright is added for PDF rendering** — already the declared stack choice
+  in CLAUDE.md ("Playwright for PDF rendering"), so this builds the stack, not
+  a surprise dependency. Chromium installed via `playwright install chromium`.
+- **The renderer exists in two runtimes on purpose.** The pure invoice template
+  (`services/worker/src/billing/invoice-html.ts`) is the single shared source of
+  the HTML. The HTML→PDF wrapper, however, lives twice: `services/worker/src/pdf`
+  for the worker / Phase 5 report job (worker's own Node runtime), and
+  `apps/admin/lib/pdf.ts` for the invoice download. Next's bundler follows
+  Playwright's dynamic `require('chromium-bidi/...')` through any *transpiled*
+  workspace package and fails to resolve it; importing Playwright *directly* in
+  the admin app plus `serverExternalPackages: ['playwright','playwright-core',
+  'chromium-bidi']` leaves it external and required at runtime. The 15-line
+  wrapper is duplicated; the template that matters is not.
+- **Invoice totals are never denormalised** — the total is always the sum of
+  invoice_lines, computed on read. No amount column to drift.
+- **Invoice numbers are globally sequential** (`GL-YYYY-NNNN`), allocated on the
+  admin connection from the count of that year's invoices. One issuer, so global
+  numbering is correct; the small single-user race is acceptable.
+- **Net INR and the Xflow fee are entered, not computed.** Xflow settles USD
+  invoices to INR externally; the analyst records what actually hit the bank
+  (gross, fee, net INR, effective rate) when marking paid — so the quarter's
+  collected total reconciles against the bank statement, never an FX estimate.
+- **business_profile is a single global row** (no tenant_id, like admin_users) —
+  the issuer's own details for the invoice PDF, including the zero-rated export
+  LUT number. Task 3.8 provides the editing UI at /settings/business; 3.6 seeds
+  it and reads it. The PDF falls back to a "set your business details" placeholder
+  when it is absent.
+- **Overview and merchant billing figures that were placeholders are now wired**
+  (collected this quarter, billed/collected to date, merchants-list billed
+  column) — they read real invoice/payment data now that it exists.

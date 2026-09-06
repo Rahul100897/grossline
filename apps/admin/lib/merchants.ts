@@ -5,6 +5,7 @@ import {
   listConnections,
   listStores,
   listTenants,
+  tenantBillingTotals,
   type Connection,
   type Tenant,
 } from '@grossline/db';
@@ -20,6 +21,8 @@ export type MerchantRow = {
   health: MerchantHealth;
   /** Ad spend for the last full calendar month, from stored metric values. */
   adSpendLastMonth: { minor: number; currency: string } | null;
+  /** Billed to date (non-void invoice lines), or null if nothing billed. */
+  billedToDate: { minor: number; currency: string } | null;
 };
 
 /** First day of the previous calendar month, as the metric layer keys periods. */
@@ -49,10 +52,11 @@ export async function loadMerchantRows(now: Date = new Date()): Promise<Merchant
   const tenants = await listTenants();
   const rows: MerchantRow[] = [];
   for (const tenant of tenants) {
-    const [stores, connections, spendRows] = await Promise.all([
+    const [stores, connections, spendRows, billing] = await Promise.all([
       listStores(tenant.id),
       listConnections(tenant.id),
       getMetricValues(tenant.id, { metric: 'total_ad_spend', grain: 'month', periods: [period] }),
+      tenantBillingTotals(tenant.id),
     ]);
     const spend = spendRows[0];
     rows.push({
@@ -62,6 +66,10 @@ export async function loadMerchantRows(now: Date = new Date()): Promise<Merchant
       adSpendLastMonth:
         spend && spend.currency !== null
           ? { minor: Number(spend.value), currency: spend.currency }
+          : null,
+      billedToDate:
+        billing.billedMinor > 0 && billing.currency
+          ? { minor: billing.billedMinor, currency: billing.currency }
           : null,
     });
   }

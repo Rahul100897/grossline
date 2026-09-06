@@ -159,7 +159,11 @@ export default async function MerchantsPage({
                     )}
                   </Td>
                   <Td num>
-                    <Absent reason="no invoices yet" />
+                    {row.billedToDate ? (
+                      formatMinor(row.billedToDate.minor, row.billedToDate.currency)
+                    ) : (
+                      <Absent reason="none" />
+                    )}
                   </Td>
                   <Td>
                     <HealthCell row={row} />

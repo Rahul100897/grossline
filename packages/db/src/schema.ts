@@ -26,6 +26,7 @@ export const connectionHealth = pgEnum('connection_health', [
   'unknown',
 ]);
 export const syncKind = pgEnum('sync_kind', ['backfill', 'incremental']);
+export const invoiceStatus = pgEnum('invoice_status', ['draft', 'sent', 'paid', 'void']);
 export const syncStatus = pgEnum('sync_status', ['running', 'success', 'failed']);
 
 export const tenants = pgTable('tenants', {
@@ -413,6 +414,85 @@ export const issueLog = pgTable(
       .where(sql`${t.resolvedAt} is null`),
   ],
 );
+
+// Invoices we raise (task 3.6). Tenant-scoped; the total is the sum of lines,
+// never a denormalised column that could drift. Money is integer minor units.
+export const invoices = pgTable(
+  'invoices',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    /** Human invoice number, globally unique across tenants (one issuer). */
+    number: text('number').notNull().unique(),
+    status: invoiceStatus('status').notNull().default('draft'),
+    currency: text('currency').notNull(),
+    issuedOn: date('issued_on', { mode: 'string' }).notNull(),
+    dueOn: date('due_on', { mode: 'string' }).notNull(),
+    notes: text('notes'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('invoices_number_uniq').on(t.number)],
+);
+
+// Period lines on an invoice (e.g. the three months of a billed quarter).
+export const invoiceLines = pgTable('invoice_lines', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenants.id),
+  invoiceId: uuid('invoice_id')
+    .notNull()
+    .references(() => invoices.id),
+  description: text('description').notNull(),
+  periodStart: date('period_start', { mode: 'string' }).notNull(),
+  periodEnd: date('period_end', { mode: 'string' }).notNull(),
+  amountMinor: integer('amount_minor').notNull(),
+  currency: text('currency').notNull(),
+});
+
+// Payments received against an invoice. Xflow settles USD invoices to INR;
+// the fee and the net INR actually received are recorded (manual — no gateway),
+// so the quarter's collected total reconciles against the bank, not an estimate.
+export const payments = pgTable('payments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenants.id),
+  invoiceId: uuid('invoice_id')
+    .notNull()
+    .references(() => invoices.id),
+  /** Gross amount in the invoice currency. */
+  grossMinor: integer('gross_minor').notNull(),
+  grossCurrency: text('gross_currency').notNull(),
+  /** Xflow fee, in the invoice currency. */
+  xflowFeeMinor: integer('xflow_fee_minor'),
+  /** Net actually settled to the INR account (minor units, paise). */
+  netInrMinor: integer('net_inr_minor'),
+  /** Effective USD→INR rate applied by Xflow on this settlement. */
+  fxRate: numeric('fx_rate', { precision: 20, scale: 10 }),
+  receivedOn: date('received_on', { mode: 'string' }).notNull(),
+  reference: text('reference'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// The analyst's own business/invoicing details for the invoice PDF. One row,
+// no tenant_id (like admin_users) — this is the issuer, not tenant data. Task
+// 3.8 edits it; 3.6 reads it for the PDF.
+export const businessProfile = pgTable('business_profile', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  legalName: text('legal_name').notNull(),
+  addressLines: text('address_lines'),
+  gstin: text('gstin'),
+  /** Export LUT (Letter of Undertaking) number for zero-rated service export. */
+  lutNumber: text('lut_number'),
+  invoiceEmail: text('invoice_email'),
+  /** Bank / remittance details block, free text. */
+  bankDetails: text('bank_details'),
+  footer: text('footer'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const auditLog = pgTable('audit_log', {
   id: uuid('id').primaryKey().defaultRandom(),
