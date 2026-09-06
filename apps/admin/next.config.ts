@@ -5,7 +5,7 @@ import { loadRootEnv } from '@grossline/core';
 loadRootEnv();
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@grossline/core', '@grossline/db'],
+  transpilePackages: ['@grossline/core', '@grossline/db', '@grossline/worker'],
 };
 
 export default nextConfig;

@@ -96,6 +96,21 @@ export async function listMetricValuesForPeriod(
   );
 }
 
+/** Distinct periods with any stored value at this grain, newest first. */
+export async function listMetricPeriods(
+  tenantId: string,
+  grain: MetricGrain,
+): Promise<string[]> {
+  const rows = await withTenant(tenantId, (tx) =>
+    tx
+      .selectDistinct({ period: metricValues.period })
+      .from(metricValues)
+      .where(eq(metricValues.grain, grain))
+      .orderBy(sql`${metricValues.period} desc`),
+  );
+  return rows.map((r) => r.period);
+}
+
 export type MetricRun = typeof metricRuns.$inferSelect;
 
 export async function startMetricRun(

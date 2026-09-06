@@ -525,3 +525,31 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   fresh repo, and the instruction for this bootstrap phase was one commit per
   task pushed after each. Phase 0 commits therefore go directly to `main`;
   turn on branch protection before Phase 1.
+
+## 2026-09-06 — Task 3.3: Merchants
+
+- **Costs is a seventh tab.** The spec enumerates Overview / Connections /
+  Stores / Metrics / Billing / Notes and separately says the 2.2 cost-inputs
+  page "folds in here". Cost inputs are neither billing (fees we charge the
+  merchant) nor metrics (computed values), so they get their own tab rather
+  than being buried in either. The old `/tenants/[id]/costs` route is gone.
+- **Admin depends on `@grossline/worker` for store connects.** The connect
+  flow (validate credential, read shop info, create store + encrypted
+  credential + connection, evaluate scope warning) already exists once in
+  `services/worker/src/connectors/shopify/connect.ts` with a clean import
+  chain (core, db, zod — no BullMQ/Redis). Duplicating it in admin would
+  fork the one place connection semantics live, so worker exposes it via an
+  `exports` map (`@grossline/worker/shopify-connect`) and Next transpiles the
+  workspace package. Workspace-internal wiring, not a new dependency.
+- **Connect form falls back to env credentials.** Blank credential fields use
+  SHOPIFY_STORE_TOKEN / SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET, same as
+  the CLI — connecting our own dev store never means pasting a secret into a
+  browser form. Meta/Google stay CLI-only (org-level credentials, still on
+  fixtures per phase-1 handover).
+- **`updateTenant` is a narrow admin-connection helper** (name, plan, status,
+  fee fields, notes) — reporting currency/timezone and the slug are not
+  editable from the UI; changing those has metric-layer consequences and
+  stays a deliberate operation.
+- **Backfill still starts from the CLI.** The 'never synced' issue row carries
+  the exact command. Running syncs from the browser is worker-queue plumbing
+  that belongs with the reconciliation-panel work (3.9) at the earliest.

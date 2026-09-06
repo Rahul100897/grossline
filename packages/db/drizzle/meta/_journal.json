@@ -141,6 +141,13 @@
       "when": 1788668306708,
       "tag": "0019_tenant_billing_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1788669007410,
+      "tag": "0020_tenant_notes",
+      "breakpoints": true
     }
   ]
 }

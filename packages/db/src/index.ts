@@ -2,11 +2,13 @@ export * as schema from './schema';
 export { withTenant, type ScopedDb } from './tenant-scope';
 export {
   createTenant,
+  updateTenant,
   getTenant,
   getTenantBySlug,
   listTenants,
   listActiveTenants,
   type CreateTenantInput,
+  type UpdateTenantInput,
   type Tenant,
 } from './admin';
 export { seedDemoTenant, type SeedSummary } from './seed-demo';
@@ -67,6 +69,7 @@ export {
   upsertMetricValues,
   getMetricValues,
   listMetricValuesForPeriod,
+  listMetricPeriods,
   startMetricRun,
   finishMetricRun,
   type MetricGrain,
