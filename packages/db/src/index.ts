@@ -77,6 +77,7 @@ export {
   getMetricValues,
   listMetricValuesForPeriod,
   listMetricPeriods,
+  listMetricDailySeries,
   startMetricRun,
   finishMetricRun,
   type MetricGrain,

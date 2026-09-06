@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, lt, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { metricRuns, metricValues } from './schema';
 import { withTenant } from './tenant-scope';
@@ -93,6 +93,37 @@ export async function listMetricValuesForPeriod(
       .from(metricValues)
       .where(and(eq(metricValues.grain, grain), eq(metricValues.period, periodValue)))
       .orderBy(asc(metricValues.metric), asc(metricValues.scope)),
+  );
+}
+
+/**
+ * Day-grain series for one metric+scope within a month (period labels between
+ * the month's first day inclusive and the next month's first day exclusive).
+ * Ordered by day. Feeds the metrics explorer's monthly→daily drill.
+ */
+export async function listMetricDailySeries(
+  tenantId: string,
+  query: { metric: string; monthPeriod: string; scope?: string },
+): Promise<MetricValueRow[]> {
+  const start = query.monthPeriod;
+  const startDate = new Date(`${start}T00:00:00Z`);
+  const end = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth() + 1, 1))
+    .toISOString()
+    .slice(0, 10);
+  return withTenant(tenantId, (tx) =>
+    tx
+      .select()
+      .from(metricValues)
+      .where(
+        and(
+          eq(metricValues.metric, query.metric),
+          eq(metricValues.grain, 'day'),
+          eq(metricValues.scope, query.scope ?? ''),
+          gte(metricValues.period, start),
+          lt(metricValues.period, end),
+        ),
+      )
+      .orderBy(asc(metricValues.period)),
   );
 }
 
