@@ -673,3 +673,19 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   secrets from the browser.
 - **Business & invoicing settings edit the business_profile from 3.6** (the
   invoice PDF issuer), completing the link the billing page already pointed at.
+
+## 2026-09-06 — Task 3.9: Reconciliation panel
+
+- **The panel calls the 1.7 harness directly**, it does not reimplement it.
+  services/worker/src/reconcile.ts is exposed via the package exports map
+  (@grossline/worker/reconcile) and run server-side from the page — the same
+  reference totals (computed from raw, per docs/metrics.md) the CLI produces.
+- **Expected figures come from the committed file**, read from disk the same
+  way the definitions page reads metrics.md (walk up to repo root, then
+  docs/reconciliation/expected/<slug>.json). When there is no file, the panel
+  still runs and shows our totals with a "no platform figure" status plus the
+  path to record them — reconciliation from the browser never requires the file
+  to exist first.
+- **Structural notes surface verbatim** (Meta's 28-day restatement window,
+  Google's conversion restatement) so an in-window variance reads as expected,
+  not as an error.
