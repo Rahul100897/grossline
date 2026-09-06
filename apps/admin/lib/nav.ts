@@ -7,4 +7,5 @@ export const NAV_ITEMS: { href: string; label: string }[] = [
   { href: '/billing', label: 'Billing' },
   { href: '/support', label: 'Support' },
   { href: '/connections', label: 'Connections' },
+  { href: '/settings', label: 'Settings' },
 ];

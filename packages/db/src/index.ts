@@ -101,10 +101,18 @@ export {
 } from './product-costs';
 export {
   getAdminUserByEmail,
+  getAdminUserById,
   upsertAdminUser,
   writeAuditLog,
   type AdminUser,
 } from './admin-users';
+export {
+  getSettings,
+  updateSettings,
+  settingsSchema,
+  type AppSettings,
+  type PlanPrice,
+} from './settings';
 export {
   createTicket,
   listTickets,
