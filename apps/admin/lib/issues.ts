@@ -5,6 +5,7 @@
 import { PROVIDER_STREAMS, type Provider } from '@grossline/core';
 import {
   getBackfillProgress,
+  getSettings,
   latestCostCompleteness,
   latestSyncRun,
   listConnections,
@@ -99,13 +100,17 @@ export async function deriveIssues(
   preloadedTenants?: Tenant[],
 ): Promise<Issue[]> {
   const tenants = preloadedTenants ?? (await listTenants());
+  // Thresholds are configurable in Settings; defaults match the constants.
+  const { thresholds } = await getSettings();
+  const staleDays = thresholds.onboardingStaleDays ?? STUCK_ONBOARDING_DAYS;
+  const completenessFloor = thresholds.costCompleteness ?? 1;
   const issues: Issue[] = [];
 
   for (const tenant of tenants) {
     // Stuck onboarding.
     if (tenant.status === 'onboarding') {
       const ageDays = (now.getTime() - tenant.createdAt.getTime()) / 86_400_000;
-      if (ageDays > STUCK_ONBOARDING_DAYS) {
+      if (ageDays > staleDays) {
         issues.push({
           id: `onboarding-${tenant.id}`,
           severity: 'attention',
@@ -165,7 +170,7 @@ export async function deriveIssues(
 
     // Missing cost data (from the latest computed month).
     const coverage = await latestCostCompleteness(tenant.id);
-    if (coverage && coverage.completeness < 1) {
+    if (coverage && coverage.completeness < completenessFloor) {
       const missingPct = Math.round((1 - coverage.completeness) * 100);
       issues.push({
         id: `cost-${tenant.id}`,

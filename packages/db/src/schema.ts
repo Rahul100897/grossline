@@ -533,6 +533,16 @@ export const ticketMessages = pgTable('ticket_messages', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Console configuration the analyst edits in Settings (task 3.8): plan prices,
+// default thresholds, alert preferences. One global row (no tenant_id, like
+// business_profile), a jsonb blob so new settings need no migration. Metric
+// definitions are NOT here — they render straight from docs/metrics.md.
+export const appSettings = pgTable('app_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  data: jsonb('data').notNull().default({}),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const auditLog = pgTable('audit_log', {
   id: uuid('id').primaryKey().defaultRandom(),
   actor: text('actor').notNull(),

@@ -653,3 +653,23 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - **The marketing form posts to the admin origin** via `PUBLIC_ADMIN_URL`
   (build-time public config, falls back to localhost:3000 in dev) rather than
   giving the static Astro site its own server runtime.
+
+## 2026-09-06 — Task 3.8: Settings
+
+- **Metric definitions render straight from docs/metrics.md** at request time —
+  the page reads the committed file (walking up from cwd to the repo root) and
+  renders it with a tiny dependency-free Markdown renderer (headings, lists,
+  tables, bold, inline code, hr). No copy, no build step, so a definition edit
+  appears with no code change — exactly the task's "done when".
+- **A single app_settings row (jsonb blob)** holds plan prices, thresholds and
+  alert preferences — new settings need no migration. It is the issuer's own
+  config (no tenant_id), on the admin connection like business_profile.
+- **Thresholds feed the issue engine.** deriveIssues now reads the configurable
+  cost-completeness floor and onboarding-stale window from settings; the
+  defaults match the previous constants, so behaviour is unchanged until edited.
+- **The admin account page is read-only.** Password and TOTP rotation touch
+  credential storage — an ask-first, CLI-only operation per CLAUDE.md — so the
+  page shows email and 2FA status and points at the CLI rather than editing
+  secrets from the browser.
+- **Business & invoicing settings edit the business_profile from 3.6** (the
+  invoice PDF issuer), completing the link the billing page already pointed at.

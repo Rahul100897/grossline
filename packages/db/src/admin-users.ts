@@ -7,6 +7,11 @@ import { adminUsers, auditLog } from './schema';
 
 export type AdminUser = typeof adminUsers.$inferSelect;
 
+export async function getAdminUserById(id: string): Promise<AdminUser | null> {
+  const [row] = await adminDb().select().from(adminUsers).where(eq(adminUsers.id, id)).limit(1);
+  return row ?? null;
+}
+
 export async function getAdminUserByEmail(email: string): Promise<AdminUser | null> {
   const [row] = await adminDb()
     .select()
