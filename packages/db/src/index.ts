@@ -51,6 +51,12 @@ export { getBackfillProgress, type BackfillProgress } from './backfill-progress'
 export { closeDbPools } from './client';
 export { runMigrations } from './migrate';
 export {
+  latestSyncRun,
+  latestCostCompleteness,
+  lastMetricRun,
+  type LatestSyncRun,
+} from './issues-data';
+export {
   compareMetric,
   rollingMetric,
   type ComparisonKind,

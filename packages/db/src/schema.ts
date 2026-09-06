@@ -33,6 +33,10 @@ export const tenants = pgTable('tenants', {
   slug: text('slug').notNull().unique(),
   status: tenantStatus('status').notNull().default('onboarding'),
   plan: text('plan'),
+  monthlyFeeMinor: integer('monthly_fee_minor'),
+  feeCurrency: text('fee_currency').notNull().default('USD'),
+  /** Design-partner rate expiry, if any (billing surfaces upcoming ones). */
+  partnerRateUntil: date('partner_rate_until', { mode: 'string' }),
   reportingCurrency: text('reporting_currency').notNull(),
   reportingTimezone: text('reporting_timezone').notNull(),
   isDemo: boolean('is_demo').notNull().default(false),
