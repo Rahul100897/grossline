@@ -630,3 +630,26 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - **Overview and merchant billing figures that were placeholders are now wired**
   (collected this quarter, billed/collected to date, merchants-list billed
   column) — they read real invoice/payment data now that it exists.
+
+## 2026-09-06 — Task 3.7: Support inbox
+
+- **Tickets are not tenant-scoped.** A marketing-site visitor has no tenant and
+  no session, so tickets (and their reply thread, ticket_messages) live on the
+  admin connection like audit_log, with a nullable tenant_id for in-app links.
+  No RLS — there is no tenant to isolate by.
+- **One intake function, two callers.** `intakeTicket` creates the ticket and
+  best-effort emails the analyst; the public marketing route and the
+  authenticated in-app widget action both call it. A failed notification never
+  fails intake — the ticket is already saved and visible.
+- **The public intake route is exempted from the admin middleware** (like the
+  Shopify OAuth callback) and defends itself: strict Zod validation, a honeypot
+  field (silently accepted, never stored — no bot signal), and permissive CORS
+  so the static marketing site can POST cross-origin. No CAPTCHA, per the
+  console's action rules.
+- **Email is dependency-free** — a small fetch wrapper over Resend's REST API,
+  not the SDK (avoids an ask-first dependency). It no-ops gracefully when
+  RESEND_API_KEY is unset (dev), and the reply records whether it actually sent
+  ("emailed" / "not emailed"), so nothing silently claims to have emailed.
+- **The marketing form posts to the admin origin** via `PUBLIC_ADMIN_URL`
+  (build-time public config, falls back to localhost:3000 in dev) rather than
+  giving the static Astro site its own server runtime.

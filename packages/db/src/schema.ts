@@ -27,6 +27,11 @@ export const connectionHealth = pgEnum('connection_health', [
 ]);
 export const syncKind = pgEnum('sync_kind', ['backfill', 'incremental']);
 export const invoiceStatus = pgEnum('invoice_status', ['draft', 'sent', 'paid', 'void']);
+export const ticketType = pgEnum('ticket_type', ['bug', 'question', 'feedback', 'feature']);
+export const ticketStatus = pgEnum('ticket_status', ['open', 'in_progress', 'closed']);
+export const ticketPriority = pgEnum('ticket_priority', ['low', 'normal', 'high']);
+export const ticketSource = pgEnum('ticket_source', ['marketing', 'in_app']);
+export const ticketAuthor = pgEnum('ticket_author', ['admin', 'submitter']);
 export const syncStatus = pgEnum('sync_status', ['running', 'success', 'failed']);
 
 export const tenants = pgTable('tenants', {
@@ -492,6 +497,40 @@ export const businessProfile = pgTable('business_profile', {
   bankDetails: text('bank_details'),
   footer: text('footer'),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Support tickets (task 3.7). Two intake points — the marketing site form and
+// the in-app widget — land here. tenant_id is nullable (a marketing-site
+// visitor has no tenant), so tickets live on the admin connection like
+// audit_log, not under tenant RLS. The reply thread is ticket_messages.
+export const tickets = pgTable('tickets', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  type: ticketType('type').notNull(),
+  source: ticketSource('source').notNull(),
+  status: ticketStatus('status').notNull().default('open'),
+  priority: ticketPriority('priority').notNull().default('normal'),
+  subject: text('subject').notNull(),
+  body: text('body').notNull(),
+  submitterName: text('submitter_name'),
+  submitterEmail: text('submitter_email'),
+  /** Optional link to a tenant (in-app submissions can carry one). */
+  tenantId: uuid('tenant_id').references(() => tenants.id),
+  /** Internal analyst notes, never shown to the submitter. */
+  notes: text('notes'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const ticketMessages = pgTable('ticket_messages', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  ticketId: uuid('ticket_id')
+    .notNull()
+    .references(() => tickets.id),
+  author: ticketAuthor('author').notNull(),
+  body: text('body').notNull(),
+  /** Whether this reply was emailed to the submitter (admin replies). */
+  emailed: boolean('emailed').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const auditLog = pgTable('audit_log', {

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Shell } from '../../components/chrome';
+import { SupportWidget } from '../../components/support-widget';
 import { logout } from '../login/actions';
 
 export default function ConsoleLayout({ children }: { children: ReactNode }) {
@@ -14,6 +15,7 @@ export default function ConsoleLayout({ children }: { children: ReactNode }) {
       }
     >
       {children}
+      <SupportWidget />
     </Shell>
   );
 }
