@@ -1,0 +1,193 @@
+<!doctype html>
+<!--
+  Grossline admin — visual target for Phase 3 (docs/phase-3.md).
+  Authored from the spec's Design direction (the referenced mockup file was
+  not present in the repo or anywhere reachable — see docs/decisions.md).
+  This is a look-and-feel reference, not markup to copy.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grossline admin — mockup</title>
+<style>
+  :root {
+    --ink: #14181F;
+    --paper: #FAFAF7;
+    --slate: #5C6470;
+    --hairline: #E6E5DF;
+    --good: #1F7A5C;
+    --attn: #B4472B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 13px/1.45 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .app { display: flex; min-height: 100vh; }
+  nav {
+    width: 176px; flex: none; border-right: 1px solid var(--hairline);
+    padding: 14px 0; background: var(--paper);
+  }
+  nav .brand { font-weight: 650; padding: 2px 16px 14px; letter-spacing: -0.01em; }
+  nav a {
+    display: block; padding: 5px 16px; color: var(--slate); text-decoration: none;
+  }
+  nav a.active { color: var(--ink); font-weight: 600; background: #F1F0EA; }
+  nav a:hover { color: var(--ink); }
+  main { flex: 1; min-width: 0; padding: 18px 22px 40px; }
+  h1 { font-size: 15px; font-weight: 650; margin: 0 0 2px; }
+  .sub { color: var(--slate); margin: 0 0 16px; }
+
+  /* Four numbers: a quiet strip, not a tile wall. */
+  .numbers { display: flex; gap: 36px; border-bottom: 1px solid var(--hairline); padding: 6px 0 14px; flex-wrap: wrap; }
+  .numbers .n { min-width: 120px; }
+  .numbers .v { font-size: 21px; font-weight: 620; letter-spacing: -0.01em; }
+  .numbers .l { color: var(--slate); font-size: 12px; }
+  .numbers .v.absent { color: var(--slate); font-weight: 400; font-size: 13px; }
+
+  section { margin-top: 22px; }
+  h2 { font-size: 13px; font-weight: 650; margin: 0 0 8px; }
+  .panel { border: 1px solid var(--hairline); background: #fff; border-radius: 4px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; white-space: nowrap; }
+  th {
+    text-align: left; font-weight: 550; color: var(--slate); font-size: 12px;
+    padding: 6px 12px; border-bottom: 1px solid var(--hairline);
+  }
+  td { padding: 6px 12px; border-bottom: 1px solid var(--hairline); }
+  tr:last-child td { border-bottom: 0; }
+  tr:hover td { background: #FBFAF5; }
+  td.num, th.num { text-align: right; }
+  .quiet { color: var(--slate); }
+  .good { color: var(--good); }
+  .attn { color: var(--attn); }
+  .badge {
+    display: inline-block; border: 1px solid var(--hairline); border-radius: 3px;
+    padding: 0 5px; font-size: 11px; color: var(--slate); background: var(--paper);
+  }
+  .badge.attn { color: var(--attn); border-color: #E4C7BC; background: #FBF3F0; }
+  .badge.good { color: var(--good); border-color: #C4DCD2; background: #F1F7F4; }
+  /* Absent: words, never a bare dash that reads like zero. */
+  .absent { color: var(--slate); font-style: italic; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav>
+    <div class="brand">Grossline</div>
+    <a class="active" href="#">Overview</a>
+    <a href="#">Merchants</a>
+    <a href="#">Issues</a>
+    <a href="#">Metrics</a>
+    <a href="#">Billing</a>
+    <a href="#">Reconciliation</a>
+    <a href="#">Support</a>
+    <a href="#">Settings</a>
+  </nav>
+  <main>
+    <h1>Overview</h1>
+    <p class="sub">Saturday 6 September 2026 · 2 merchants · 1 demo</p>
+
+    <div class="numbers">
+      <div class="n"><div class="v">$1,400</div><div class="l">monthly recurring</div></div>
+      <div class="n"><div class="v">$2,650</div><div class="l">collected this quarter</div></div>
+      <div class="n"><div class="v attn">4</div><div class="l">open issues · 1 blocking</div></div>
+      <div class="n"><div class="v">2</div><div class="l">reports due</div></div>
+    </div>
+
+    <section>
+      <h2>Needs your attention</h2>
+      <div class="panel">
+        <table>
+          <thead><tr><th></th><th>issue</th><th>merchant</th><th>age</th><th>action</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge attn">blocking</span></td>
+              <td>Google Ads connection broken — account not linked to MCC</td>
+              <td>Demo Brand</td><td class="num">3d</td>
+              <td class="quiet">send link request from the MCC, accept in client account</td>
+            </tr>
+            <tr>
+              <td><span class="badge attn">blocking</span></td>
+              <td>Order history capped at 60 days — read_all_orders not granted</td>
+              <td>Rahul Developer Store</td><td class="num">1d</td>
+              <td class="quiet">request scope in Dev Dashboard, re-run connect</td>
+            </tr>
+            <tr>
+              <td><span class="badge">cost data</span></td>
+              <td>21,005.11 USD of June revenue has no unit cost (4 SKUs)</td>
+              <td>Demo Brand</td><td class="num">6d</td>
+              <td class="quiet">upload costs CSV or import from Shopify</td>
+            </tr>
+            <tr>
+              <td><span class="badge">billing</span></td>
+              <td>Invoice GL-2026-014 overdue 12 days ($700)</td>
+              <td>Demo Brand</td><td class="num">12d</td>
+              <td class="quiet">chase, or mark paid if Xflow settled</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Merchants</h2>
+      <div class="panel">
+        <table>
+          <thead>
+            <tr>
+              <th>name</th><th>plan</th><th class="num">fee/mo</th>
+              <th class="num">ad spend (Aug)</th><th class="num">billed to date</th>
+              <th>health</th><th>status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Demo Brand <span class="badge">demo</span></td><td>partner</td>
+              <td class="num">$700</td><td class="num">$8,957.41</td><td class="num">$4,900</td>
+              <td><span class="good">● healthy</span></td><td>active</td>
+            </tr>
+            <tr>
+              <td>Rahul Developer Store</td><td>partner</td>
+              <td class="num">$700</td><td class="num absent">no ad accounts</td><td class="num">$0</td>
+              <td><span class="attn">● degraded</span></td><td>active</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>August 2026 — Demo Brand (metric table shape)</h2>
+      <div class="panel">
+        <table>
+          <thead>
+            <tr><th>metric</th><th class="num">Aug 2026</th><th class="num">vs Jul</th><th class="num">vs Aug ’25</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Net sales</td><td class="num">$21,204.18</td><td class="num good">+4.8%</td><td class="num">+31.2%</td><td></td></tr>
+            <tr><td>MER</td><td class="num">2.41</td><td class="num attn">−0.22</td><td class="num absent">no history</td><td></td></tr>
+            <tr>
+              <td>Gross margin</td><td class="num">61.4%</td><td class="num">+0.3pp</td><td class="num absent">no history</td>
+              <td><span class="badge attn">costs cover 80% of lines</span></td>
+            </tr>
+            <tr>
+              <td>Repeat rate, 90d</td><td class="num">18.2%</td><td class="num quiet">—</td><td class="num absent">no history</td>
+              <td><span class="badge">provisional — window closes 30 Nov</span></td>
+            </tr>
+            <tr>
+              <td class="quiet">Meta conversions <span class="badge">platform-reported</span></td>
+              <td class="num quiet">412</td><td class="num quiet">+9</td><td class="num absent">no history</td>
+              <td><span class="badge">never summed across platforms</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

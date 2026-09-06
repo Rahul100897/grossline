@@ -15,7 +15,7 @@ The business model is analyst-with-a-tool. Rahul is the only application user in
 - TypeScript everywhere. Node 22, pnpm workspaces.
 - Next.js (App Router) for the admin console. Tailwind + shadcn/ui.
 - Astro for the marketing site.
-- Postgres with Drizzle for schema and migrations. Raw SQL for metric queries.
+- Postgres with Drizzle for schema and migrations. Raw SQL for aggregate queries, TypeScript for line-level money math over jsonb payloads (reasoning in `docs/decisions.md`, accepted 2026-09-06).
 - BullMQ on Redis for jobs.
 - Zod at every boundary: API responses, form input, env vars.
 - Playwright for PDF rendering. Resend for email.

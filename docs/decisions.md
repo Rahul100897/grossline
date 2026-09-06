@@ -505,6 +505,21 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   show it. And COGS-on-net-units — metrics.md was silent; chose consistency
   with returns recognition over "cost of goods shipped".
 
+## 2026-09-06 — Phase 3 start: housekeeping
+
+- **Stack rule amended** (Rahul's acceptance of the flagged deviation):
+  CLAUDE.md now reads "Raw SQL for aggregate queries, TypeScript for
+  line-level money math over jsonb payloads".
+- **The referenced design mockup did not exist.** `docs/design/admin-mockup.html`
+  was in neither the repo nor Downloads, so it was AUTHORED from the spec's
+  own Design direction section (palette, tabular figures, table-first
+  density, colour-as-verdict) and committed as the visual target. Replace the
+  file if a different reference exists — the console matches whatever this
+  file shows.
+- **The "frontend-design" skill is not available** in this environment
+  (checked enabled and searchable skills); the spec's design rules are
+  applied directly instead.
+
 - **Direct pushes to `main`.** README says `main` is protected with PR-only
   merges. Branch protection is a GitHub setting that does not exist yet on a
   fresh repo, and the instruction for this bootstrap phase was one commit per
