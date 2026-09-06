@@ -32,6 +32,7 @@ export async function saveCostInputs(formData: FormData): Promise<void> {
   });
   const field = (name: string): string => String(formData.get(name) ?? '');
 
+  let failed = false;
   try {
     await upsertTenantCostInputs(base.tenantId, {
       effectiveFrom: base.effectiveFrom,
@@ -45,7 +46,14 @@ export async function saveCostInputs(formData: FormData): Promise<void> {
       monthlySpendTargetMinor: moneyToMinor(field('monthlySpendTarget'), base.currency),
     });
   } catch {
-    redirect(`/tenants/${base.tenantId}/costs?error=1`);
+    failed = true;
   }
-  redirect(`/tenants/${base.tenantId}/costs?saved=1`);
+  if (failed) {
+    redirect(
+      `/merchants/${base.tenantId}/costs?error=${encodeURIComponent(
+        'Could not save — decimals like 2.9 or 4.50; dates as YYYY-MM-DD.',
+      )}`,
+    );
+  }
+  redirect(`/merchants/${base.tenantId}/costs?saved=1`);
 }

@@ -30,6 +30,31 @@ export async function createTenant(input: CreateTenantInput): Promise<Tenant> {
   return row;
 }
 
+const updateTenantSchema = z
+  .object({
+    name: z.string().min(1),
+    plan: z.string().nullable(),
+    status: z.enum(['onboarding', 'active', 'paused', 'churned']),
+    monthlyFeeMinor: z.number().int().nullable(),
+    feeCurrency: z.string().length(3),
+    partnerRateUntil: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .nullable(),
+    notes: z.string().nullable(),
+  })
+  .partial();
+
+export type UpdateTenantInput = z.input<typeof updateTenantSchema>;
+
+export async function updateTenant(tenantId: string, patch: UpdateTenantInput): Promise<Tenant> {
+  const data = updateTenantSchema.parse(patch);
+  if (Object.keys(data).length === 0) throw new Error('updateTenant: empty patch');
+  const [row] = await adminDb().update(tenants).set(data).where(eq(tenants.id, tenantId)).returning();
+  if (!row) throw new Error(`updateTenant: no tenant ${tenantId}`);
+  return row;
+}
+
 export async function listTenants(): Promise<Tenant[]> {
   return adminDb().select().from(tenants).orderBy(asc(tenants.createdAt));
 }
