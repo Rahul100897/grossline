@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { minorUnitExponent } from '@grossline/core';
 import { getTenant, listTenantCostInputs, type TenantCostInputs } from '@grossline/db';
-import { requireSession } from '../../../../lib/auth';
+import { requireSession } from '../../../../../lib/auth';
 import { saveCostInputs } from './actions';
 
 export const dynamic = 'force-dynamic';
