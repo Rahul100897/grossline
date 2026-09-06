@@ -1,9 +1,11 @@
 // Plan, fee and partner-rate terms for one merchant. Invoices, payments and
 // billed-to-date arrive with task 3.6 — until then those figures stay absent.
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getTenant } from '@grossline/db';
+import { getTenant, tenantBillingTotals } from '@grossline/db';
 import { requireSession } from '../../../../../lib/auth';
 import { minorUnitExponent } from '@grossline/core';
+import { formatMinor } from '../../../../../lib/format';
 import { Absent, SectionHeader } from '../../../../../components/ui';
 import { Field, FormNotice, SelectField, SubmitButton } from '../../../../../components/forms';
 import { saveBilling } from './actions';
@@ -29,21 +31,35 @@ export default async function MerchantBillingPage({
   const tenant = await getTenant(id);
   if (!tenant) notFound();
 
+  const totals = await tenantBillingTotals(id);
+  const totalsCurrency = totals.currency ?? tenant.feeCurrency;
+
   return (
     <>
-      <div className="mb-4 flex flex-wrap gap-x-9 gap-y-3">
+      <div className="mb-4 flex flex-wrap items-baseline gap-x-9 gap-y-3">
         <div>
           <div className="text-[21px] font-semibold tracking-tight">
-            <Absent reason="no invoices yet" />
+            {totals.billedMinor > 0 ? (
+              formatMinor(totals.billedMinor, totalsCurrency)
+            ) : (
+              <Absent reason="no invoices yet" />
+            )}
           </div>
           <div className="text-[12px] text-slate">billed to date</div>
         </div>
         <div>
           <div className="text-[21px] font-semibold tracking-tight">
-            <Absent reason="no payments yet" />
+            {totals.collectedGrossMinor > 0 ? (
+              formatMinor(totals.collectedGrossMinor, totalsCurrency)
+            ) : (
+              <Absent reason="no payments yet" />
+            )}
           </div>
-          <div className="text-[12px] text-slate">collected to date</div>
+          <div className="text-[12px] text-slate">collected (gross)</div>
         </div>
+        <Link href="/billing/new" className="self-center text-[13px] text-ink underline">
+          new invoice
+        </Link>
       </div>
 
       <SectionHeader title="Terms" />
