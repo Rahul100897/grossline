@@ -571,3 +571,29 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   not yet emitted** — their sources (the 1.7 harness surfaced in 3.9, invoices
   in 3.6) land in later tasks and add cases to the same derivation, consistent
   with issues being derived from whatever state exists.
+
+## 2026-09-06 — Task 3.5: Metrics explorer
+
+- **Comparisons are batched, not per-metric.** Rather than call the 2.9
+  compareMetric engine ~40 times, the explorer reads three month snapshots
+  (this month, previous, a year ago) with listMetricValuesForPeriod and
+  diffs tenant-level rows in memory. Same MoM/YoY semantics (absent base →
+  "no base", never a Δ against zero/absent), three queries instead of eighty.
+- **Deltas render in the metric's own units**, not always as a percentage:
+  money as money, rates as percentage points, ratios as ratio deltas. A "+4.6%"
+  on a rate metric and a "+$2,230.00" on a money metric are both honest; a
+  blanket Δ% would not be.
+- **Cost provenance uses the same computeCostCoverage the CLI uses**, filtered
+  on order createdAt via monthWindow (as costs:coverage does) — so the upload
+  / shopify-dated / shopify-epoch-assumed split shown here matches the CLI.
+  This coverage is createdAt-based; the margin metrics' completeness meta is
+  processedAt-based (the reporting definition), so the two line counts can
+  differ slightly — the panel is labelled "coverage", the margin badges carry
+  the authoritative completeness.
+- **Every metric is drillable.** Tenant-level metrics drill to their daily
+  series; scoped metrics (ad_*, channel_*, platform_*) drill to the campaign/
+  platform breakdown. Platform-reported rows (referenceOnly/neverBlended meta)
+  are badged and carry a "not blended, not additive across platforms" note so
+  they are never summed with blended figures.
+- **Uncatalogued metrics still show** under an "Other" group, so a metric added
+  in a later phase is never silently hidden from the explorer.
