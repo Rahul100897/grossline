@@ -121,6 +121,7 @@ export {
   getFinding,
   listFindingPeriods,
   countUnreviewedFindings,
+  periodsWithUnreviewedFindings,
   approveFinding,
   unapproveFinding,
   dismissFinding,

@@ -243,11 +243,30 @@ export async function countUnreviewedFindings(tenantId: string, period: string):
           eq(findings.period, period),
           eq(findings.suppressed, false),
           isNull(findings.approvedAt),
-          sql`${findings.status} <> 'dismissed'`,
+          // resolved and dismissed findings are outcomes, not review work.
+          sql`${findings.status} in ('new', 'recurring')`,
         ),
       ),
   );
   return rows.length;
+}
+
+/** Periods with at least one unreviewed finding, newest first. */
+export async function periodsWithUnreviewedFindings(tenantId: string): Promise<string[]> {
+  const rows = await withTenant(tenantId, (tx) =>
+    tx
+      .selectDistinct({ period: findings.period })
+      .from(findings)
+      .where(
+        and(
+          eq(findings.suppressed, false),
+          isNull(findings.approvedAt),
+          sql`${findings.status} in ('new', 'recurring')`,
+        ),
+      )
+      .orderBy(desc(findings.period)),
+  );
+  return rows.map((r) => r.period);
 }
 
 // ---- review mutations (task 4.5) ----
