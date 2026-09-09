@@ -95,6 +95,20 @@ export type ReportModel = {
   freeReport: { periodLabel: string; priceText: string } | null;
 };
 
+/**
+ * PDF options for the report (task B2): per-page margins so page 2+ is also
+ * inset and the footer sits in the bottom margin, plus a centred "page X / Y"
+ * footer. Kept here (pure, no Playwright) so the worker and admin render paths
+ * pass the identical options. The report's own @media print rule zeroes body
+ * padding, deferring to these margins.
+ */
+export const REPORT_PDF_OPTIONS = {
+  margin: { top: '14mm', bottom: '16mm', left: '14mm', right: '14mm' },
+  footerHtml:
+    '<div style="font-size:8px;color:#5C6470;width:100%;text-align:center;padding:0 14mm;">' +
+    '<span class="pageNumber"></span> / <span class="totalPages"></span></div>',
+} as const;
+
 // ---- formatting helpers (mirrors invoice-html.ts) ----
 
 function escapeHtml(value: string): string {
