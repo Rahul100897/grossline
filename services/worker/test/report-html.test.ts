@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderReportHtml, type ReportModel } from '../src/reports/report-html';
+import { renderReportHtml, REPORT_PDF_OPTIONS, type ReportModel } from '../src/reports/report-html';
 
 // task 5.B1 — the pure template renders the seven fixed sections from a fully
 // resolved model. Both outputs (PDF and web preview) come from this one string,
@@ -116,5 +116,20 @@ describe('report template (task 5.B1)', () => {
     const html = renderReportHtml(model({ freeReport: { periodLabel: 'August 2026', priceText: 'USD 400 / month' } }));
     expect(html).toContain('complimentary');
     expect(html).toContain('USD 400 / month');
+  });
+
+  // task 5.B2 — print rules that stop orphaned table headers and split rows.
+  it('carries print rules that repeat table headers and keep rows/blocks whole', () => {
+    const html = renderReportHtml(model());
+    expect(html).toContain('@media print');
+    expect(html).toContain('thead { display: table-header-group; }');
+    expect(html).toContain('tr { break-inside: avoid; }');
+    expect(html).toContain('.block, .finding, .card { break-inside: avoid; }');
+  });
+
+  it('report PDF options set per-page margins and a page-number footer', () => {
+    expect(REPORT_PDF_OPTIONS.margin).toEqual({ top: '14mm', bottom: '16mm', left: '14mm', right: '14mm' });
+    expect(REPORT_PDF_OPTIONS.footerHtml).toContain('pageNumber');
+    expect(REPORT_PDF_OPTIONS.footerHtml).toContain('totalPages');
   });
 });

@@ -1038,6 +1038,28 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.B2: Report PDF rendering
+
+- **Report PDFs use per-page Playwright margins, not body padding.** Body padding
+  only insets the flow (page 1); the report's `@media print` rule zeroes body
+  padding and defers to `REPORT_PDF_OPTIONS.margin` (14mm sides, 16mm bottom) so
+  every page — 2 and beyond — is inset and the footer sits in the bottom margin.
+  `htmlToPdf` gained an optional options arg (margin + header/footer templates);
+  its default is unchanged, so invoice rendering is untouched.
+- **Page numbers** via Chromium's footer template (`.pageNumber / .totalPages`).
+- **Orphaned headers / split tables** are prevented in the template's print CSS:
+  `thead { display: table-header-group }` repeats the header on every page a
+  table spans; `tr { break-inside: avoid }` keeps a row whole; `.block/.finding/
+  .card { break-inside: avoid }` keep sections and cards whole where they fit.
+- **Fonts** are embedded by Chromium automatically (it subsets and embeds the
+  faces it renders into the PDF), so no base64 font is bundled into the HTML —
+  keeping the page small and dependency-free, consistent with the invoice PDF.
+- **Verified with pypdf (pdf skill):** a 70-row stress report renders to 4 pages
+  with the table header repeated on pages 2–4, contiguous non-split rows (01–31,
+  32–63, 64–70, all 70 present), a page-number footer, and content-identical text
+  on a second render. "Identical" is content, not bytes — Chromium stamps a PDF
+  CreationDate, so bytes differ only by that timestamp.
+
 ## 2026-09-10 — Task 5.A6: Recommendation tracking for growth
 
 - **A growth bet that was tried and did not hold is recorded as actioned, not
