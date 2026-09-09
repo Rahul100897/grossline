@@ -1038,6 +1038,25 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.B3: Report build pipeline + snapshot
+
+- **`reports` table**: one row per (tenant, period), status draft|approved|sent,
+  built_at, sent_at, recipients (jsonb), pdf_path, and a `snapshot` jsonb holding
+  the fully-resolved ReportModel exactly as rendered. RLS tenant-isolation like
+  every tenant table.
+- **The snapshot is the immutability mechanism.** `buildAndSaveReport` stores the
+  model; `renderStoredReport` renders from it. A past report never re-queries the
+  metric layer, so a definition change or cost re-upload cannot alter it —
+  golden-tested (mutate `net_sales` live, the stored render is byte-for-byte the
+  same, while a fresh build reflects the new number).
+- **A sent report is frozen.** `upsertReportSnapshot` rebuilds a draft/approved
+  snapshot but never overwrites a `sent` row.
+- **The db package stays decoupled from the template** — the snapshot is stored
+  opaquely (`unknown`); the worker owns the ReportModel shape.
+- **PDF is re-rendered from the snapshot on demand** (deterministic); `pdf_path`
+  is reserved for a future archived artifact. Build is `pnpm reports:build`
+  (and, later, the nightly job / console).
+
 ## 2026-09-10 — Task 5.B2: Report PDF rendering
 
 - **Report PDFs use per-page Playwright margins, not body padding.** Body padding

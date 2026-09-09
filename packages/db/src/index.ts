@@ -132,6 +132,15 @@ export {
   type FindingFilter,
 } from './findings';
 export {
+  upsertReportSnapshot,
+  getReport,
+  getReportById,
+  listReports,
+  markReportApproved,
+  markReportSent,
+  type Report,
+} from './reports';
+export {
   getCalibration,
   saveComputedCalibration,
   saveEditedCalibration,
