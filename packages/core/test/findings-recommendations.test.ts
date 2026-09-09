@@ -36,4 +36,45 @@ describe('recommendation tracking', () => {
     const j = classifyRecommendation({ checkMetric: 'blended_cac', baseline: 6000, measured: 6050, resolvedNextPeriod: false, computedNextPeriod: true });
     expect(j.status).toBe('unchanged');
   });
+
+  // task 5.A6 — a growth recommendation that was tried and did not hold is a
+  // genuine outcome, not hidden: worsened but ACTIONED.
+  it('records a growth bet that did not hold as actioned (MER 3.2 → 2.6)', () => {
+    const j = classifyRecommendation({
+      checkMetric: 'mer',
+      baseline: 3.2,
+      measured: 2.6,
+      resolvedNextPeriod: false,
+      computedNextPeriod: true,
+      family: 'growth',
+    });
+    expect(j.status).toBe('worsened');
+    expect(j.actioned).toBe(true); // waste would be false; growth means they tried it
+  });
+
+  it('marks a growth bet that held as improving (platform ROAS 5.0 → 6.0)', () => {
+    const j = classifyRecommendation({
+      checkMetric: 'platform_roas',
+      baseline: 5.0,
+      measured: 6.0,
+      resolvedNextPeriod: false,
+      computedNextPeriod: true,
+      family: 'growth',
+    });
+    expect(j.status).toBe('improving');
+    expect(j.actioned).toBe(true);
+  });
+
+  it('treats platform_roas as higher-is-better (a fall is worsened)', () => {
+    const j = classifyRecommendation({
+      checkMetric: 'platform_roas',
+      baseline: 6.0,
+      measured: 4.0,
+      resolvedNextPeriod: false,
+      computedNextPeriod: true,
+      family: 'waste',
+    });
+    expect(j.status).toBe('worsened');
+    expect(j.actioned).toBe(false); // waste family: not a "we tried it" outcome
+  });
 });
