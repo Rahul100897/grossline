@@ -38,6 +38,7 @@ const ISSUE_TYPES = [
   'reconciliation',
   'onboarding',
   'billing',
+  'findings',
 ];
 
 export default async function IssuesPage({

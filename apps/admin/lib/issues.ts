@@ -6,11 +6,13 @@ import { PROVIDER_STREAMS, type Provider } from '@grossline/core';
 import {
   getBackfillProgress,
   getSettings,
+  countUnreviewedFindings,
   latestCostCompleteness,
   latestSyncRun,
   listConnections,
   listResolvedIssues,
   listTenants,
+  periodsWithUnreviewedFindings,
   reconcileIssueLog,
   type Connection,
   type ResolvedIssue,
@@ -26,7 +28,8 @@ export type IssueType =
   | 'backfill'
   | 'reconciliation'
   | 'onboarding'
-  | 'billing';
+  | 'billing'
+  | 'findings';
 
 export type Issue = {
   id: string;
@@ -182,6 +185,25 @@ export async function deriveIssues(
         action: 'upload a costs CSV or import from Shopify',
         since: tenant.createdAt,
         weight: 45,
+      });
+    }
+
+    // Findings awaiting review (task 4.8). A month with generated findings and
+    // no review is blocking — it stops that month's report going out. Derived,
+    // so it clears the moment every finding is approved or dismissed.
+    for (const period of await periodsWithUnreviewedFindings(tenant.id)) {
+      const count = await countUnreviewedFindings(tenant.id, period);
+      if (count === 0) continue;
+      issues.push({
+        id: `findings-${tenant.id}-${period}`,
+        severity: 'blocking',
+        type: 'findings',
+        tenantId: tenant.id,
+        tenant: tenant.name,
+        summary: `${count} finding${count === 1 ? '' : 's'} awaiting review for ${period.slice(0, 7)}`,
+        action: 'review and approve on the Findings page',
+        since: new Date(`${period}T00:00:00Z`),
+        weight: 70,
       });
     }
   }

@@ -862,3 +862,20 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - Verified live: the demo's recommendation history spans four months — the May
   claim-gap resolved (measured), May payback improving (CAC $64.73 → $54.44),
   June/July payback worsened as CAC crept back, August pending.
+
+## 2026-09-10 — Task 4.8: Findings as issues
+
+- **Added a `findings` IssueType.** The spec says "using the types already
+  declared in Phase 3", but none of the Phase 3 types fit an unreviewed-findings
+  condition, so I extended the enum (simplest option satisfying the intent). The
+  issue is derived in the same engine as every other issue — it appears when a
+  month has unreviewed findings and clears the instant they are all approved or
+  dismissed, with no stored state.
+- **A month with unreviewed findings is blocking** (weight 70) — it stops that
+  month's report going out. Unreviewed = new/recurring, not approved, not
+  suppressed; resolved and dismissed findings are outcomes and never count
+  (fixed countUnreviewedFindings accordingly).
+- Verified live: unapproving a demo August finding raised a blocking "1 finding
+  awaiting review for 2026-08" issue; re-approving cleared it (it moved to the
+  90-day resolved history). The cost-data issue also resolved once real COGS
+  were imported — the derived engine reflecting current state.
