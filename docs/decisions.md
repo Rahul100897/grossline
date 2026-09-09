@@ -879,3 +879,34 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   awaiting review for 2026-08" issue; re-approving cleared it (it moved to the
   90-day resolved history). The cost-data issue also resolved once real COGS
   were imported — the derived engine reflecting current state.
+
+## 2026-09-10 — Phase 5 start: housekeeping
+
+- **`docs/phase-5.md` placed from the provided spec.** It supersedes
+  `docs/phase-4-5.md`, which was never committed to the repo (it lived only in
+  Downloads) — so "delete that file" was a no-op in the repo; nothing removed.
+- **No `docs/design/marketing-mockup.html` existed** (only `admin-mockup.html`).
+  Following the Phase 3 precedent for the admin mockup, one will be AUTHORED from
+  Part C's own design direction and committed as the visual target (task C1),
+  not copied from an external file.
+
+## 2026-09-10 — Task 5.A1: Findings family + opportunity value
+
+- **`family` (waste|growth|measurement) and `opportunity_value_minor` added to
+  `findings`.** A finding carries a `money_impact_minor` (waste/measurement) OR
+  an `opportunity_value_minor` (growth), never both. Enforced at two layers: a
+  Postgres CHECK (`findings_value_exclusive`: opportunity is null OR money impact
+  is 0) proven by a DB-level worker test, and a pure `valueIsExclusive` guard in
+  core proven by a unit test. `money_impact_minor` stays NOT NULL (0 for growth
+  and measurement), so the ranking sort key and every existing read are unchanged.
+- **Existing rows backfill to `waste`** via the column default; the migration's
+  one UPDATE sets `claim_gap` rows to `measurement` (its money impact was already
+  0, and its exempt-from-suppression behaviour already implied measurement).
+- **`FindingDraft`/`PriorFinding`/`ResolvedFinding` gained `family` (and drafts
+  gained `opportunityValueMinor`).** The rule `finding()` factory defaults family
+  to `waste` and opportunity to null; only `claim_gap` passes `measurement`. No
+  growth rule fires yet (A3/A4), so behaviour is inert this task — pure plumbing.
+- **Fixed a stray NUL byte in `state-machine.ts`** (same class as the costs.ts
+  fix on 2026-09-10): `keyOf`'s map-key separator was a raw U+0000, which made
+  git treat the whole file as binary. Replaced with the `\0` escape — identical
+  runtime value (the key string is unchanged), clean UTF-8, readable diffs.

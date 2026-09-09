@@ -6,6 +6,14 @@ export type FindingEntity = 'account' | 'campaign' | 'product' | 'discount' | 'c
 
 export type FindingSeverity = 'info' | 'attention' | 'critical';
 
+/**
+ * A finding's family (task 5.A1). Waste is provable money being lost; growth is
+ * a hypothetical gain (a bounded test, never an instruction); measurement is a
+ * data-trust risk with no spend action (claim gap). A finding carries a
+ * money_impact (waste/measurement) OR an opportunity_value (growth), never both.
+ */
+export type FindingFamily = 'waste' | 'growth' | 'measurement';
+
 export type FindingStatus = 'new' | 'recurring' | 'resolved' | 'dismissed';
 
 /** Evidence is the raw numbers behind a finding — for the UI and PR reviewer. */
@@ -23,8 +31,14 @@ export type FindingDraft = {
   /** Stable key used to match this finding across periods. */
   entityKey: string;
   entityLabel: string;
-  /** The sort key. Integer minor units of `currency`. */
+  family: FindingFamily;
+  /** The sort key for waste/measurement. Integer minor units of `currency`. */
   moneyImpactMinor: number;
+  /**
+   * The sort key for growth findings — a hypothetical gain, integer minor units.
+   * Mutually exclusive with a non-zero moneyImpactMinor (see valueIsExclusive).
+   */
+  opportunityValueMinor: number | null;
   currency: string | null;
   evidence: Evidence;
   /** The metric that will prove the recommendation right or wrong (task 4.7). */
@@ -52,7 +66,9 @@ export type PriorFinding = {
   firstSeenPeriod: string;
   occurrenceCount: number;
   status: FindingStatus;
+  family: FindingFamily;
   moneyImpactMinor: number;
+  opportunityValueMinor: number | null;
   currency: string | null;
   entity: FindingEntity;
   entityLabel: string;
@@ -83,6 +99,7 @@ export type ResolvedFinding = {
   entity: FindingEntity;
   entityKey: string;
   entityLabel: string;
+  family: FindingFamily;
   period: string; // the period in which it resolved
   firstSeenPeriod: string;
   occurrenceCount: number;
@@ -91,6 +108,19 @@ export type ResolvedFinding = {
   checkMetric: string | null;
   checkBaseline: number | null;
 };
+
+/**
+ * A finding may carry a money_impact OR an opportunity_value, never both
+ * (task 5.A1). True when the pair is exclusive: an opportunity_value only ever
+ * sits alongside a zero money_impact. The database enforces the same rule with a
+ * check constraint; this is the pure guard the rules and tests use.
+ */
+export function valueIsExclusive(f: {
+  moneyImpactMinor: number;
+  opportunityValueMinor: number | null;
+}): boolean {
+  return f.opportunityValueMinor === null || f.moneyImpactMinor === 0;
+}
 
 export type ReconcileInput = {
   period: string; // YYYY-MM-01, the period being computed
