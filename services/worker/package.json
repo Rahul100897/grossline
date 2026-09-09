@@ -6,6 +6,8 @@
   "exports": {
     "./shopify-connect": "./src/connectors/shopify/connect.ts",
     "./invoice-html": "./src/billing/invoice-html.ts",
+    "./report-html": "./src/reports/report-html.ts",
+    "./report-model": "./src/reports/build-model.ts",
     "./pdf": "./src/pdf/render.ts",
     "./reconcile": "./src/reconcile.ts",
     "./findings-calibrate": "./src/findings/calibrate.ts",

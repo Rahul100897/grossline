@@ -1010,6 +1010,34 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   is a prohibited action; the card rendering is covered by the family-badge logic
   and the correct persisted family/opportunity values.
 
+## 2026-09-10 — Task 5.B1: Report template + model
+
+- **One template, two outputs.** `renderReportHtml(ReportModel)` is a pure
+  function to a self-contained HTML string (in `services/worker/src/reports`,
+  exported via the worker `exports` map like the invoice template). The PDF (via
+  the shared `htmlToPdf`) and the web preview both consume that one string, so
+  identical content is structural, not maintained twice.
+- **The model IS the snapshot.** Everything the report states is a value in
+  `ReportModel` — no live query at render time — which is what lets task B3 store
+  it and re-render a past report identically after a definition or cost change.
+- **Fixed seven-section order**, every report: Headline · Blended efficiency ·
+  Margin (waterfall, cost completeness stated) · Channel & claim gap (labelled
+  measurement, not correction) · What changed (MoM/YoY, absent where no history) ·
+  Findings (approved set, family-distinct) · What we check next month (this
+  month's checks + last month's outcomes).
+- **Honesty markers travel with the report** (currency, timezone, last synced,
+  last reconciled, provisional flag, cost completeness/provenance) in a bar under
+  the header — not just the console. `lastReconciledAt` is wired in task B4 (the
+  reconciliation-run record); it is null until then.
+- **The build reads the approved set by default** (`approved_at` set), with an
+  `includeUnapproved` preview override. Growth findings render with a green
+  accent and "+opportunity"; measurement as a note; a measurement-only period
+  shows the "nothing needs changing" banner.
+- Verified: the demo's August report renders to both HTML and PDF from the same
+  string — headline "August 2026 worked — USD 7,810.07 of contribution after ad
+  spend, up on last month", with payback (waste) + spend headroom (growth) +
+  claim gap (measurement).
+
 ## 2026-09-10 — Task 5.A6: Recommendation tracking for growth
 
 - **A growth bet that was tried and did not hold is recorded as actioned, not
