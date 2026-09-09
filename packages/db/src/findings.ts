@@ -249,3 +249,78 @@ export async function countUnreviewedFindings(tenantId: string, period: string):
   );
   return rows.length;
 }
+
+// ---- review mutations (task 4.5) ----
+
+/** Approve a finding for sending (Phase 5 delivers the approved set). */
+export async function approveFinding(tenantId: string, id: string): Promise<void> {
+  await withTenant(tenantId, (tx) =>
+    tx.update(findings).set({ approvedAt: new Date() }).where(eq(findings.id, id)),
+  );
+}
+
+export async function unapproveFinding(tenantId: string, id: string): Promise<void> {
+  await withTenant(tenantId, (tx) =>
+    tx.update(findings).set({ approvedAt: null }).where(eq(findings.id, id)),
+  );
+}
+
+/**
+ * Dismiss a finding (manual, sticky). Captures the current money impact so the
+ * state machine can resurface it only when the numbers move materially. Marking
+ * it "deliberate" is a dismissal with that reason.
+ */
+export async function dismissFinding(
+  tenantId: string,
+  id: string,
+  reason: string,
+): Promise<void> {
+  await withTenant(tenantId, async (tx) => {
+    const [row] = await tx.select().from(findings).where(eq(findings.id, id)).limit(1);
+    if (!row) return;
+    await tx
+      .update(findings)
+      .set({
+        status: 'dismissed',
+        dismissedReason: reason,
+        dismissedImpactMinor: row.moneyImpactMinor,
+        approvedAt: null,
+      })
+      .where(eq(findings.id, id));
+  });
+}
+
+/** Reopen a dismissed finding back to its lifecycle status (new). */
+export async function reopenFinding(tenantId: string, id: string): Promise<void> {
+  await withTenant(tenantId, (tx) =>
+    tx
+      .update(findings)
+      .set({ status: 'new', dismissedReason: null, dismissedImpactMinor: null })
+      .where(eq(findings.id, id)),
+  );
+}
+
+/** Save the analyst-edited final text and stamp edited_at. */
+export async function saveFindingText(
+  tenantId: string,
+  id: string,
+  finalText: string,
+): Promise<void> {
+  await withTenant(tenantId, (tx) =>
+    tx
+      .update(findings)
+      .set({ finalText: finalText.trim() === '' ? null : finalText, editedAt: new Date() })
+      .where(eq(findings.id, id)),
+  );
+}
+
+/** Save a model draft (task 4.6). Never overwrites an analyst's final edit. */
+export async function saveFindingDraft(
+  tenantId: string,
+  id: string,
+  draftText: string,
+): Promise<void> {
+  await withTenant(tenantId, (tx) =>
+    tx.update(findings).set({ draftText }).where(eq(findings.id, id)),
+  );
+}

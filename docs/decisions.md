@@ -803,3 +803,21 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   (payback new→recurring×3; claim_gap new→resolved→new→recurring), ranked with
   payback above claim_gap; the dev store (no data) reports "nothing needs
   changing" with every rule skipping for a stated reason.
+
+## 2026-09-10 — Task 4.5: Findings review console
+
+- **/findings is the editorial gate.** A tenant+period queue grouped into Needs
+  review / Approved / Resolved this month / Below the line (suppressed) /
+  Dismissed, ranked by money impact, each finding showing its structured record
+  and evidence, an editable final-text box, and Approve / Dismiss / Mark
+  deliberate / Reopen actions. Nothing is "sent" without an approvedAt stamp.
+- **State reads clearly**: a recurring finding shows "recurring · month N", a
+  measurement-risk finding is badged and shows "no money at stake". When only
+  suppressed/measurement-risk items remain the page says "nothing needs changing
+  this month"; when every finding is reviewed it says the approved set is ready.
+- **Dismiss captures the money impact** (via the db helper) so the state machine
+  can keep it suppressed until the numbers move materially; "mark deliberate" is
+  a dismissal with that reason. Reopen clears it.
+- Verified live on the demo's August: wrote the payback finding's four-part
+  note, approved both findings, ended with "the approved set is ready to send";
+  dismiss+reopen round-tripped.
