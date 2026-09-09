@@ -73,6 +73,11 @@ export {
   spendPacing,
   spendHeadroom,
   HEADROOM_SAFETY_MARGIN,
+  scaleSignal,
+  SCALE_OUTPERFORM_MULTIPLE,
+  SCALE_SMALL_SHARE,
+  SCALE_SHIFT_FRACTION,
+  SCALE_MIN_CAMPAIGNS,
 } from './findings/rules';
 export type {
   Rule,

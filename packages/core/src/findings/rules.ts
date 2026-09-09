@@ -9,6 +9,7 @@ import type { Rule } from './rule-types';
 
 const skip = (reason: string): RuleOutcome[] => [{ status: 'skipped', reason }];
 const ok = (): RuleOutcome[] => [{ status: 'ok' }];
+const round4 = (v: number): number => Math.round(v * 10_000) / 10_000;
 
 function severityForImpact(impactMinor: number, minImpactMinor: number): FindingSeverity {
   if (impactMinor >= minImpactMinor * 10) return 'critical';
@@ -461,6 +462,82 @@ export const spendHeadroom: Rule = {
   },
 };
 
+// ---- 11. Scale signal (growth) ----------------------------------------------
+// A campaign whose platform-reported ROAS is materially above the account
+// average while holding a small share of platform spend has room to take more
+// budget. The opportunity is deliberately CONSERVATIVE — not this campaign's
+// ROAS applied to more budget (the exact mistake that loses a client money) but
+// the revenue *difference* between the campaign's efficiency and the account
+// average, applied to a bounded share shift. ROAS stays labelled
+// platform-reported and is never presented as blended.
+export const SCALE_OUTPERFORM_MULTIPLE = 1.5; // ROAS ≥ average × 1.5
+export const SCALE_SMALL_SHARE = 0.25; // holds ≤ 25% of platform spend
+export const SCALE_SHIFT_FRACTION = 0.25; // bounded share shift = 25% of its spend
+export const SCALE_MIN_CAMPAIGNS = 3;
+
+export const scaleSignal: Rule = {
+  id: 'scale_signal',
+  title: 'Scale signal',
+  run(input) {
+    const withRoas = input.campaigns.filter((c) => c.roas !== null && c.spendMinor > 0);
+    if (withRoas.length === 0) return skip('no campaign-level platform ROAS available');
+    if (withRoas.length < SCALE_MIN_CAMPAIGNS) {
+      return skip('too few campaigns to identify an outperformer');
+    }
+    const totalSpend = withRoas.reduce((s, c) => s + c.spendMinor, 0);
+    if (totalSpend === 0) return skip('no campaign spend to compare against');
+    // Spend-weighted account-average ROAS = total conversion value ÷ total spend.
+    const avgRoas = withRoas.reduce((s, c) => s + (c.roas as number) * c.spendMinor, 0) / totalSpend;
+    if (avgRoas <= 0) return ok();
+
+    // Materially above average AND holding a small share of spend.
+    const candidates = withRoas.filter(
+      (c) =>
+        (c.roas as number) >= avgRoas * SCALE_OUTPERFORM_MULTIPLE &&
+        c.spendMinor / totalSpend <= SCALE_SMALL_SHARE,
+    );
+    if (candidates.length === 0) return ok();
+
+    // The single best outperformer by (conservative) opportunity value.
+    let best: { c: (typeof candidates)[number]; shareShift: number; opp: number } | null = null;
+    for (const c of candidates) {
+      const shareShift = Math.round(c.spendMinor * SCALE_SHIFT_FRACTION);
+      const opp = Math.round(shareShift * ((c.roas as number) - avgRoas));
+      if (best === null || opp > best.opp) best = { c, shareShift, opp };
+    }
+    if (best === null || best.opp < input.thresholds.minImpactMinor) return ok();
+
+    const { c, shareShift, opp } = best;
+    return [
+      finding({
+        ruleId: this.id,
+        severity: 'info', // a growth hypothesis, not an alarm; family ranks it
+        family: 'growth',
+        metric: 'platform_roas',
+        currentValue: c.roas,
+        comparisonValue: round4(avgRoas),
+        entity: 'campaign',
+        entityKey: c.key,
+        entityLabel: c.label,
+        moneyImpactMinor: 0,
+        opportunityValueMinor: opp,
+        currency: input.currency,
+        evidence: {
+          roas: c.roas,
+          accountAvgRoas: round4(avgRoas),
+          spendShare: round4(c.spendMinor / totalSpend),
+          campaignSpendMinor: c.spendMinor,
+          shareShiftMinor: shareShift,
+          platform: c.platform,
+          platformReported: true,
+        },
+        checkMetric: 'platform_roas',
+        checkBaseline: c.roas,
+      }),
+    ];
+  },
+};
+
 export const RULES: Rule[] = [
   belowBreakEvenMer,
   deadCampaign,
@@ -472,6 +549,7 @@ export const RULES: Rule[] = [
   claimGap,
   spendPacing,
   spendHeadroom,
+  scaleSignal,
 ];
 
 /** Rules whose findings are exempt from the money-impact suppression floor. */

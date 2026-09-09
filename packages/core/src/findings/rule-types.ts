@@ -32,6 +32,12 @@ export type CampaignFact = {
   attributedOrders: number | null;
   /** Whether this is a branded-search campaign. null = not identifiable. */
   isBranded: boolean | null;
+  /**
+   * Platform-reported ROAS (conversion value ÷ spend) — the only campaign-level
+   * efficiency figure available. null = not computed. Never presented as blended
+   * (the scale-signal rule keeps it labelled platform-reported).
+   */
+  roas: number | null;
 };
 
 export type SearchTermFact = {
