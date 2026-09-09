@@ -10,6 +10,7 @@ import {
   paybackBroken,
   claimGap,
   spendPacing,
+  spendHeadroom,
   type FindingsInput,
   type FindingThresholds,
   type RuleOutcome,
@@ -275,10 +276,64 @@ describe('no rule fires on incomplete data', () => {
   });
 });
 
+describe('rule: spend headroom (growth)', () => {
+  it('fires with spend × (MER ÷ break-even − 1) when comfortably above break-even', () => {
+    // mer 3.0 ≥ break-even 2.0 × 1.2 = 2.4; spend 1,000,000 →
+    // 1,000,000 × (3.0/2.0 − 1) = 1,000,000 × 0.5 = 500,000 opportunity.
+    // Not pacing over: projected 540,000 ≤ target 500,000 × 1.1 = 550,000.
+    const out = spendHeadroom.run(base({ account: { ...base().account, merValue: 3.0 } }));
+    const f = fired(out);
+    expect(f).toHaveLength(1);
+    expect(f[0]).toMatchObject({
+      ruleId: 'spend_headroom',
+      family: 'growth',
+      moneyImpactMinor: 0,
+      opportunityValueMinor: 500_000,
+      currentValue: 3.0,
+      comparisonValue: 2.0,
+      checkMetric: 'mer',
+      checkBaseline: 3.0,
+    });
+  });
+
+  it('does not fire at (or near) break-even — evaluated, no opportunity', () => {
+    // mer 2.1 is above break-even 2.0 but below the 2.4 safety margin → ok().
+    const out = spendHeadroom.run(base({ account: { ...base().account, merValue: 2.1 } }));
+    expect(out).toEqual([{ status: 'ok' }]);
+  });
+
+  it('does not fire when spend is already pacing over target', () => {
+    // Comfortably above break-even (mer 3.0) but projected 600,000 > 550,000
+    // ceiling → the pacing rule owns this; headroom stays quiet.
+    const out = spendHeadroom.run(
+      base({
+        account: { ...base().account, merValue: 3.0, spendProjectedMonthEndMinor: 600_000 },
+      }),
+    );
+    expect(out).toEqual([{ status: 'ok' }]);
+  });
+
+  it('skips when cost data is incomplete', () => {
+    const out = spendHeadroom.run(
+      base({
+        availability: { ...base().availability, hasMargin: false },
+        thresholds: { ...thresholds, breakEvenMer: null },
+      }),
+    );
+    expect(out).toHaveLength(1);
+    expect(out[0]!.status).toBe('skipped');
+  });
+});
+
 describe('nothing needs changing', () => {
-  it('a healthy account fires no rule', () => {
+  it('a healthy account fires no waste finding — only the growth headroom opportunity', () => {
+    // A robustly healthy account (mer 3.0) surfaces nothing wrong; the only rule
+    // that fires is the growth headroom opportunity, which ranking then
+    // suppresses when no waste finding accompanies it (findings-ranking.test.ts).
     const healthy = base({ account: { ...base().account, merValue: 3.0 } });
-    const anyFired = RULES.flatMap((r) => r.run(healthy)).some((o) => o.status === 'fired');
-    expect(anyFired).toBe(false);
+    const firedRuleIds = RULES.flatMap((r) =>
+      r.run(healthy).flatMap((o) => (o.status === 'fired' ? [r.id] : [])),
+    );
+    expect(firedRuleIds).toEqual(['spend_headroom']);
   });
 });
