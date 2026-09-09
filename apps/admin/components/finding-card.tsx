@@ -4,7 +4,7 @@
 // computes a figure.
 import type { Finding } from '@grossline/db';
 import { impactText, ruleTitle, statusLabel, statusTone, templateText } from '../lib/findings';
-import { formatDate } from '../lib/format';
+import { formatDate, formatMinor } from '../lib/format';
 import { Badge } from './ui';
 import { approve, dismiss, reopen, saveText, unapprove } from '../app/(console)/findings/actions';
 
@@ -38,6 +38,8 @@ export function FindingCard({
   period: string;
 }) {
   const impact = impactText(finding);
+  const isGrowth = finding.family === 'growth';
+  const isMeasurement = finding.family === 'measurement';
   const approved = finding.approvedAt !== null;
   const dismissed = finding.status === 'dismissed';
   // final edit wins; else the model draft; else the deterministic template.
@@ -52,15 +54,32 @@ export function FindingCard({
   );
 
   return (
-    <div className="rounded border border-hairline bg-panel p-3">
+    <div
+      className={`rounded border bg-panel p-3 ${
+        isGrowth ? 'border-hairline border-l-2 border-l-good' : 'border-hairline'
+      }`}
+    >
       <div className="flex flex-wrap items-baseline gap-2">
         <span className="text-[13px] font-semibold">{ruleTitle(finding.ruleId)}</span>
         <span className="text-[12px] text-slate">{finding.entityLabel}</span>
         <Badge tone={statusTone(finding)}>{statusLabel(finding)}</Badge>
-        {finding.severity === 'info' ? <Badge>measurement risk</Badge> : null}
+        {/* Family, not severity: a growth finding must never read like a waste
+            finding at a glance (task 5.A5). */}
+        {isGrowth ? <Badge tone="good">growth opportunity</Badge> : null}
+        {isMeasurement ? <Badge>measurement risk</Badge> : null}
         {approved ? <Badge tone="good">approved</Badge> : null}
-        <span className="ml-auto text-[13px] font-semibold tabular-nums">
-          {impact ?? <span className="text-[12px] font-normal italic text-slate">no money at stake</span>}
+        <span
+          className={`ml-auto text-[13px] font-semibold tabular-nums ${isGrowth ? 'text-good' : ''}`}
+        >
+          {isGrowth ? (
+            finding.opportunityValueMinor !== null ? (
+              `+${formatMinor(finding.opportunityValueMinor, finding.currency ?? 'USD')} opportunity`
+            ) : (
+              <span className="text-[12px] font-normal italic text-slate">opportunity</span>
+            )
+          ) : (
+            impact ?? <span className="text-[12px] font-normal italic text-slate">no money at stake</span>
+          )}
         </span>
       </div>
 

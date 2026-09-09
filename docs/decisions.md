@@ -974,3 +974,38 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   outperformer is evaluated → ok).
 - On the demo today the ad campaigns carry no per-campaign platform data, so this
   rule skips honestly — same as the other entity-level rules.
+  **Correction observed at A5:** the demo *does* carry campaign-level
+  `platform_roas` (the seed generates campaign ad rows with conversion value), so
+  `scale_signal` actually fires on the demo. It is the per-campaign *order
+  attribution* the dead-campaign/branded/search-term rules need that the demo
+  lacks — those still skip. So the demo's mixed report is payback (waste) +
+  spend_headroom (growth, surfaced) + scale_signal (growth, suppressed by the
+  one-growth cap) + claim_gap (measurement).
+
+## 2026-09-10 — Task 5.A5: Review console + growth commentary
+
+- **The review card badges by family, not severity.** Growth findings are
+  severity `info` like claim gap, so the old `severity === 'info' → "measurement
+  risk"` badge would have mislabelled them (and mislabelled resolved rows too).
+  The card now reads family: a green left accent + a "growth opportunity" badge +
+  the value shown as "+$X opportunity" in the positive tone; measurement shows
+  "measurement risk"; waste is the default look. A growth finding never reads like
+  a waste finding at a glance.
+- **Commentary gains two growth variants** (`spend_headroom`, `scale_signal`) in
+  the same deterministic four-part structure, speaking of an opportunity rather
+  than a loss and carrying the mandatory framing ("efficiency falls as spend
+  rises"; "platform-reported, not blended"; "an estimate that holds only if
+  efficiency holds").
+- **Figure guard unchanged.** `CommentaryFinding` gained optional `family` and
+  `opportunityValueMinor`; the guard's allowed-figure set now includes the
+  opportunity value (a number that IS in the record), so growth prose can cite it
+  — the guard still rejects any figure not derivable from the record, proven by a
+  growth-specific rejection test.
+- **Verified on the demo (data, not a browser login):** recomputing 2026-05…08
+  yields, each month, a surfaced `spend_headroom` growth opportunity with a
+  sendable template note (e.g. Aug: "roughly USD 4,508.01 of additional monthly
+  spend that would still clear break-even … treat this as a ceiling, not a
+  target"), alongside the payback waste finding. A live browser screenshot was
+  not taken because admin login requires entering a password into a form, which
+  is a prohibited action; the card rendering is covered by the family-badge logic
+  and the correct persisted family/opportunity values.
