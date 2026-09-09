@@ -50,6 +50,10 @@ export const findingStatus = pgEnum('finding_status', [
 // money_impact (waste/measurement) OR an opportunity_value (growth), never both.
 export const findingFamily = pgEnum('finding_family', ['waste', 'growth', 'measurement']);
 export const syncStatus = pgEnum('sync_status', ['running', 'success', 'failed']);
+// Monthly report lifecycle (task 5.B3): draft (built, editable) → approved
+// (reviewed, ready to send) → sent (frozen, delivered). A sent report's snapshot
+// is never rebuilt.
+export const reportStatus = pgEnum('report_status', ['draft', 'approved', 'sent']);
 
 export const tenants = pgTable('tenants', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -643,6 +647,35 @@ export const findings = pgTable(
       sql`${t.opportunityValueMinor} is null or ${t.moneyImpactMinor} = 0`,
     ),
   ],
+);
+
+// Monthly reports (task 5.B3). One row per (tenant, period). The `snapshot`
+// stores the fully-resolved ReportModel exactly as rendered — a report sent in
+// September still shows September's numbers in December, even after a definition
+// change or a cost re-upload, because the report renders from this snapshot and
+// never a live query. A sent report's snapshot is frozen.
+export const reports = pgTable(
+  'reports',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    /** Reporting month, first day (YYYY-MM-01). */
+    period: date('period', { mode: 'string' }).notNull(),
+    status: reportStatus('status').notNull().default('draft'),
+    builtAt: timestamp('built_at', { withTimezone: true }).notNull().defaultNow(),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+    /** Recipients the report was sent to (emails), captured at send time. */
+    recipients: jsonb('recipients').notNull().default([]),
+    /** Optional path to a rendered PDF artifact, when archived to disk. */
+    pdfPath: text('pdf_path'),
+    /** The ReportModel as rendered — the immutable record of what was sent. */
+    snapshot: jsonb('snapshot').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('reports_tenant_period_uniq').on(t.tenantId, t.period)],
 );
 
 export const auditLog = pgTable('audit_log', {
