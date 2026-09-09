@@ -773,3 +773,33 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   attribution, so dead-campaign / branded-search / search-term / refund-outlier
   return `skipped`; the account-level rules evaluate. This is the intended
   behaviour, not a gap.
+
+## 2026-09-10 — Task 4.4: Ranking and suppression
+
+- **Ranking is pure (`packages/core/src/findings/ranking.ts`)**: sort by money
+  impact desc, suppress anything below the tenant's minImpact floor, cap the
+  actionable output at three. Suppressed findings are flagged, never discarded —
+  the pipeline persists them with `suppressed=true` so they stay queryable.
+- **Claim-gap findings are exempt from the floor and the cap** and never consume
+  a cap slot (measurement risk, zero money impact). `nothingNeedsChanging` is
+  true when only suppressed or measurement-risk findings remain — a reachable,
+  tested output.
+- **The worker pipeline** (build-input → run rules → rank → reconcile → persist)
+  loads FindingsInput from the metric layer only. Per-campaign order
+  attribution, search-term reports and per-product refunds are not in the metric
+  layer yet, so those availability flags are false and the entity-level rules
+  skip — honestly, not silently.
+- **Demo COGS made real.** The demo products always carried unit costs in their
+  raw Shopify payloads but `product_costs` was never populated, so margins were
+  inflated (the Phase 3 cost-data issue). Ran `costs:import-shopify` +
+  `metrics:compute` to populate real ~70% margins, then recalibrated. This is
+  correct data, not gaming: the demo now produces a genuine recurring
+  `payback_broken` finding (blended MER is healthy at ~2.5 but first-order
+  acquisition is underwater — CAC > first-order contribution) alongside the
+  `claim_gap` measurement risk. Demo findings setup sequence (documented for the
+  handover): seed:demo → costs:import-shopify → metrics:compute →
+  findings:calibrate → findings:compute.
+- Verified live: the demo shows the full state machine across four months
+  (payback new→recurring×3; claim_gap new→resolved→new→recurring), ranked with
+  payback above claim_gap; the dev store (no data) reports "nothing needs
+  changing" with every rule skipping for a stated reason.
