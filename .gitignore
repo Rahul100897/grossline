@@ -32,9 +32,10 @@ redisdata/
 /tmp/
 docs/scratch/
 
-# generated reports and exports
-reports/
-exports/
+# generated reports and exports (root-level output dirs only — NOT source dirs
+# like services/worker/src/reports)
+/reports/
+/exports/
 *.pdf
 !docs/**/*.pdf
 
