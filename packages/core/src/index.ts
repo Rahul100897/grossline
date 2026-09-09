@@ -84,6 +84,13 @@ export type {
 } from './findings/rule-types';
 export { rankAndSuppress, nothingNeedsChanging, DEFAULT_FINDINGS_CAP } from './findings/ranking';
 export type { RankedFinding } from './findings/ranking';
+export {
+  renderTemplate,
+  allowedFigures,
+  foreignFigures,
+  hasNoForeignFigures,
+} from './findings/commentary';
+export type { CommentaryFinding, FourPart } from './findings/commentary';
 export type {
   FindingEntity,
   FindingSeverity,

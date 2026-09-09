@@ -1,8 +1,27 @@
 // Presentation helpers for findings in the console (docs/phase-4.md tasks
 // 4.5–4.8). These format the numbers already in the finding record — they never
 // compute a new figure. Prose lives in draft_text/final_text.
+import { renderTemplate, type CommentaryFinding } from '@grossline/core';
 import type { Finding } from '@grossline/db';
 import { formatMinor } from './format';
+
+/** The deterministic four-part template for a finding, rendered from the record. */
+export function templateText(f: Finding): string {
+  const commentary: CommentaryFinding = {
+    ruleId: f.ruleId,
+    entityLabel: f.entityLabel,
+    currency: f.currency ?? 'USD',
+    status: f.status,
+    occurrenceCount: f.occurrenceCount,
+    moneyImpactMinor: f.moneyImpactMinor,
+    currentValue: f.currentValue === null ? null : Number(f.currentValue),
+    comparisonValue: f.comparisonValue === null ? null : Number(f.comparisonValue),
+    delta: f.delta === null ? null : Number(f.delta),
+    evidence: (f.evidence ?? {}) as CommentaryFinding['evidence'],
+    checkMetric: f.checkMetric,
+  };
+  return renderTemplate(commentary).text;
+}
 
 export const RULE_TITLES: Record<string, string> = {
   below_break_even_mer: 'Below break-even MER',

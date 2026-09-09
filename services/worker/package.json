@@ -9,7 +9,8 @@
     "./pdf": "./src/pdf/render.ts",
     "./reconcile": "./src/reconcile.ts",
     "./findings-calibrate": "./src/findings/calibrate.ts",
-    "./findings-pipeline": "./src/findings/pipeline.ts"
+    "./findings-pipeline": "./src/findings/pipeline.ts",
+    "./findings-commentary": "./src/findings/commentary.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -27,7 +28,8 @@
     "metrics:compute": "tsx src/cli/metrics-compute.ts",
     "metrics:recompute": "tsx src/cli/metrics-recompute.ts",
     "findings:calibrate": "tsx src/cli/findings-calibrate.ts",
-    "findings:compute": "tsx src/cli/findings-compute.ts"
+    "findings:compute": "tsx src/cli/findings-compute.ts",
+    "findings:draft": "tsx src/cli/findings-draft.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",
