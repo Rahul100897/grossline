@@ -46,6 +46,19 @@ export { computeChannelMetrics } from './metrics/channels';
 
 // ---- findings engine (Phase 4) ----
 export { reconcileFindings } from './findings/state-machine';
+export {
+  calibrateThresholds,
+  DEFAULT_MIN_IMPACT_FLOOR_MINOR,
+  DEFAULT_DEAD_CAMPAIGN_FLOOR_MINOR,
+  DEFAULT_CLAIM_GAP_TOLERANCE,
+  DEFAULT_DISCOUNT_LEAKAGE_CEIL,
+  DEFAULT_BRANDED_SHARE_CEIL,
+  DEFAULT_PACING_OVERAGE_PCT,
+  REFUND_RATE_MULTIPLE,
+  type FindingThresholds,
+  type CalibrationMonth,
+  type CalibrationInput,
+} from './findings/calibration';
 export type {
   FindingEntity,
   FindingSeverity,

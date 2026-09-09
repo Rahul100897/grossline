@@ -34,6 +34,7 @@ export default async function MerchantLayout({
           { href: `${base}/stores`, label: 'Stores' },
           { href: `${base}/metrics`, label: 'Metrics' },
           { href: `${base}/costs`, label: 'Costs' },
+          { href: `${base}/thresholds`, label: 'Thresholds' },
           { href: `${base}/billing`, label: 'Billing' },
           { href: `${base}/notes`, label: 'Notes' },
         ]}

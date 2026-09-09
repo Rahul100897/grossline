@@ -723,3 +723,28 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   simplest rule, and it reads correctly to a client ("this is back").
 - **Dismissal stickiness bar: a 25% move in money impact** (default, in the pure
   reconciler) resurfaces a dismissed finding. Below that it stays suppressed.
+
+## 2026-09-10 — Task 4.2: Per-tenant threshold calibration
+
+- **Thresholds live per tenant in `tenant_calibration`** (one jsonb row,
+  RLS-scoped), NOT in the global Settings blob (which holds issue-derivation
+  thresholds). The spec says "editable in Settings"; per-tenant finding
+  thresholds are edited on the merchant detail page's new **Thresholds** tab,
+  consistent with every other per-tenant config in Phase 3 (Costs, Billing).
+- **Calibration is pure (`packages/core/src/findings/calibration.ts`)** — the
+  tenant's recent months + margin in, thresholds out. Break-even MER = median
+  break-even ROAS (1 ÷ contribution margin rate); CAC ceiling = mean + 1σ of
+  blended CAC; claim-gap tolerance = mean + 1σ of the account's own per-platform
+  claim gaps, clamped [0.1, 0.9]; min impact = max($50, 1% of median spend).
+  Non-derivable knobs (branded-share ceiling, refund multiple, pacing overage)
+  keep documented defaults.
+- **Missing inputs → null threshold, not a fabricated one.** The dev store has
+  no cost inputs, so its break-even MER and CAC ceiling calibrate to null; rules
+  that need them will skip rather than fire on absent data. Verified: demo-brand
+  breakEvenMer 1.1745, dev store null — same rule set, different results.
+- **`edited` flag makes hand tuning sticky**: saving from the UI sets edited=true
+  so automatic recalibration skips the tenant; the Recalibrate button forces a
+  recompute and clears the flag.
+- **Local dev note:** reset the local admin password via the documented
+  `ADMIN_PASSWORD=… pnpm seed:admin` flow to verify the console UI (TOTP is
+  disabled in dev). Passed inline, never written to .env.
