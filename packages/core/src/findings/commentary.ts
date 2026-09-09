@@ -7,7 +7,7 @@
 // The four parts are always: what happened (with the numbers), what is at stake
 // (a figure), what to do (specifically), what we check next month (a metric).
 import { minorUnitExponent } from '../money';
-import type { Evidence } from './types';
+import type { Evidence, FindingFamily } from './types';
 
 export type CommentaryFinding = {
   ruleId: string;
@@ -21,6 +21,9 @@ export type CommentaryFinding = {
   delta: number | null;
   evidence: Evidence;
   checkMetric: string | null;
+  /** Growth findings (task 5.A5): the family and the hypothetical gain. */
+  family?: FindingFamily;
+  opportunityValueMinor?: number | null;
 };
 
 export type FourPart = {
@@ -55,6 +58,7 @@ const CHECK_LABEL: Record<string, string> = {
   search_term_cost: 'wasted search-term cost',
   refund_rate: 'this product’s refund rate',
   claim_gap: 'the platform-to-store claim gap',
+  platform_roas: 'the campaign’s platform-reported ROAS',
 };
 
 function combine(parts: Omit<FourPart, 'text'>): FourPart {
@@ -66,9 +70,26 @@ export function renderTemplate(f: CommentaryFinding): FourPart {
   const check = f.checkMetric ? (CHECK_LABEL[f.checkMetric] ?? f.checkMetric) : 'the same metric';
   const e = f.evidence;
   const stake = money(f.moneyImpactMinor, c);
+  // Growth findings speak of an opportunity, not a loss.
+  const opportunity = money(f.opportunityValueMinor ?? null, c);
   const recurring = f.status === 'recurring' ? ` This is month ${f.occurrenceCount}.` : '';
 
   switch (f.ruleId) {
+    // ---- growth variants (task 5.A5): a bounded test, never an instruction ----
+    case 'spend_headroom':
+      return combine({
+        whatHappened: `Blended MER is running at ${(f.currentValue ?? 0).toFixed(2)} against a break-even of ${(f.comparisonValue ?? 0).toFixed(2)} on ${money(num(e, 'totalAdSpendMinor'), c)} of ad spend — comfortably profitable.${recurring}`,
+        atStake: `At today's efficiency there is roughly ${opportunity} of additional monthly spend that would still clear break-even. Efficiency falls as spend rises, so treat this as a ceiling, not a target.`,
+        whatToDo: `Test a bounded increase — not the full figure — on the strongest campaigns for a defined period, and hold if efficiency slips.`,
+        whatWeCheck: `Next month we check ${check} and total orders to see whether the added spend paid.`,
+      });
+    case 'scale_signal':
+      return combine({
+        whatHappened: `${f.entityLabel} is running a platform-reported ROAS of ${(f.currentValue ?? 0).toFixed(2)} against an account average of ${(f.comparisonValue ?? 0).toFixed(2)}, on a small share of spend.${recurring}`,
+        atStake: `Shifting a bounded slice of budget toward it could be worth about ${opportunity} — an estimate that holds only if efficiency holds as it scales. This is a platform-reported figure, not blended.`,
+        whatToDo: `Move a small, capped share of budget into it and watch whether the platform-reported ROAS holds before adding more.`,
+        whatWeCheck: `Next month we check ${check}.`,
+      });
     case 'below_break_even_mer':
       return combine({
         whatHappened: `MER came in at ${(f.currentValue ?? 0).toFixed(2)} against a break-even of ${(f.comparisonValue ?? 0).toFixed(2)} on ${money(num(e, 'totalAdSpendMinor'), c)} of ad spend.${recurring}`,
@@ -158,6 +179,7 @@ export function allowedFigures(f: CommentaryFinding): number[] {
     out.add(round1(v * 100));
   };
   add(f.moneyImpactMinor);
+  add(f.opportunityValueMinor ?? null); // the growth finding's hypothetical gain
   add(f.currentValue);
   add(f.comparisonValue);
   add(f.delta);

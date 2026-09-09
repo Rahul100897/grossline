@@ -19,6 +19,8 @@ export function templateText(f: Finding): string {
     delta: f.delta === null ? null : Number(f.delta),
     evidence: (f.evidence ?? {}) as CommentaryFinding['evidence'],
     checkMetric: f.checkMetric,
+    family: f.family as CommentaryFinding['family'],
+    opportunityValueMinor: f.opportunityValueMinor,
   };
   return renderTemplate(commentary).text;
 }
@@ -33,10 +35,36 @@ export const RULE_TITLES: Record<string, string> = {
   payback_broken: 'Payback broken',
   claim_gap: 'Claim gap',
   spend_pacing: 'Spend pacing',
+  spend_headroom: 'Spend headroom',
+  scale_signal: 'Scale signal',
 };
 
 export function ruleTitle(ruleId: string): string {
   return RULE_TITLES[ruleId] ?? ruleId;
+}
+
+/** Family badge label + tone for the review card (task 5.A5). A growth finding
+ * must never read like a waste finding at a glance. */
+export function familyBadge(f: Finding): { label: string; tone: 'waste' | 'growth' | 'measurement' } {
+  switch (f.family) {
+    case 'growth':
+      return { label: 'Growth opportunity', tone: 'growth' };
+    case 'measurement':
+      return { label: 'Measurement risk', tone: 'measurement' };
+    default:
+      return { label: 'Waste', tone: 'waste' };
+  }
+}
+
+/** The finding's headline value — a saving to recover, or a gain to pursue. */
+export function findingValueLabel(f: Finding): string {
+  if (f.family === 'growth') {
+    return f.opportunityValueMinor === null
+      ? 'opportunity'
+      : `${formatMinor(f.opportunityValueMinor, f.currency ?? 'USD')} opportunity`;
+  }
+  if (f.family === 'measurement') return 'no money at stake';
+  return `${formatMinor(f.moneyImpactMinor, f.currency ?? 'USD')} at stake`;
 }
 
 export function statusLabel(f: Finding): string {

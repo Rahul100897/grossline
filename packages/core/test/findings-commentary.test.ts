@@ -61,6 +61,74 @@ describe('deterministic templates (tier 1)', () => {
   });
 });
 
+describe('growth commentary variants (task 5.A5)', () => {
+  // Spend headroom: MER 3.00 vs break-even 2.00 on USD 10,000 spend; opportunity
+  // USD 5,000.00 (= 1,000,000 × (3/2 − 1) minor units).
+  const headroom: CommentaryFinding = {
+    ruleId: 'spend_headroom',
+    entityLabel: 'Whole account',
+    currency: 'USD',
+    status: 'new',
+    occurrenceCount: 1,
+    family: 'growth',
+    moneyImpactMinor: 0,
+    opportunityValueMinor: 500_000,
+    currentValue: 3.0,
+    comparisonValue: 2.0,
+    delta: 1.0,
+    evidence: { mer: 3.0, breakEvenMer: 2.0, totalAdSpendMinor: 1_000_000, headroomMinor: 500_000, safetyMargin: 0.2 },
+    checkMetric: 'mer',
+  };
+
+  // Scale signal: campaign ROAS 7.00 vs account average 3.00; opportunity
+  // USD 400.00 (= 10,000 × (7 − 3) minor units).
+  const scale: CommentaryFinding = {
+    ruleId: 'scale_signal',
+    entityLabel: 'Meta C',
+    currency: 'USD',
+    status: 'new',
+    occurrenceCount: 1,
+    family: 'growth',
+    moneyImpactMinor: 0,
+    opportunityValueMinor: 40_000,
+    currentValue: 7.0,
+    comparisonValue: 3.0,
+    delta: 4.0,
+    evidence: { roas: 7.0, accountAvgRoas: 3.0, spendShare: 0.2, campaignSpendMinor: 40_000, shareShiftMinor: 10_000, platform: 'meta', platformReported: true },
+    checkMetric: 'platform_roas',
+  };
+
+  it('renders a spend-headroom note that reads as an opportunity, not a loss', () => {
+    const t = renderTemplate(headroom);
+    expect(t.atStake).toContain('USD 5,000.00');
+    expect(t.whatHappened).toContain('3.00');
+    expect(t.whatHappened).toContain('2.00');
+    expect(t.atStake.toLowerCase()).toContain('efficiency falls as spend rises');
+    expect(t.whatWeCheck).toContain('total orders');
+  });
+
+  it('renders a scale-signal note that stays labelled platform-reported', () => {
+    const t = renderTemplate(scale);
+    expect(t.atStake).toContain('USD 400.00');
+    expect(t.whatHappened).toContain('7.00');
+    expect(t.atStake.toLowerCase()).toContain('platform-reported');
+  });
+
+  it('both growth templates pass their own figure guard', () => {
+    for (const f of [headroom, scale]) {
+      const t = renderTemplate(f);
+      expect(foreignFigures(t.text, f), `${f.ruleId} template must contain no foreign figures`).toEqual([]);
+    }
+  });
+
+  it('the figure guard still rejects a foreign figure in a growth note', () => {
+    // A model draft that invents "47 campaigns" — not in the record — is caught.
+    const draft = `Blended MER is at 3.00, well above break-even 2.00, across 47 campaigns. There is about USD 5,000.00 of headroom.`;
+    expect(hasNoForeignFigures(draft, headroom)).toBe(false);
+    expect(foreignFigures(draft, headroom)).toContain('47');
+  });
+});
+
 describe('figure guard (the model never introduces a number)', () => {
   it('accepts prose that uses only figures from the record', () => {
     const clean =

@@ -28,6 +28,8 @@ export function toCommentary(f: Finding): CommentaryFinding {
     delta: f.delta === null ? null : Number(f.delta),
     evidence: (f.evidence ?? {}) as CommentaryFinding['evidence'],
     checkMetric: f.checkMetric,
+    family: f.family as CommentaryFinding['family'],
+    opportunityValueMinor: f.opportunityValueMinor,
   };
 }
 
