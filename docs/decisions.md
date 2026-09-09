@@ -845,3 +845,20 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   template rendered live from the record, so the analyst never faces a blank box.
 - Verified: with no API key, drafts fall back to the template; the generated
   claim-gap note reads as something you would send.
+
+## 2026-09-10 — Task 4.7: Recommendation tracking
+
+- **Recommendations are derived from approved findings.** Each approved finding
+  carries a check-metric and baseline; the next period's value of that metric is
+  the measured result, and the pure `classifyRecommendation` decides the status
+  (resolved / improving / unchanged / worsened / pending). No separate table —
+  the finding chain plus metric_values is the source.
+- **The measured result reads the check metric at the next period** at the right
+  scope (account '', claim_gap 'platform:*', campaigns by their scope), so a
+  resolved case carries a real number, e.g. "resolved — claim_gap now 49.6%".
+- **Direction of improvement is per metric** (MER higher-is-better; CAC, discount
+  share, claim gap, pacing lower-is-better), with a 2% movement threshold so
+  noise reads as "unchanged".
+- Verified live: the demo's recommendation history spans four months — the May
+  claim-gap resolved (measured), May payback improving (CAC $64.73 → $54.44),
+  June/July payback worsened as CAC crept back, August pending.

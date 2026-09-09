@@ -91,6 +91,8 @@ export {
   hasNoForeignFigures,
 } from './findings/commentary';
 export type { CommentaryFinding, FourPart } from './findings/commentary';
+export { classifyRecommendation } from './findings/recommendations';
+export type { RecStatus, RecommendationInput, RecommendationJudgement } from './findings/recommendations';
 export type {
   FindingEntity,
   FindingSeverity,

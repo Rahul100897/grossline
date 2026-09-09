@@ -3,19 +3,87 @@
 // approve, dismiss or mark it deliberate. Nothing reaches a client without
 // passing through here. State is shown clearly — a recurring finding on its
 // third month reads differently from a new one.
-import { listFindingPeriods, listFindings, listTenants, type Finding } from '@grossline/db';
+import { getTenant, listFindingPeriods, listFindings, listTenants, type Finding } from '@grossline/db';
 import { requireSession } from '../../../lib/auth';
 import { groupFindings } from '../../../lib/findings';
+import { buildRecommendationHistory, type Recommendation } from '../../../lib/recommendations';
 import {
   Absent,
+  Badge,
   EmptyState,
   ErrorState,
   NumberStrip,
   PageHeader,
+  Panel,
   SectionHeader,
+  Table,
+  Td,
+  Th,
+  Tr,
 } from '../../../components/ui';
 import { FindingCard } from '../../../components/finding-card';
+import { formatDate } from '../../../lib/format';
 import { recompute } from './actions';
+
+function recStatusTone(status: Recommendation['status']): 'good' | 'attn' | 'neutral' {
+  if (status === 'resolved' || status === 'improving') return 'good';
+  if (status === 'worsened') return 'attn';
+  return 'neutral';
+}
+
+async function RecommendationHistory({ tenantId, currency }: { tenantId: string; currency: string }) {
+  let history: Recommendation[] = [];
+  try {
+    history = await buildRecommendationHistory(tenantId, currency);
+  } catch {
+    return null;
+  }
+  if (history.length === 0) return null;
+  return (
+    <>
+      <SectionHeader
+        title="Recommendation history"
+        right={<span className="text-[12px] text-slate">approved findings, tracked forward</span>}
+      />
+      <Panel>
+        <Table>
+          <thead>
+            <tr>
+              <Th>recommendation</Th>
+              <Th>month</Th>
+              <Th>actioned</Th>
+              <Th>result</Th>
+              <Th>status</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {history.map((r) => (
+              <Tr key={r.id}>
+                <Td>
+                  {r.title} <span className="text-slate">· {r.entityLabel}</span>
+                </Td>
+                <Td quiet>{formatDate(r.period)?.replace(/ \d{4}$/, '')}</Td>
+                <Td>
+                  {r.actioned === null ? (
+                    <span className="text-slate">—</span>
+                  ) : r.actioned ? (
+                    'yes'
+                  ) : (
+                    'no'
+                  )}
+                </Td>
+                <Td quiet>{r.resultText}</Td>
+                <Td>
+                  <Badge tone={recStatusTone(r.status)}>{r.status}</Badge>
+                </Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
+      </Panel>
+    </>
+  );
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -75,6 +143,8 @@ export default async function FindingsPage({
   }
 
   const tenantId = query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
+  const tenantRow = await getTenant(tenantId);
+  const currency = tenantRow?.reportingCurrency ?? 'USD';
   const periods = await listFindingPeriods(tenantId);
   const period = query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
 
@@ -174,6 +244,8 @@ export default async function FindingsPage({
               Every finding this month has been reviewed. The approved set is ready to send.
             </p>
           ) : null}
+
+          <RecommendationHistory tenantId={tenantId} currency={currency} />
         </>
       )}
     </>
