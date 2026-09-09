@@ -40,6 +40,16 @@ function draft(ruleId: string, impact: number, entityKey = ruleId): FindingDraft
   };
 }
 
+/** A growth finding: no money impact, a hypothetical opportunity value instead. */
+function growthDraft(ruleId: string, opportunity: number, entityKey = ruleId): FindingDraft {
+  return {
+    ...draft(ruleId, 0, entityKey),
+    family: 'growth',
+    moneyImpactMinor: 0,
+    opportunityValueMinor: opportunity,
+  };
+}
+
 describe('ranking and suppression', () => {
   it('sorts by money impact, caps actionable output at three, records the rest', () => {
     const findings = [
@@ -86,5 +96,77 @@ describe('ranking and suppression', () => {
     expect(nothingNeedsChanging(hasActionable)).toBe(false);
 
     expect(nothingNeedsChanging(rankAndSuppress([], thresholds))).toBe(true);
+  });
+});
+
+describe('ranking across families (task 5.A2)', () => {
+  it('surfaces waste-only findings unchanged, ranked by money impact', () => {
+    const ranked = rankAndSuppress([draft('w1', 300_000), draft('w2', 200_000)], thresholds);
+    expect(ranked.filter((f) => !f.suppressed).map((f) => f.ruleId)).toEqual(['w1', 'w2']);
+  });
+
+  it('suppresses growth findings entirely when no waste finding fires', () => {
+    // A lone growth opportunity of $3,000, well above the $100 floor, but with
+    // no waste finding this period → suppressed. A report is never only growth.
+    const ranked = rankAndSuppress([growthDraft('spend_headroom', 300_000)], thresholds);
+    const g = ranked.find((f) => f.ruleId === 'spend_headroom');
+    expect(g).toMatchObject({
+      suppressed: true,
+      suppressedReason: 'no waste finding this period — growth is suppressed',
+    });
+    expect(nothingNeedsChanging(ranked)).toBe(true);
+  });
+
+  it('ranks across both value fields in one list, waste above growth at equal value', () => {
+    // Values: waste 500k, growth 400k, waste 300k → order 500k, 400k, 300k.
+    const mixed = rankAndSuppress(
+      [draft('w_hi', 500_000), growthDraft('g_mid', 400_000), draft('w_lo', 300_000)],
+      thresholds,
+    );
+    expect(mixed.filter((f) => !f.suppressed).map((f) => f.ruleId)).toEqual([
+      'w_hi',
+      'g_mid',
+      'w_lo',
+    ]);
+
+    // Equal value (200k each) → the waste finding ranks above the growth one.
+    const tie = rankAndSuppress(
+      [growthDraft('g_eq', 200_000), draft('w_eq', 200_000)],
+      thresholds,
+    );
+    expect(tie.filter((f) => !f.suppressed).map((f) => f.ruleId)).toEqual(['w_eq', 'g_eq']);
+  });
+
+  it('surfaces at most one growth finding per report', () => {
+    // A waste finding fires, so growth is eligible — but only the top growth is
+    // surfaced; the second is suppressed on the one-growth cap.
+    const ranked = rankAndSuppress(
+      [draft('w1', 600_000), growthDraft('g1', 400_000), growthDraft('g2', 300_000)],
+      thresholds,
+    );
+    expect(ranked.filter((f) => !f.suppressed).map((f) => f.ruleId)).toEqual(['w1', 'g1']);
+    expect(ranked.find((f) => f.ruleId === 'g2')).toMatchObject({
+      suppressed: true,
+      suppressedReason: 'over the one-growth-per-report cap',
+    });
+  });
+
+  it('growth yields to waste under the three-per-period cap', () => {
+    // Three waste findings fill the cap; the growth finding is squeezed out even
+    // though a waste finding fired (so it was eligible).
+    const ranked = rankAndSuppress(
+      [
+        draft('w1', 500_000),
+        draft('w2', 400_000),
+        draft('w3', 300_000),
+        growthDraft('g1', 250_000),
+      ],
+      thresholds,
+    );
+    expect(ranked.filter((f) => !f.suppressed).map((f) => f.ruleId)).toEqual(['w1', 'w2', 'w3']);
+    expect(ranked.find((f) => f.ruleId === 'g1')).toMatchObject({
+      suppressed: true,
+      suppressedReason: 'over the three-per-period cap',
+    });
   });
 });

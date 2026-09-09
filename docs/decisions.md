@@ -910,3 +910,21 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   fix on 2026-09-10): `keyOf`'s map-key separator was a raw U+0000, which made
   git treat the whole file as binary. Replaced with the `\0` escape — identical
   runtime value (the key string is unchanged), clean UTF-8, readable diffs.
+
+## 2026-09-10 — Task 5.A2: Ranking across families
+
+- **`rankAndSuppress` now ranks waste and growth in one list.** The rank value is
+  the money impact for waste/measurement and the opportunity value for growth.
+  Higher value wins across families; at equal value, waste ranks above growth (a
+  provable saving beats a hypothetical gain). Cap stays at three total; claim gap
+  stays exempt from floor and cap.
+- **Growth is gated on waste.** A growth finding is surfaced only if at least one
+  waste finding fires and clears the floor this period; otherwise every growth
+  finding is suppressed ("no waste finding this period — growth is suppressed")
+  and the output is "nothing needs changing" (measurement notes aside). At most
+  one growth finding is surfaced per report (`GROWTH_CAP = 1`); the rest are
+  suppressed and recorded, queryable as before.
+- **The growth floor reuses `minImpactMinor`** (the spec is silent on a separate
+  growth floor). An opportunity below the tenant's money-impact floor is too
+  small to spend a slot on; simplest option satisfying the spec. The A3/A4 rules
+  carry their own trigger thresholds on top of this.
