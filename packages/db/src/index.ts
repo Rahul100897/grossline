@@ -121,6 +121,12 @@ export {
   getFinding,
   listFindingPeriods,
   countUnreviewedFindings,
+  approveFinding,
+  unapproveFinding,
+  dismissFinding,
+  reopenFinding,
+  saveFindingText,
+  saveFindingDraft,
   type Finding,
   type FindingFilter,
 } from './findings';
