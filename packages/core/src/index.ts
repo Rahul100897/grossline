@@ -59,6 +59,29 @@ export {
   type CalibrationMonth,
   type CalibrationInput,
 } from './findings/calibration';
+export {
+  RULES,
+  IMPACT_FLOOR_EXEMPT_RULES,
+  belowBreakEvenMer,
+  deadCampaign,
+  brandedSearchShare,
+  searchTermWaste,
+  discountLeakage,
+  refundOutlier,
+  paybackBroken,
+  claimGap,
+  spendPacing,
+} from './findings/rules';
+export type {
+  Rule,
+  FindingsInput,
+  AccountMetrics,
+  CampaignFact,
+  SearchTermFact,
+  ProductRefundFact,
+  ChannelClaimFact,
+  DataAvailability,
+} from './findings/rule-types';
 export type {
   FindingEntity,
   FindingSeverity,

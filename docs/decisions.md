@@ -748,3 +748,28 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - **Local dev note:** reset the local admin password via the documented
   `ADMIN_PASSWORD=… pnpm seed:admin` flow to verify the console UI (TOTP is
   disabled in dev). Passed inline, never written to .env.
+
+## 2026-09-10 — Task 4.3: Rules library
+
+- **Rules read a typed `FindingsInput`, not raw metric strings.** The worker
+  selects the metric layer into `{ account, campaigns[], searchTerms[],
+  productRefunds[], channelClaims[], thresholds, availability }`; each rule is a
+  pure function of that. This keeps rules golden-testable from literals and
+  makes "the model never calculates" structural — rules only read pre-computed
+  numbers.
+- **A `DataAvailability` flag set distinguishes skip-with-reason from ok.** A
+  rule returns `skipped(reason)` when the data it needs is absent (no Google
+  connection, no cost inputs, no search-term report) and `ok` when it evaluated
+  and found nothing. Only then can "no rule fires on incomplete data" and
+  "nothing needs changing" both be proven.
+- **Money impact follows the spec's formulas exactly** (hand-calculated in the
+  goldens): below-break-even = (break-even − actual) × spend; dead campaign =
+  full spend; discount leakage = Δshare × gross; payback = CAC gap × new
+  customers; pacing = projected − target; claim gap = 0 (measurement risk, no
+  spend action) and is exempted from the ranking floor via
+  `IMPACT_FLOOR_EXEMPT_RULES`.
+- **On the real demo, the entity-level rules skip honestly.** The demo ad-spend
+  campaigns carry no campaign names and there is no per-campaign order
+  attribution, so dead-campaign / branded-search / search-term / refund-outlier
+  return `skipped`; the account-level rules evaluate. This is the intended
+  behaviour, not a gap.
