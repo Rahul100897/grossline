@@ -928,3 +928,25 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   growth floor). An opportunity below the tenant's money-impact floor is too
   small to spend a slot on; simplest option satisfying the spec. The A3/A4 rules
   carry their own trigger thresholds on top of this.
+
+## 2026-09-10 — Task 5.A3: Spend-headroom rule
+
+- **Opportunity value = `round(totalAdSpend × (MER ÷ break-even − 1))`.** The
+  spec says "the additional monthly spend deployable while still clearing
+  break-even at the current margin structure … arithmetic at today's efficiency."
+  This is the current contribution-after-ad-spend surplus expressed as spend room
+  (both inputs — MER and the margin-derived break-even MER — already in the metric
+  layer). Framed in the note as bounded, because efficiency falls as spend rises.
+- **Margin of safety = MER ≥ break-even × 1.2** (`HEADROOM_SAFETY_MARGIN = 0.2`)
+  is the "comfortably above" trigger. It also does not fire when spend is already
+  pacing over target (the pacing rule owns that), nor when the opportunity is
+  below `minImpactMinor`.
+- **ok vs skipped.** Only genuinely-absent inputs (no cost data, MER/spend not
+  computed) return `skipped`; not-comfortably-above and pacing-over return `ok`
+  (evaluated, no opportunity) — matching Phase 4's ok/skip discipline and the
+  spec's separate "at-break-even case" vs "incomplete-cost skip" done-when.
+- **Growth severity is `info`** (a hypothesis, not an alarm). Family, not
+  severity, ranks and badges it; ranking still surfaces it because it is not
+  suppressed. A healthy account now fires exactly the growth headroom rule and no
+  waste rule — updated the Phase 4 "healthy fires nothing" test accordingly (the
+  lone growth finding is then suppressed by ranking when no waste accompanies it).

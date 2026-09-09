@@ -71,6 +71,8 @@ export {
   paybackBroken,
   claimGap,
   spendPacing,
+  spendHeadroom,
+  HEADROOM_SAFETY_MARGIN,
 } from './findings/rules';
 export type {
   Rule,

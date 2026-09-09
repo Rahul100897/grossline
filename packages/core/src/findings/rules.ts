@@ -397,6 +397,70 @@ export const spendPacing: Rule = {
   },
 };
 
+// ---- 10. Spend headroom (growth) --------------------------------------------
+// Where should freed budget go? When blended MER sits comfortably above
+// break-even and spend is not already pacing over target, there is room to
+// deploy more spend while still clearing break-even. The opportunity is
+// arithmetic at TODAY's efficiency — and efficiency falls as spend rises, so the
+// recommendation is a bounded increase, checked next month against MER and orders.
+export const HEADROOM_SAFETY_MARGIN = 0.2; // MER must clear break-even × 1.2
+
+export const spendHeadroom: Rule = {
+  id: 'spend_headroom',
+  title: 'Spend headroom',
+  run(input) {
+    if (!input.availability.hasMargin || input.thresholds.breakEvenMer === null) {
+      return skip('no cost inputs — contribution margin and break-even MER are unavailable');
+    }
+    const { merValue, totalAdSpendMinor } = input.account;
+    if (merValue === null || totalAdSpendMinor === null || totalAdSpendMinor <= 0) {
+      return skip('MER or total ad spend not computed for the period');
+    }
+    const breakEven = input.thresholds.breakEvenMer;
+    // Only when comfortably above break-even, with a margin of safety.
+    if (merValue < breakEven * (1 + HEADROOM_SAFETY_MARGIN)) return ok();
+    // Not when spend is already pacing over target — the pacing rule owns that,
+    // and suggesting more spend there would contradict it.
+    if (input.availability.hasSpendTarget && input.monthlySpendTargetMinor !== null) {
+      const projected = input.account.spendProjectedMonthEndMinor;
+      if (projected !== null) {
+        const ceiling = Math.round(input.monthlySpendTargetMinor * (1 + input.thresholds.pacingOveragePct));
+        if (projected > ceiling) return ok();
+      }
+    }
+    // Opportunity: additional monthly spend deployable while still clearing
+    // break-even at today's efficiency = spend × (MER ÷ break-even − 1). This is
+    // the current contribution-after-ad-spend surplus expressed as spend room.
+    const opportunity = Math.round(totalAdSpendMinor * (merValue / breakEven - 1));
+    if (opportunity < input.thresholds.minImpactMinor) return ok(); // too small to surface
+    return [
+      finding({
+        ruleId: this.id,
+        severity: 'info', // a growth hypothesis, not an alarm; family ranks it
+        family: 'growth',
+        metric: 'mer',
+        currentValue: merValue,
+        comparisonValue: breakEven,
+        entity: 'account',
+        entityKey: 'account',
+        entityLabel: 'Whole account',
+        moneyImpactMinor: 0,
+        opportunityValueMinor: opportunity,
+        currency: input.currency,
+        evidence: {
+          mer: merValue,
+          breakEvenMer: breakEven,
+          totalAdSpendMinor,
+          headroomMinor: opportunity,
+          safetyMargin: HEADROOM_SAFETY_MARGIN,
+        },
+        checkMetric: 'mer',
+        checkBaseline: merValue,
+      }),
+    ];
+  },
+};
+
 export const RULES: Rule[] = [
   belowBreakEvenMer,
   deadCampaign,
@@ -407,6 +471,7 @@ export const RULES: Rule[] = [
   paybackBroken,
   claimGap,
   spendPacing,
+  spendHeadroom,
 ];
 
 /** Rules whose findings are exempt from the money-impact suppression floor. */
