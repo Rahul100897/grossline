@@ -45,6 +45,9 @@ function campaignsFrom(bundle: MetricBundle): CampaignFact[] {
         attributedOrders: null,
         // Branded only identifiable when a campaign name is present.
         isBranded: name === null ? null : /brand/i.test(name),
+        // Platform-reported ROAS is computed at campaign scope by the ad-platform
+        // metric layer; null when absent (used by the scale-signal growth rule).
+        roas: bundle.at('platform_roas', m.scope)?.value ?? null,
       };
     });
 }

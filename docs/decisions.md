@@ -950,3 +950,27 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   suppressed. A healthy account now fires exactly the growth headroom rule and no
   waste rule — updated the Phase 4 "healthy fires nothing" test accordingly (the
   lone growth finding is then suppressed by ranking when no waste accompanies it).
+
+## 2026-09-10 — Task 5.A4: Scale-signal rule
+
+- **Conservative opportunity = `round(shareShift × (campaignRoas − avgRoas))`**,
+  where `shareShift = round(campaignSpend × 0.25)` (a bounded share shift). This
+  is the revenue *difference* between the campaign's efficiency and the account
+  average applied to a bounded increment — NOT the campaign's ROAS applied to
+  more budget, which is the exact mistake the framing principle forbids (wrong in
+  the direction that loses a client money). The finding text says it is an
+  estimate contingent on efficiency holding.
+- **Account-average ROAS is spend-weighted** (total conversion value ÷ total
+  spend across campaigns with a ROAS). Outperformer = ROAS ≥ average × 1.5 while
+  holding ≤ 25% of platform spend; the single best candidate by opportunity fires.
+- **Platform-reported ROAS is the only campaign-level efficiency figure** — it is
+  labelled `platformReported` in the evidence and the check metric, and never
+  presented as blended (the never-blend rule holds). `platform_roas` is computed
+  at campaign scope by the ad-platform metric layer; build-input now reads it into
+  `CampaignFact.roas`.
+- **Skips** when no campaign-level ROAS is available, fewer than three campaigns,
+  or no clear small-share outperformer (the last two return `ok` vs `skipped`
+  respectively per the ok/skip discipline: too-few is missing data → skipped, no
+  outperformer is evaluated → ok).
+- On the demo today the ad campaigns carry no per-campaign platform data, so this
+  rule skips honestly — same as the other entity-level rules.

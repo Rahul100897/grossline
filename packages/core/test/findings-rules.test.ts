@@ -11,6 +11,7 @@ import {
   claimGap,
   spendPacing,
   spendHeadroom,
+  scaleSignal,
   type FindingsInput,
   type FindingThresholds,
   type RuleOutcome,
@@ -93,8 +94,8 @@ describe('rule: below break-even MER', () => {
 
 describe('rule: dead campaign', () => {
   const campaigns = [
-    { key: 'campaign:google_ads:1', label: 'PMax', platform: 'google_ads', spendMinor: 420_000, attributedOrders: 3, isBranded: false },
-    { key: 'campaign:google_ads:2', label: 'Prospecting', platform: 'google_ads', spendMinor: 60_000, attributedOrders: 0, isBranded: false },
+    { key: 'campaign:google_ads:1', label: 'PMax', platform: 'google_ads', spendMinor: 420_000, attributedOrders: 3, isBranded: false, roas: null },
+    { key: 'campaign:google_ads:2', label: 'Prospecting', platform: 'google_ads', spendMinor: 60_000, attributedOrders: 0, isBranded: false, roas: null },
   ];
   it('fires full spend for a campaign over the floor with zero orders', () => {
     const f = fired(deadCampaign.run(base({ campaigns })));
@@ -112,8 +113,8 @@ describe('rule: dead campaign', () => {
 
 describe('rule: branded search share', () => {
   const campaigns = [
-    { key: 'g:brand', label: 'Brand', platform: 'google_ads', spendMinor: 400_000, attributedOrders: 50, isBranded: true },
-    { key: 'g:generic', label: 'Generic', platform: 'google_ads', spendMinor: 600_000, attributedOrders: 40, isBranded: false },
+    { key: 'g:brand', label: 'Brand', platform: 'google_ads', spendMinor: 400_000, attributedOrders: 50, isBranded: true, roas: null },
+    { key: 'g:generic', label: 'Generic', platform: 'google_ads', spendMinor: 600_000, attributedOrders: 40, isBranded: false, roas: null },
   ];
   it('fires branded spend when share exceeds the ceiling', () => {
     // 400,000 / 1,000,000 = 0.40 > 0.35.
@@ -322,6 +323,69 @@ describe('rule: spend headroom (growth)', () => {
     );
     expect(out).toHaveLength(1);
     expect(out[0]!.status).toBe('skipped');
+  });
+});
+
+describe('rule: scale signal (growth)', () => {
+  // Spend-weighted average ROAS = total conversion value ÷ total spend.
+  // A/B: 80,000 spend @ 2.0 → 160,000 each; C: 40,000 spend @ 7.0 → 280,000.
+  // total spend 200,000, total value 600,000 → average ROAS 3.0.
+  const campaigns = [
+    { key: 'campaign:meta:a', label: 'Meta A', platform: 'meta', spendMinor: 80_000, attributedOrders: null, isBranded: null, roas: 2.0 },
+    { key: 'campaign:meta:b', label: 'Meta B', platform: 'meta', spendMinor: 80_000, attributedOrders: null, isBranded: null, roas: 2.0 },
+    { key: 'campaign:meta:c', label: 'Meta C', platform: 'meta', spendMinor: 40_000, attributedOrders: null, isBranded: null, roas: 7.0 },
+  ];
+
+  it('fires on a small-share outperformer with a conservative opportunity', () => {
+    // C: ROAS 7.0 ≥ average 3.0 × 1.5 = 4.5, share 40,000/200,000 = 0.20 ≤ 0.25.
+    // share shift = 40,000 × 0.25 = 10,000; opportunity = 10,000 × (7.0 − 3.0)
+    // = 40,000 (the revenue *difference*, not 7.0 applied to more budget).
+    const f = fired(scaleSignal.run(base({ campaigns })));
+    expect(f).toHaveLength(1);
+    expect(f[0]).toMatchObject({
+      ruleId: 'scale_signal',
+      family: 'growth',
+      entityKey: 'campaign:meta:c',
+      moneyImpactMinor: 0,
+      opportunityValueMinor: 40_000,
+      currentValue: 7.0,
+      comparisonValue: 3.0,
+      checkMetric: 'platform_roas',
+    });
+    expect((f[0] as { evidence: Record<string, unknown> }).evidence).toMatchObject({
+      platformReported: true,
+      accountAvgRoas: 3.0,
+    });
+  });
+
+  it('is ok when no campaign clearly outperforms the average', () => {
+    // 100k each at 2.0/2.0/2.5 → average ≈ 2.167; 2.5 < 1.5 × 2.167 = 3.25.
+    const flat = [
+      { ...campaigns[0]!, spendMinor: 100_000, roas: 2.0 },
+      { ...campaigns[1]!, spendMinor: 100_000, roas: 2.0 },
+      { ...campaigns[2]!, spendMinor: 100_000, roas: 2.5 },
+    ];
+    expect(scaleSignal.run(base({ campaigns: flat }))).toEqual([{ status: 'ok' }]);
+  });
+
+  it('does not reward an outperformer that already holds a large share of spend', () => {
+    // C outperforms (ROAS 7.0) but takes 60% of spend → not a small-share signal.
+    const bigShare = [
+      { ...campaigns[0]!, spendMinor: 40_000, roas: 2.0 },
+      { ...campaigns[1]!, spendMinor: 40_000, roas: 2.0 },
+      { ...campaigns[2]!, spendMinor: 120_000, roas: 7.0 },
+    ];
+    expect(scaleSignal.run(base({ campaigns: bigShare }))).toEqual([{ status: 'ok' }]);
+  });
+
+  it('skips when no campaign-level ROAS is available', () => {
+    expect(scaleSignal.run(base({ campaigns: [] }))[0]!.status).toBe('skipped');
+    const noRoas = campaigns.map((c) => ({ ...c, roas: null }));
+    expect(scaleSignal.run(base({ campaigns: noRoas }))[0]!.status).toBe('skipped');
+  });
+
+  it('skips with too few campaigns to compare', () => {
+    expect(scaleSignal.run(base({ campaigns: campaigns.slice(0, 2) }))[0]!.status).toBe('skipped');
   });
 });
 
