@@ -3,7 +3,7 @@
 // text, and the review actions. Numbers come from the record; nothing here
 // computes a figure.
 import type { Finding } from '@grossline/db';
-import { impactText, ruleTitle, statusLabel, statusTone } from '../lib/findings';
+import { impactText, ruleTitle, statusLabel, statusTone, templateText } from '../lib/findings';
 import { formatDate } from '../lib/format';
 import { Badge } from './ui';
 import { approve, dismiss, reopen, saveText, unapprove } from '../app/(console)/findings/actions';
@@ -40,7 +40,9 @@ export function FindingCard({
   const impact = impactText(finding);
   const approved = finding.approvedAt !== null;
   const dismissed = finding.status === 'dismissed';
-  const draft = finding.finalText ?? finding.draftText ?? '';
+  // final edit wins; else the model draft; else the deterministic template.
+  const draft = finding.finalText ?? finding.draftText ?? templateText(finding);
+  const draftSource = finding.finalText ? 'final' : finding.draftText ? 'draft' : 'template';
   const hidden = (
     <>
       <input type="hidden" name="tenantId" value={tenantId} />
@@ -64,20 +66,14 @@ export function FindingCard({
 
       <EvidenceTable evidence={(finding.evidence ?? {}) as Record<string, unknown>} />
 
-      {finding.draftText && !finding.finalText ? (
-        <p className="mt-2 whitespace-pre-wrap rounded bg-hover p-2 text-[12px] text-slate">
-          <span className="mr-1 font-medium">draft:</span>
-          {finding.draftText}
-        </p>
-      ) : null}
-
       {!dismissed ? (
         <form action={saveText} className="mt-2">
           {hidden}
+          <div className="mb-1 text-[12px] text-slate">text · {draftSource}</div>
           <textarea
             name="finalText"
             defaultValue={draft}
-            rows={4}
+            rows={5}
             placeholder="The four-part note that reaches the client: what happened, what's at stake, what to do, what we check next month."
             className="w-full rounded border border-hairline bg-panel px-2 py-1.5 text-[13px] outline-none focus:border-slate"
           />

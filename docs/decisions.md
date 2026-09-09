@@ -821,3 +821,27 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - Verified live on the demo's August: wrote the payback finding's four-part
   note, approved both findings, ended with "the approved set is ready to send";
   dismiss+reopen round-tripped.
+
+## 2026-09-10 — Task 4.6: Commentary layer
+
+- **Two tiers, both structured-first.** Tier 1 (`renderTemplate`, pure core) is
+  a deterministic four-part note — what happened / at stake / what to do / what
+  we check next month — filled from the finding record; always correct, no
+  model. Tier 2 (worker) drafts a natural narrative with the Anthropic API and
+  runs it through the figure guard.
+- **The model can polish prose but never introduce a number.** `foreignFigures`
+  extracts every numeric token from the model's draft and rejects it if any
+  cannot be derived from the finding record (raw, money major/minor, percent,
+  or rounded forms, within tolerance). On any failure — no API key, API error,
+  or a foreign figure — the worker falls back to the deterministic template,
+  which is clean by construction. This is the tested invariant: a hallucinated
+  "47 campaigns / 12%" is flagged; record-restatements pass; every template
+  passes its own guard.
+- **Dependency-free Anthropic call** (plain fetch over the Messages API, like
+  the Resend integration), model id from ANTHROPIC_MODEL (default
+  claude-sonnet-5). The model receives only the finding's computed numbers and
+  the template — no raw tables, no ability to calculate.
+- **The review card always shows a note**: final edit > stored draft > the
+  template rendered live from the record, so the analyst never faces a blank box.
+- Verified: with no API key, drafts fall back to the template; the generated
+  claim-gap note reads as something you would send.
