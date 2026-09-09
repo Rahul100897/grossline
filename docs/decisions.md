@@ -1009,3 +1009,20 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   not taken because admin login requires entering a password into a form, which
   is a prohibited action; the card rendering is covered by the family-badge logic
   and the correct persisted family/opportunity values.
+
+## 2026-09-10 — Task 5.A6: Recommendation tracking for growth
+
+- **A growth bet that was tried and did not hold is recorded as actioned, not
+  hidden.** `classifyRecommendation` gained an optional `family`: a worsened check
+  metric is `actioned: false` for waste (the problem got worse, unaddressed) but
+  `actioned: true` for growth (they took the bounded increase and efficiency did
+  not hold — the "we would revert" report line). Everything else is unchanged.
+- **`platform_roas` added to the higher-is-better set** so the scale-signal check
+  reads correctly (a fall is a worsening).
+- **The console phrases growth outcomes plainly:** a worsened growth
+  recommendation reads "tried — mer 2.59 → 2.50, would revert"; a held one reads
+  "mer 2.50 → 2.82, held".
+- **Verified on the demo (data):** approving `spend_headroom` for May/Jun/Jul
+  produces a carried-forward growth recommendation history — May→Jun held
+  (MER 2.40 → 2.59), Jun→Jul tried-and-did-not-hold (MER 2.59 → 2.50, worsened,
+  actioned), Jul→Aug held (MER 2.50 → 2.82).

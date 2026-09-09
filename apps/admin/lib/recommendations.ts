@@ -87,6 +87,7 @@ export async function buildRecommendationHistory(
       measured,
       resolvedNextPeriod,
       computedNextPeriod,
+      family: a.family,
     });
 
     const b = formatCheck(baseline, a.checkMetric, currency);
@@ -94,6 +95,11 @@ export async function buildRecommendationHistory(
     let resultText: string;
     if (judge.status === 'pending') resultText = 'awaiting next month';
     else if (judge.status === 'resolved') resultText = measured !== null ? `resolved — ${a.checkMetric} now ${m}` : 'resolved';
+    else if (a.family === 'growth' && judge.status === 'worsened')
+      // A growth bet that was tried and did not hold — a genuine report line.
+      resultText = `tried — ${a.checkMetric} ${b} → ${m}, would revert`;
+    else if (a.family === 'growth' && judge.status === 'improving')
+      resultText = `${a.checkMetric} ${b} → ${m}, held`;
     else resultText = `${a.checkMetric} ${b} → ${m}`;
 
     out.push({

@@ -4,6 +4,8 @@
 // status out. The four-part note's "what we check next month" is what makes
 // this possible.
 
+import type { FindingFamily } from './types';
+
 export type RecStatus = 'pending' | 'resolved' | 'improving' | 'unchanged' | 'worsened';
 
 /** Check metrics where a lower value next period is the improvement. */
@@ -18,7 +20,7 @@ const LOWER_IS_BETTER = new Set<string>([
   'ad_spend',
 ]);
 /** Check metrics where a higher value next period is the improvement. */
-const HIGHER_IS_BETTER = new Set<string>(['mer']);
+const HIGHER_IS_BETTER = new Set<string>(['mer', 'platform_roas']);
 
 /** Minimum relative move to count as improved/worsened rather than unchanged. */
 const MOVE_THRESHOLD = 0.02;
@@ -32,6 +34,8 @@ export type RecommendationInput = {
   resolvedNextPeriod: boolean;
   /** Was next period computed at all? */
   computedNextPeriod: boolean;
+  /** The finding's family (task 5.A6). Growth outcomes are read differently. */
+  family?: FindingFamily;
 };
 
 export type RecommendationJudgement = {
@@ -56,7 +60,11 @@ export function classifyRecommendation(input: RecommendationInput): Recommendati
   const magnitude = Math.abs(relativeChange);
 
   if (magnitude < MOVE_THRESHOLD) return { status: 'unchanged', actioned: false, relativeChange };
-  return improved
-    ? { status: 'improving', actioned: true, relativeChange }
-    : { status: 'worsened', actioned: false, relativeChange };
+  if (improved) return { status: 'improving', actioned: true, relativeChange };
+  // Worsened. For a growth recommendation this is a genuine "we suggested a
+  // bounded increase, you tried it, efficiency did not hold, we would revert"
+  // outcome — actioned, not hidden. For a waste finding a worsened metric means
+  // the problem got worse and was not acted on.
+  const actioned = input.family === 'growth';
+  return { status: 'worsened', actioned, relativeChange };
 }
