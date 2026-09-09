@@ -43,6 +43,22 @@ export {
 } from './metrics/margin';
 export { computeAdPlatformMetrics, type PlatformDay } from './metrics/ad-platforms';
 export { computeChannelMetrics } from './metrics/channels';
+
+// ---- findings engine (Phase 4) ----
+export { reconcileFindings } from './findings/state-machine';
+export type {
+  FindingEntity,
+  FindingSeverity,
+  FindingStatus,
+  Evidence,
+  FindingDraft,
+  RuleOutcome,
+  PriorFinding,
+  ReconciledFinding,
+  ResolvedFinding,
+  ReconcileInput,
+  ReconcileOutput,
+} from './findings/types';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,
