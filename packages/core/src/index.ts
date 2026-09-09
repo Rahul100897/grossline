@@ -82,6 +82,8 @@ export type {
   ChannelClaimFact,
   DataAvailability,
 } from './findings/rule-types';
+export { rankAndSuppress, nothingNeedsChanging, DEFAULT_FINDINGS_CAP } from './findings/ranking';
+export type { RankedFinding } from './findings/ranking';
 export type {
   FindingEntity,
   FindingSeverity,

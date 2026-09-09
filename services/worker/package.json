@@ -8,7 +8,8 @@
     "./invoice-html": "./src/billing/invoice-html.ts",
     "./pdf": "./src/pdf/render.ts",
     "./reconcile": "./src/reconcile.ts",
-    "./findings-calibrate": "./src/findings/calibrate.ts"
+    "./findings-calibrate": "./src/findings/calibrate.ts",
+    "./findings-pipeline": "./src/findings/pipeline.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -25,7 +26,8 @@
     "costs:coverage": "tsx src/cli/costs-coverage.ts",
     "metrics:compute": "tsx src/cli/metrics-compute.ts",
     "metrics:recompute": "tsx src/cli/metrics-recompute.ts",
-    "findings:calibrate": "tsx src/cli/findings-calibrate.ts"
+    "findings:calibrate": "tsx src/cli/findings-calibrate.ts",
+    "findings:compute": "tsx src/cli/findings-compute.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",
