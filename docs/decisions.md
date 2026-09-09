@@ -689,3 +689,37 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - **Structural notes surface verbatim** (Meta's 28-day restatement window,
   Google's conversion restatement) so an in-window variance reads as expected,
   not as an error.
+
+## 2026-09-10 — Phase 4 start
+
+- **Fixed the stray NUL byte in `packages/core/src/costs.ts`** (requested). The
+  composite map key `` `${sku}\0${variantId}` `` used a raw U+0000 byte as the
+  separator, which made git treat the file as binary. Replaced with the `\0`
+  escape — identical runtime value, clean UTF-8. Behaviour unchanged (39 core
+  tests pass, including the cost-coverage key tests).
+
+## 2026-09-10 — Task 4.1: Findings schema and state machine
+
+- **`status` is the lifecycle** (new / recurring / resolved / dismissed),
+  computed by the state machine except `dismissed` which is a sticky manual
+  action. Editorial approval is a separate `approved_at` column, and ranking
+  suppression a separate `suppressed` boolean — three orthogonal axes rather
+  than one overloaded enum.
+- **Matching across periods uses `rule_id + entity_key`.** The spec's schema has
+  `entity` and `entity_label`; I split the stable match key (`entity_key`, e.g.
+  a campaign scope) from the display label (`entity_label`) and the type
+  (`entity`: account/campaign/product/discount/channel), so "matching by rule_id
+  + entity" is unambiguous and labels can change without breaking recurrence.
+- **The state machine is pure (`packages/core/src/findings`).** It never reads
+  the database or hand-sets a status; the worker persists what it returns. This
+  is what makes the three-period transition test possible without infrastructure.
+- **A rule returns one of three outcomes**: `fired` (a finding), `ok`
+  (evaluated, nothing wrong), or `skipped` (missing inputs, with a reason).
+  Keeping `ok` distinct from `skipped` is what lets a test prove no rule fires on
+  incomplete data, and lets "nothing needs changing" be claimed only when every
+  rule that *could* evaluate returned `ok`.
+- **Re-firing after resolution starts a fresh episode** (status `new`,
+  `first_seen_period` reset, count 1) rather than resuming the old count — the
+  simplest rule, and it reads correctly to a client ("this is back").
+- **Dismissal stickiness bar: a 25% move in money impact** (default, in the pure
+  reconciler) resurfaces a dismissed finding. Below that it stays suppressed.

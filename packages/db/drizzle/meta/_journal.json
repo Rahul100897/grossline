@@ -190,6 +190,20 @@
       "when": 1788701758546,
       "tag": "0026_app_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1788980545328,
+      "tag": "0027_findings",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1788980546328,
+      "tag": "0028_rls_findings",
+      "breakpoints": true
     }
   ]
 }

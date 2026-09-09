@@ -114,6 +114,17 @@ export {
   type PlanPrice,
 } from './settings';
 export {
+  getFindingsForReconcile,
+  getDismissedFindings,
+  writeReconciledFindings,
+  listFindings,
+  getFinding,
+  listFindingPeriods,
+  countUnreviewedFindings,
+  type Finding,
+  type FindingFilter,
+} from './findings';
+export {
   createTicket,
   listTickets,
   countOpenTickets,

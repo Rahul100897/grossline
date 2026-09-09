@@ -32,6 +32,17 @@ export const ticketStatus = pgEnum('ticket_status', ['open', 'in_progress', 'clo
 export const ticketPriority = pgEnum('ticket_priority', ['low', 'normal', 'high']);
 export const ticketSource = pgEnum('ticket_source', ['marketing', 'in_app']);
 export const ticketAuthor = pgEnum('ticket_author', ['admin', 'submitter']);
+// Finding lifecycle (task 4.1), computed not hand-set except 'dismissed':
+//   new       first time this rule+entity fired
+//   recurring fired last period too — occurrence_count carried forward
+//   resolved  fired before, no longer triggers — generates a closing output
+//   dismissed manual + sticky; suppressed until the numbers move materially
+export const findingStatus = pgEnum('finding_status', [
+  'new',
+  'recurring',
+  'resolved',
+  'dismissed',
+]);
 export const syncStatus = pgEnum('sync_status', ['running', 'success', 'failed']);
 
 export const tenants = pgTable('tenants', {
@@ -542,6 +553,77 @@ export const appSettings = pgTable('app_settings', {
   data: jsonb('data').notNull().default({}),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Per-tenant threshold calibration (task 4.2): break-even MER, CAC ceiling,
+// claim-gap tolerance, minimum money-impact floor, etc., computed from the
+// tenant's own history + margin structure and editable in Settings. One row
+// per tenant; the shape is a jsonb blob so new thresholds need no migration.
+export const tenantCalibration = pgTable('tenant_calibration', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .unique()
+    .references(() => tenants.id),
+  data: jsonb('data').notNull().default({}),
+  /** Whether the stored values were hand-edited (auto-recalibration skips them). */
+  edited: boolean('edited').notNull().default(false),
+  computedAt: timestamp('computed_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Findings (task 4.1). One row per (tenant, period, rule, entity). Every number
+// is computed by the rule layer and lives in these columns / evidence; the
+// model only writes prose over them (draft_text → final_text). Money is integer
+// minor units, and money_impact is the sort key. Status is computed by the
+// state machine except 'dismissed', which is a sticky manual action.
+export const findings = pgTable(
+  'findings',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    /** Reporting month, first day (YYYY-MM-01). */
+    period: date('period', { mode: 'string' }).notNull(),
+    ruleId: text('rule_id').notNull(),
+    severity: text('severity').notNull(), // informational label; money_impact ranks
+    /** The primary metric the finding is about. */
+    metric: text('metric').notNull(),
+    currentValue: numeric('current_value', { precision: 24, scale: 8 }),
+    comparisonValue: numeric('comparison_value', { precision: 24, scale: 8 }),
+    delta: numeric('delta', { precision: 24, scale: 8 }),
+    /** Entity type: campaign | product | discount | channel | account. */
+    entity: text('entity').notNull(),
+    /** Stable key used to match across periods (e.g. the campaign scope). */
+    entityKey: text('entity_key').notNull(),
+    entityLabel: text('entity_label').notNull(),
+    moneyImpactMinor: integer('money_impact_minor').notNull(),
+    currency: text('currency'),
+    evidence: jsonb('evidence').notNull().default({}),
+    status: findingStatus('status').notNull(),
+    firstSeenPeriod: date('first_seen_period', { mode: 'string' }).notNull(),
+    occurrenceCount: integer('occurrence_count').notNull().default(1),
+    /** Whether this period's ranking suppressed it (below floor or over the cap). */
+    suppressed: boolean('suppressed').notNull().default(false),
+    suppressedReason: text('suppressed_reason'),
+    /** Recommendation check carried to next period (task 4.7). */
+    checkMetric: text('check_metric'),
+    checkBaseline: numeric('check_baseline', { precision: 24, scale: 8 }),
+    /** Editorial (task 4.5): approved findings may go to a report (Phase 5). */
+    approvedAt: timestamp('approved_at', { withTimezone: true }),
+    dismissedReason: text('dismissed_reason'),
+    /** money_impact captured at dismissal, to detect a material later change. */
+    dismissedImpactMinor: integer('dismissed_impact_minor'),
+    /** Commentary (task 4.6): model draft, then the analyst's edited final. */
+    draftText: text('draft_text'),
+    finalText: text('final_text'),
+    editedAt: timestamp('edited_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('findings_uniq').on(t.tenantId, t.period, t.ruleId, t.entityKey),
+  ],
+);
 
 export const auditLog = pgTable('audit_log', {
   id: uuid('id').primaryKey().defaultRandom(),
