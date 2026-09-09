@@ -5,6 +5,7 @@
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 import type {
   FindingEntity,
+  FindingFamily,
   FindingStatus,
   PriorFinding,
   ReconciledFinding,
@@ -25,7 +26,9 @@ function toPrior(row: Finding): PriorFinding {
     firstSeenPeriod: row.firstSeenPeriod,
     occurrenceCount: row.occurrenceCount,
     status: row.status as FindingStatus,
+    family: row.family as FindingFamily,
     moneyImpactMinor: row.moneyImpactMinor,
+    opportunityValueMinor: row.opportunityValueMinor,
     currency: row.currency,
     entity: row.entity as FindingEntity,
     entityLabel: row.entityLabel,
@@ -114,7 +117,9 @@ export async function writeReconciledFindings(
           entity: f.entity,
           entityKey: f.entityKey,
           entityLabel: f.entityLabel,
+          family: f.family,
           moneyImpactMinor: f.moneyImpactMinor,
+          opportunityValueMinor: f.opportunityValueMinor,
           currency: f.currency,
           evidence: f.evidence,
           status: f.status,
@@ -136,7 +141,9 @@ export async function writeReconciledFindings(
             comparisonValue: f.comparisonValue === null ? null : String(f.comparisonValue),
             delta: f.delta === null ? null : String(f.delta),
             entityLabel: f.entityLabel,
+            family: f.family,
             moneyImpactMinor: f.moneyImpactMinor,
+            opportunityValueMinor: f.opportunityValueMinor,
             currency: f.currency,
             evidence: f.evidence,
             // Preserve a dismissal that is still in force.
@@ -163,6 +170,7 @@ export async function writeReconciledFindings(
           entity: r.entity,
           entityKey: r.entityKey,
           entityLabel: r.entityLabel,
+          family: r.family,
           moneyImpactMinor: 0,
           currency: r.currency,
           evidence: {

@@ -95,6 +95,7 @@ export { classifyRecommendation } from './findings/recommendations';
 export type { RecStatus, RecommendationInput, RecommendationJudgement } from './findings/recommendations';
 export type {
   FindingEntity,
+  FindingFamily,
   FindingSeverity,
   FindingStatus,
   Evidence,
@@ -106,6 +107,7 @@ export type {
   ReconcileInput,
   ReconcileOutput,
 } from './findings/types';
+export { valueIsExclusive } from './findings/types';
 export { hashPassword, verifyPassword } from './auth/password';
 export {
   base32Encode,

@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import {
   bigint,
   boolean,
+  check,
   date,
   integer,
   jsonb,
@@ -43,6 +44,11 @@ export const findingStatus = pgEnum('finding_status', [
   'resolved',
   'dismissed',
 ]);
+// Finding family (task 5.A1). Waste is provable money being lost; growth is a
+// hypothetical gain (a bounded test, never an instruction); measurement is a
+// data-trust risk with no spend action (claim gap). A finding carries a
+// money_impact (waste/measurement) OR an opportunity_value (growth), never both.
+export const findingFamily = pgEnum('finding_family', ['waste', 'growth', 'measurement']);
 export const syncStatus = pgEnum('sync_status', ['running', 'success', 'failed']);
 
 export const tenants = pgTable('tenants', {
@@ -598,6 +604,14 @@ export const findings = pgTable(
     entityKey: text('entity_key').notNull(),
     entityLabel: text('entity_label').notNull(),
     moneyImpactMinor: integer('money_impact_minor').notNull(),
+    /**
+     * Growth findings (task 5.A3–A4) carry a hypothetical gain here instead of a
+     * money_impact. Nullable; mutually exclusive with a non-zero money_impact
+     * (enforced by the check constraint below). Integer minor units.
+     */
+    opportunityValueMinor: integer('opportunity_value_minor'),
+    /** waste | growth | measurement (task 5.A1). */
+    family: findingFamily('family').notNull().default('waste'),
     currency: text('currency'),
     evidence: jsonb('evidence').notNull().default({}),
     status: findingStatus('status').notNull(),
@@ -622,6 +636,12 @@ export const findings = pgTable(
   },
   (t) => [
     uniqueIndex('findings_uniq').on(t.tenantId, t.period, t.ruleId, t.entityKey),
+    // A finding cannot carry both a money_impact and an opportunity_value: if an
+    // opportunity_value is present, the money_impact must be zero (task 5.A1).
+    check(
+      'findings_value_exclusive',
+      sql`${t.opportunityValueMinor} is null or ${t.moneyImpactMinor} = 0`,
+    ),
   ],
 );
 

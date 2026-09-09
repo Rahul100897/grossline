@@ -4,7 +4,7 @@
 // does not have returns a single `skipped` with a reason — never a finding
 // built on absent inputs. Every rule is golden-tested with hand-calculated
 // values.
-import type { Evidence, FindingDraft, FindingSeverity, RuleOutcome } from './types';
+import type { Evidence, FindingDraft, FindingFamily, FindingSeverity, RuleOutcome } from './types';
 import type { Rule } from './rule-types';
 
 const skip = (reason: string): RuleOutcome[] => [{ status: 'skipped', reason }];
@@ -30,10 +30,22 @@ function finding(f: {
   evidence: Evidence;
   checkMetric: string | null;
   checkBaseline: number | null;
+  /** Defaults to 'waste'; growth rules pass 'growth', claim gap 'measurement'. */
+  family?: FindingFamily;
+  /** Growth findings carry this instead of a money_impact (which stays 0). */
+  opportunityValueMinor?: number | null;
 }): RuleOutcome {
   const delta =
     f.currentValue !== null && f.comparisonValue !== null ? f.currentValue - f.comparisonValue : null;
-  return { status: 'fired', finding: { ...f, delta } };
+  return {
+    status: 'fired',
+    finding: {
+      ...f,
+      family: f.family ?? 'waste',
+      opportunityValueMinor: f.opportunityValueMinor ?? null,
+      delta,
+    },
+  };
 }
 
 // ---- 1. Below break-even MER ------------------------------------------------
@@ -318,6 +330,7 @@ export const claimGap: Rule = {
           finding({
             ruleId: this.id,
             severity: 'info', // measurement risk, never a spend loss
+            family: 'measurement',
             metric: 'claim_gap',
             currentValue: c.claimGap,
             comparisonValue: tolerance,
