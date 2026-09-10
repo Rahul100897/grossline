@@ -1038,6 +1038,19 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.C4: Site basics
+
+- **favicon.svg** (a green "G" mark), **robots.txt** (allow all + sitemap), and a
+  hand-written **sitemap.xml** listing the eight pages — all static in
+  `apps/web/public`. The sitemap is hand-written rather than adding
+  `@astrojs/sitemap`, to avoid a new dependency (ask-first) for eight known URLs.
+- **OG/Twitter meta** completed in `Base.astro`: `og:image` / `twitter:image`
+  point at the real sample-report render, `twitter:card` is `summary_large_image`,
+  plus `robots: index, follow`. Description/canonical/og basics were already there.
+- **No third-party analytics** — none is added, which is the privacy-preserving
+  choice the spec asks for; nothing sits awkwardly beside a privacy-first pitch.
+- The earlier favicon 404 is resolved.
+
 ## 2026-09-10 — Task 5.C3: Contact + free-report intake
 
 - **`free_report` added to `ticket_type`** (enum `ALTER TYPE … ADD VALUE`). The
