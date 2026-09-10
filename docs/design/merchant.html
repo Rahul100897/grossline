@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grossline — Homespice Decor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0F6F5C;--green-deep:#0A4A3E;--green-dark:#0B3A31;--green-soft:#E7F0EC;
+  --cream:#F8F5ED;--cream-2:#F1EDE1;--line:#E2DCCC;--line-soft:#EDE8DA;
+  --ink:#131A18;--slate:#5E6B66;--slate-2:#8A948F;
+  --rust:#B4472B;--rust-soft:#FAF0EC;--gold:#9A6B12;--gold-soft:#FBF3E3;--white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,sans-serif;background:var(--cream);color:var(--ink);
+     font-feature-settings:"tnum" 1;line-height:1.5}
+a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400;letter-spacing:-.01em}
+
+/* ---- top ---- */
+.top{background:var(--green-dark);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.02em}
+.mark{width:26px;height:26px;border-radius:7px;flex:none}
+.divider{width:1px;height:20px;background:#1E4C41}
+.store{font-size:14.5px;font-weight:500;color:#D5E5DF}
+.store .chev{color:#6D9488;font-size:10px;margin-left:5px}
+.tr{display:flex;align-items:center;gap:9px}
+.sel{border:1px solid #1E4C41;background:#0E463B;color:#D5E5DF;border-radius:7px;padding:7px 12px;font-size:13.5px}
+.btn{background:var(--green);color:#fff;border:1px solid var(--green);border-radius:7px;
+     padding:8px 15px;font-size:13.5px;font-weight:500}
+.btn.ghost{background:var(--white);color:var(--ink);border-color:var(--line)}
+.btn.dark-ghost{background:transparent;color:#D5E5DF;border-color:#1E4C41}
+.btn.sm{padding:6px 11px;font-size:12.5px}
+.avatar{width:29px;height:29px;border-radius:50%;background:#0E463B;border:1px solid #1E4C41;color:#9DC4B8;
+        display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600}
+
+/* ---- tabs ---- */
+.tabs{background:var(--green-dark);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:26px}
+.tab{padding:0 0 13px;font-size:14px;color:#8FB3A9;border-bottom:2px solid transparent;
+     margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:#D5E5DF}
+.tab.on{color:#fff;font-weight:500;border-bottom-color:var(--green)}
+.page{display:none;padding:30px 0 28px}.page.on{display:block}
+
+/* ---- headers ---- */
+.phead2{margin-bottom:22px}
+.ptitle{font-family:"Instrument Serif",Georgia,serif;font-size:31px;line-height:1.1;letter-spacing:-.015em}
+.plede{margin-top:9px;font-size:15px;line-height:1.65;color:var(--slate);max-width:640px}
+
+/* ---- verdict ---- */
+.verdict{display:grid;grid-template-columns:1fr 400px;gap:48px;align-items:start;margin-bottom:28px}
+.period{font-size:12.5px;color:var(--slate-2);margin-bottom:12px;letter-spacing:.04em}
+.headline{font-family:"Instrument Serif",Georgia,serif;font-size:38px;line-height:1.2;letter-spacing:-.015em;max-width:580px}
+.headline .up{color:var(--green)}.headline .down{color:var(--rust)}
+.hsub{margin-top:14px;font-size:15px;line-height:1.68;color:var(--slate);max-width:540px}
+
+.anchor{border:1px solid var(--line);border-radius:14px;background:var(--white);overflow:hidden}
+.arow{padding:19px 21px;border-bottom:1px solid var(--line-soft)}
+.arow:last-child{border-bottom:0}
+.arow .k{font-size:12.5px;color:var(--slate)}
+.arow .v{font-family:"Instrument Serif",Georgia,serif;font-size:37px;line-height:1;margin-top:7px;
+         display:flex;align-items:baseline;gap:10px}
+.arow .v small{font-family:Inter,sans-serif;font-size:13px;font-weight:500}
+.up{color:var(--green)}.down{color:var(--rust)}
+.track{position:relative;height:7px;background:var(--cream-2);border-radius:4px;margin-top:13px}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--green)}
+.be{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.55}
+.tl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--slate);margin-top:8px}
+
+/* ---- panels ---- */
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--white);overflow:hidden;margin-bottom:20px}
+.phead{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;
+       border-bottom:1px solid var(--line);gap:12px}
+.phead h2{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.phead .meta,.phead a{font-size:12.5px;color:var(--slate)}
+.grid2{display:grid;grid-template-columns:1fr 356px;gap:20px;align-items:start}
+.grid50{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+   color:var(--slate);padding:11px 20px;border-bottom:1px solid var(--line);background:#FCFBF6}
+td{padding:13px 20px;border-bottom:1px solid var(--line-soft);font-size:14px}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#FCFBF6}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.strong{font-weight:600;font-size:14.5px}
+.strong small{display:block;font-weight:400;color:var(--slate);font-size:12px;margin-top:2px}
+.tag{display:inline-block;font-size:11.5px;padding:3px 9px;border-radius:6px;font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--green-soft);color:var(--green)}
+.tag.warn{background:var(--gold-soft);color:var(--gold)}
+.tag.bad{background:var(--rust-soft);color:var(--rust)}
+.tag.n{background:var(--cream-2);color:var(--slate)}
+.foot{padding:13px 20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--slate);background:#FCFBF6;line-height:1.6}
+.mini{display:flex;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line-soft);font-size:14px}
+.mini:last-child{border-bottom:0}
+.mini .v{font-weight:600;font-variant-numeric:tabular-nums}
+.mini.big .v{font-family:"Instrument Serif",Georgia,serif;font-size:20px;font-weight:400}
+.li{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+    border-bottom:1px solid var(--line-soft);font-size:14px}
+.li:last-child{border-bottom:0}
+.li .r{font-size:12.5px;color:var(--slate)}
+.li b{font-weight:500}
+
+/* ---- chart ---- */
+.chart{padding:22px 20px 12px}
+.bars{display:flex;align-items:flex-end;gap:12px;height:170px}
+.bcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%}
+.bpair{display:flex;align-items:flex-end;gap:3px;width:100%;height:100%;justify-content:center}
+.b{width:14px;border-radius:3px 3px 0 0}
+.b.rev{background:var(--green)}.b.spend{background:#CFC7B0}
+.bcol .lb{font-size:11px;color:var(--slate-2)}
+.legend{display:flex;gap:18px;padding:14px 20px;border-top:1px solid var(--line);
+        font-size:12.5px;color:var(--slate);background:#FCFBF6;flex-wrap:wrap}
+.key{display:flex;align-items:center;gap:7px}
+.sq{width:10px;height:10px;border-radius:3px}
+.sq.rev{background:var(--green)}.sq.spend{background:#CFC7B0}
+
+/* ---- findings ---- */
+.finding{padding:20px;border-bottom:1px solid var(--line-soft)}
+.finding:last-of-type{border-bottom:0}
+.fhead{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.finding h3{font-family:"Instrument Serif",Georgia,serif;font-size:21px;line-height:1.25;letter-spacing:-.01em}
+.finding p{font-size:14px;line-height:1.68;color:var(--slate);margin-top:8px}
+.fline{margin-top:9px;font-size:14px;line-height:1.68;display:grid;grid-template-columns:104px 1fr;gap:10px}
+.fline .l{font-weight:600}.fline .t{color:var(--slate)}
+.stake{font-family:"Instrument Serif",Georgia,serif;font-size:23px;line-height:1;white-space:nowrap;text-align:right}
+.stake small{display:block;font-family:Inter,sans-serif;font-size:10.5px;color:var(--slate);
+             letter-spacing:.05em;text-transform:uppercase;margin-top:5px;font-weight:600}
+.fmeta{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+.fbar{width:3px;border-radius:3px;flex:none;align-self:stretch}
+.fbar.bad{background:var(--rust)}.fbar.warn{background:var(--gold)}.fbar.ok{background:var(--green)}
+.frow{display:flex;gap:15px}
+
+/* ---- cohort ---- */
+.c0{background:#FCFBF6}.c1{background:#EFF6F3}.c2{background:#E1EFE9}.c3{background:#CFE5DC}.c4{background:#B8D9CC}
+
+/* ---- bar in cell ---- */
+.hbar{display:flex;align-items:center;gap:9px;justify-content:flex-end}
+.hbar .t{position:relative;width:86px;height:7px;background:var(--cream-2);border-radius:4px;flex:none}
+.hbar .f{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--green);opacity:.85}
+
+/* ---- settings ---- */
+.srow{display:grid;grid-template-columns:230px 1fr auto;gap:26px;padding:19px 20px;
+      border-bottom:1px solid var(--line-soft);align-items:start}
+.srow:last-child{border-bottom:0}
+.srow h3{font-size:14.5px;font-weight:600}
+.srow .d{font-size:12.5px;color:var(--slate);margin-top:4px;line-height:1.55}
+.srow .c{font-size:14px;line-height:1.8;color:var(--slate)}
+.srow .c b{color:var(--ink);font-weight:500}
+
+/* ---- trust ---- */
+.trust{border-top:1px solid var(--line);background:var(--cream-2);padding:20px 0;font-size:12.5px;color:var(--slate)}
+.trust .wrap{display:flex;gap:34px;flex-wrap:wrap}
+.trust b{color:var(--ink);font-weight:500}
+footer{padding:22px 0 34px;font-size:12.5px;color:var(--slate-2)}
+
+@media (max-width:1080px){
+  .verdict{grid-template-columns:1fr;gap:26px}.anchor{max-width:520px}
+  .grid2,.grid50{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .wrap{padding:0 16px}
+  .top .wrap{height:auto;padding-top:11px;padding-bottom:11px;flex-wrap:wrap}
+  .tr{width:100%;justify-content:space-between}
+  .tabs .wrap{overflow-x:auto;gap:20px;scrollbar-width:none}
+  .tabs .wrap::-webkit-scrollbar{display:none}
+  .headline{font-size:26px}.ptitle{font-size:24px}
+  .panel{overflow-x:auto}table{min-width:640px}
+  .srow{grid-template-columns:1fr;gap:9px}
+  .bars{gap:6px;height:140px}.b{width:9px}
+  .fhead{flex-direction:column;gap:10px}.stake{text-align:left}
+  .fline{grid-template-columns:1fr;gap:2px}
+  .trust .wrap{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0F6F5C"/>
+          <path d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z" fill="#fff"/>
+        </svg>
+        Grossline
+      </div>
+      <span class="divider"></span>
+      <span class="store">Homespice Decor<span class="chev">&#9662;</span></span>
+    </div>
+    <div class="tr">
+      <span class="sel">August 2026 · vs July</span>
+      <button class="btn dark-ghost">Download report</button>
+      <span class="avatar">PD</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="wrap">
+    <span class="tab on" data-go="month">This month</span>
+    <span class="tab" data-go="channels">Channels</span>
+    <span class="tab" data-go="customers">Customers</span>
+    <span class="tab" data-go="products">Products</span>
+    <span class="tab" data-go="reports">Reports</span>
+    <span class="tab" data-go="settings">Settings</span>
+  </div>
+</div>
+
+<!-- ============ THIS MONTH ============ -->
+<div class="page on" id="month"><div class="wrap">
+  <div class="verdict">
+    <div>
+      <div class="period">1–31 August 2026 · IST · reported in USD</div>
+      <div class="headline">You kept <span class="up">$41,280</span> last month, on <span class="down">19% more</span> ad spend than July.</div>
+      <p class="hsub">Revenue grew 8.2% but spend grew faster, so efficiency slipped. You're still comfortably above break-even. Two things below are worth changing, and one thing you changed last month worked.</p>
+    </div>
+    <div class="anchor">
+      <div class="arow">
+        <div class="k">For every $1 spent on ads, this came back</div>
+        <div class="v">3.24&times; <small class="down">−0.31 vs July</small></div>
+        <div class="track"><span class="fill" style="width:74%"></span><span class="be" style="left:48%"></span></div>
+        <div class="tl"><span>Break even at 2.10&times;</span><span>Target 3.50&times;</span></div>
+      </div>
+      <div class="arow">
+        <div class="k">What each new customer cost you</div>
+        <div class="v">$38.40 <small class="down">+$5.10</small></div>
+        <div class="tl" style="margin-top:11px"><span>First order brings back $46.20</span><span class="up">Pays back on order one</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="panel">
+        <div class="phead"><h2>Revenue against ad spend</h2><span class="meta">Last 12 months</span></div>
+        <div class="chart"><div class="bars">
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:38%"></span><span class="b spend" style="height:13%"></span></div><span class="lb">Sep</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:44%"></span><span class="b spend" style="height:15%"></span></div><span class="lb">Oct</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:72%"></span><span class="b spend" style="height:26%"></span></div><span class="lb">Nov</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:100%"></span><span class="b spend" style="height:37%"></span></div><span class="lb">Dec</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:41%"></span><span class="b spend" style="height:16%"></span></div><span class="lb">Jan</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:46%"></span><span class="b spend" style="height:17%"></span></div><span class="lb">Feb</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:52%"></span><span class="b spend" style="height:19%"></span></div><span class="lb">Mar</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:49%"></span><span class="b spend" style="height:18%"></span></div><span class="lb">Apr</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:55%"></span><span class="b spend" style="height:21%"></span></div><span class="lb">May</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:58%"></span><span class="b spend" style="height:22%"></span></div><span class="lb">Jun</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:62%"></span><span class="b spend" style="height:24%"></span></div><span class="lb">Jul</span></div>
+          <div class="bcol"><div class="bpair"><span class="b rev" style="height:67%"></span><span class="b spend" style="height:31%"></span></div><span class="lb">Aug</span></div>
+        </div></div>
+        <div class="legend">
+          <span class="key"><span class="sq rev"></span>What you sold</span>
+          <span class="key"><span class="sq spend"></span>What you spent on ads</span>
+          <span style="margin-left:auto">August spend was the highest share of revenue in 12 months.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="phead"><h2>What's worth changing this month</h2><span class="meta">Ordered by money involved</span></div>
+
+        <div class="finding"><div class="frow"><span class="fbar bad"></span><div style="flex:1">
+          <div class="fhead">
+            <h3>Meta is taking credit for orders your store never saw</h3>
+            <div class="stake down">40%<small>gap, 3rd month</small></div>
+          </div>
+          <p>Meta reported 412 purchases in August. Your store recorded 247 orders arriving from Meta. That gap has held for three months, so it isn't a one-off.</p>
+          <div class="fline"><span class="l">At stake</span><span class="t">You may be judging $51,400 of spend on numbers 40% more generous than reality.</span></div>
+          <div class="fline"><span class="l">What to do</span><span class="t">Set your Meta budget against the store-recorded figure for one month.</span></div>
+          <div class="fline"><span class="l">We'll check</span><span class="t">Whether total order volume holds when the budget comes off the lower number.</span></div>
+          <div class="fmeta"><span class="tag warn">Third month running</span><span class="tag n">Meta</span></div>
+        </div></div></div>
+
+        <div class="finding"><div class="frow"><span class="fbar warn"></span><div style="flex:1">
+          <div class="fhead">
+            <h3>Discounting is eating four points more margin than July</h3>
+            <div class="stake" style="color:var(--gold)">$11,240<small>at stake</small></div>
+          </div>
+          <p>Discounts hit 18.7% of gross sales, up from 14.5%. WELCOME20 alone appeared on 61% of new-customer orders, and those customers come back at 11.2% against 26.4% for full-price buyers.</p>
+          <div class="fline"><span class="l">At stake</span><span class="t">$11,240 of margin in August, plus weaker customers coming in the door.</span></div>
+          <div class="fline"><span class="l">What to do</span><span class="t">Drop WELCOME20 to 10% for four weeks. Watch new-customer count, not conversion rate.</span></div>
+          <div class="fline"><span class="l">We'll check</span><span class="t">New customers and what you keep, next month.</span></div>
+          <div class="fmeta"><span class="tag n">New</span><span class="tag n">Shopify</span></div>
+        </div></div></div>
+
+        <div class="finding"><div class="frow"><span class="fbar ok"></span><div style="flex:1">
+          <div class="fhead">
+            <h3>There's room to spend more, if you want to test it</h3>
+            <div class="stake up">$18,000<small>headroom</small></div>
+          </div>
+          <p>You break even at 2.10&times; and you're running at 3.24&times;. On paper that's about $18,000 a month of headroom. This is arithmetic at today's efficiency, and efficiency almost always falls as spend rises — so it's a test, not a target.</p>
+          <div class="fline"><span class="l">What to do</span><span class="t">Raise spend 20% on your best campaign for two weeks, nothing else changed.</span></div>
+          <div class="fline"><span class="l">We'll check</span><span class="t">Efficiency and total orders. Below 2.8&times;, we'd revert.</span></div>
+          <div class="fmeta"><span class="tag ok">Opportunity</span><span class="tag n">Test, not an instruction</span></div>
+        </div></div></div>
+
+        <div class="finding"><div class="frow"><span class="fbar ok"></span><div style="flex:1">
+          <div class="fhead">
+            <h3>Last month's Google change worked</h3>
+            <div class="stake up">$2,870<small>redirected</small></div>
+          </div>
+          <p>In July we flagged $4,100 of PMax spend producing three attributable orders. You cut it 70% on 8 August. Orders held steady and Google's cost per order fell from $121 to $84.</p>
+          <div class="fmeta"><span class="tag ok">Resolved</span></div>
+        </div></div></div>
+
+        <div class="foot">Nothing else met the threshold this month. When nothing needs changing, we say so rather than filling the space.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="phead"><h2>Where the money went</h2></div>
+        <div class="mini"><span>Gross sales</span><span class="v">$298,410</span></div>
+        <div class="mini"><span>Discounts</span><span class="v">−$21,190</span></div>
+        <div class="mini"><span>Returns</span><span class="v">−$9,280</span></div>
+        <div class="mini"><span><b>Net sales</b></span><span class="v">$267,940</span></div>
+        <div class="mini"><span>Product cost</span><span class="v">−$118,900</span></div>
+        <div class="mini"><span>Fees, shipping, packing</span><span class="v">−$25,060</span></div>
+        <div class="mini"><span>Ad spend</span><span class="v">−$82,700</span></div>
+        <div class="mini big" style="background:#FCFBF6"><span><b>What you kept</b></span><span class="v up">$41,280</span></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Headlines</h2></div>
+        <div class="mini"><span>Orders</span><span class="v">1,424</span></div>
+        <div class="mini"><span>Average order value</span><span class="v">$188.16</span></div>
+        <div class="mini"><span>New customers</span><span class="v">2,153</span></div>
+        <div class="mini"><span>Refund rate</span><span class="v">3.1%</span></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Your reports</h2><a href="#">All</a></div>
+        <div class="li"><span><b>August 2026</b></span><span class="r"><span class="tag warn">In review</span></span></div>
+        <div class="li"><span><b>July 2026</b></span><span class="r">PDF · 3 Aug</span></div>
+        <div class="li"><span><b>June 2026</b></span><span class="r">PDF · 4 Jul</span></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ CHANNELS ============ -->
+<div class="page" id="channels"><div class="wrap">
+  <div class="phead2">
+    <div class="ptitle">Channels</div>
+    <p class="plede">What each platform claims it delivered, against what your store actually recorded. The two will never match exactly — what matters is the size and direction of the gap.</p>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>Where the money went, and what came back</h2><span class="meta">August 2026</span></div>
+    <table>
+      <thead><tr><th style="width:20%">Channel</th><th class="num">Spend</th><th class="num">Platform says</th><th class="num">Your store recorded</th><th class="num">Gap</th><th class="num">Revenue</th><th class="num">Cost per order</th></tr></thead>
+      <tbody>
+        <tr><td class="strong">Meta</td><td class="num">$51,400</td><td class="num">412 orders</td><td class="num">247 orders</td><td class="num"><span class="tag bad">40%</span></td><td class="num">$71,900</td><td class="num">$208.10</td></tr>
+        <tr><td class="strong">Google</td><td class="num">$31,300</td><td class="num">288 orders</td><td class="num">261 orders</td><td class="num"><span class="tag ok">9%</span></td><td class="num">$68,240</td><td class="num">$119.92</td></tr>
+        <tr><td class="strong">Email &amp; SMS</td><td class="num">—</td><td class="num">—</td><td class="num">414 orders</td><td class="num">—</td><td class="num">$58,100</td><td class="num">—</td></tr>
+        <tr><td class="strong">Direct &amp; organic</td><td class="num">—</td><td class="num">—</td><td class="num">502 orders</td><td class="num">—</td><td class="num">$69,700</td><td class="num">—</td></tr>
+      </tbody>
+    </table>
+    <div class="foot">Meta and Google each count the same orders their own way, so their figures can't be added together. Your store's record is the independent check.</div>
+  </div>
+
+  <div class="grid50">
+    <div class="panel">
+      <div class="phead"><h2>Meta — campaigns</h2><span class="meta">$51,400 spent</span></div>
+      <table>
+        <thead><tr><th style="width:40%">Campaign</th><th class="num">Spend</th><th class="num">Meta's ROAS</th><th class="num">Share</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Prospecting — Broad<small>Advantage+ · 14 creatives</small></td><td class="num">$24,800</td><td class="num">2.41&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:100%"></span></span></span></td></tr>
+          <tr><td class="strong">Retargeting — 30d<small>6 creatives</small></td><td class="num">$11,900</td><td class="num">6.82&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:48%"></span></span></span></td></tr>
+          <tr><td class="strong">Prospecting — Interest<small>9 creatives</small></td><td class="num">$9,400</td><td class="num">1.88&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:38%"></span></span></span></td></tr>
+          <tr><td class="strong">Catalogue — DPA<small>Feed-based</small></td><td class="num">$5,300</td><td class="num">4.10&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:21%"></span></span></span></td></tr>
+        </tbody>
+      </table>
+      <div class="foot">These ROAS figures are Meta's own. Retargeting always looks strong because it reaches people who were already coming back.</div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Google — campaigns</h2><span class="meta">$31,300 spent</span></div>
+      <table>
+        <thead><tr><th style="width:40%">Campaign</th><th class="num">Spend</th><th class="num">Google's ROAS</th><th class="num">Share</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Performance Max<small>Shopping feed</small></td><td class="num">$12,400</td><td class="num">3.02&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:100%"></span></span></span></td></tr>
+          <tr><td class="strong">Search — Non-branded<small>412 keywords</small></td><td class="num">$8,900</td><td class="num">1.94&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:72%"></span></span></span></td></tr>
+          <tr><td class="strong">Search — Branded<small>18 keywords</small></td><td class="num">$6,700</td><td class="num">8.21&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:54%"></span></span></span></td></tr>
+          <tr><td class="strong">Demand Gen<small>3 asset groups</small></td><td class="num">$3,300</td><td class="num">1.42&times;</td><td class="num"><span class="hbar"><span class="t"><span class="f" style="width:27%"></span></span></span></td></tr>
+        </tbody>
+      </table>
+      <div class="foot">Branded search is 21% of Google spend. Strong numbers here usually mean paying to reach people who already knew your name.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>How customers found you — your store's own record</h2><span class="meta">First touch</span></div>
+    <table>
+      <thead><tr><th style="width:22%">Source</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">Average order</th><th class="num">New customers</th><th class="num">Days to buy</th></tr></thead>
+      <tbody>
+        <tr><td class="strong">Meta ads</td><td class="num">247</td><td class="num">$71,900</td><td class="num">$291.09</td><td class="num">78%</td><td class="num">2.4</td></tr>
+        <tr><td class="strong">Google ads</td><td class="num">261</td><td class="num">$68,240</td><td class="num">$261.46</td><td class="num">64%</td><td class="num">4.1</td></tr>
+        <tr><td class="strong">Email</td><td class="num">338</td><td class="num">$47,900</td><td class="num">$141.72</td><td class="num">11%</td><td class="num">1.2</td></tr>
+        <tr><td class="strong">Direct</td><td class="num">312</td><td class="num">$44,600</td><td class="num">$142.95</td><td class="num">32%</td><td class="num">—</td></tr>
+        <tr><td class="strong">Organic search</td><td class="num">190</td><td class="num">$25,100</td><td class="num">$132.11</td><td class="num">58%</td><td class="num">9.6</td></tr>
+        <tr><td class="strong">SMS</td><td class="num">76</td><td class="num">$10,200</td><td class="num">$134.21</td><td class="num">7%</td><td class="num">0.8</td></tr>
+      </tbody>
+    </table>
+    <div class="foot">Untagged traffic shows as Direct. If your email or affiliate links are missing tags, their orders land there instead.</div>
+  </div>
+</div></div>
+
+<!-- ============ CUSTOMERS ============ -->
+<div class="page" id="customers"><div class="wrap">
+  <div class="phead2">
+    <div class="ptitle">Customers</div>
+    <p class="plede">Whether your ad spend is buying new people or re-buying people you already had, and what they turn out to be worth.</p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="panel">
+        <div class="phead"><h2>New against returning</h2><span class="meta">August 2026</span></div>
+        <table>
+          <thead><tr><th style="width:30%"></th><th class="num">Customers</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">Average order</th><th class="num">Share</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">New</td><td class="num">2,153</td><td class="num">2,153</td><td class="num">$164,900</td><td class="num">$76.59</td><td class="num">61.5%</td></tr>
+            <tr><td class="strong">Returning</td><td class="num">1,412</td><td class="num">1,891</td><td class="num">$103,040</td><td class="num">$54.49</td><td class="num">38.5%</td></tr>
+          </tbody>
+        </table>
+        <div class="foot">Ad spend should be judged against what new customers brought in, not total revenue. On that basis your acquisition returns 1.99&times;.</div>
+      </div>
+
+      <div class="panel">
+        <div class="phead"><h2>What a group of customers is worth over time</h2><span class="meta">Total spent per customer</span></div>
+        <table>
+          <thead><tr><th>First bought</th><th class="num">Customers</th><th class="num">Day 30</th><th class="num">Day 60</th><th class="num">Day 90</th><th class="num">Day 180</th><th class="num">Day 365</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">Aug 2025</td><td class="num">1,640</td><td class="num c1">$76.20</td><td class="num c2">$94.10</td><td class="num c2">$108.40</td><td class="num c3">$131.90</td><td class="num c4">$168.30</td></tr>
+            <tr><td class="strong">Nov 2025</td><td class="num">3,210</td><td class="num c1">$81.40</td><td class="num c2">$99.60</td><td class="num c3">$116.20</td><td class="num c3">$142.10</td><td class="num c0">—</td></tr>
+            <tr><td class="strong">Feb 2026</td><td class="num">1,890</td><td class="num c1">$74.80</td><td class="num c1">$90.20</td><td class="num c2">$104.60</td><td class="num c0">—</td><td class="num c0">—</td></tr>
+            <tr><td class="strong">May 2026</td><td class="num">2,040</td><td class="num c1">$78.90</td><td class="num c2">$96.40</td><td class="num c0">—</td><td class="num c0">—</td><td class="num c0">—</td></tr>
+            <tr><td class="strong">Aug 2026</td><td class="num">2,153</td><td class="num c1">$76.59</td><td class="num c0">—</td><td class="num c0">—</td><td class="num c0">—</td><td class="num c0">—</td></tr>
+          </tbody>
+        </table>
+        <div class="foot">At $38.40 to acquire and $76.59 back in the first 30 days, you get your money back on the first order.</div>
+      </div>
+
+      <div class="panel">
+        <div class="phead"><h2>How often people come back</h2></div>
+        <table>
+          <thead><tr><th style="width:34%">Orders placed</th><th class="num">Customers</th><th class="num">Share</th><th class="num">Revenue</th><th class="num">Share of revenue</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">Once only</td><td class="num">9,840</td><td class="num">71.2%</td><td class="num">$742,300</td><td class="num">48.1%</td></tr>
+            <tr><td class="strong">Twice</td><td class="num">2,410</td><td class="num">17.4%</td><td class="num">$361,900</td><td class="num">23.4%</td></tr>
+            <tr><td class="strong">Three to five</td><td class="num">1,290</td><td class="num">9.3%</td><td class="num">$318,600</td><td class="num">20.6%</td></tr>
+            <tr><td class="strong">Six or more</td><td class="num">290</td><td class="num">2.1%</td><td class="num">$120,700</td><td class="num">7.8%</td></tr>
+          </tbody>
+        </table>
+        <div class="foot">All time. Just under 29% of your customers produce almost 52% of your revenue.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="phead"><h2>Key numbers</h2></div>
+        <div class="mini"><span>Come back within 30 days</span><span class="v">9.4%</span></div>
+        <div class="mini"><span>Come back within 90 days</span><span class="v">24.8%</span></div>
+        <div class="mini"><span>Days to second order</span><span class="v">41</span></div>
+        <div class="mini"><span>Cost per new customer</span><span class="v">$38.40</span></div>
+        <div class="mini"><span>First order brings back</span><span class="v">$46.20</span></div>
+        <div class="mini"><span>Worth after 90 days</span><span class="v">$104.60</span></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Where new customers came from</h2><span class="meta">August</span></div>
+        <div class="li"><span><b>Meta</b></span><span class="r">193 · 8.9%</span></div>
+        <div class="li"><span><b>Google — non-branded</b></span><span class="r">167 · 7.8%</span></div>
+        <div class="li"><span><b>Organic search</b></span><span class="r">110 · 5.1%</span></div>
+        <div class="li"><span><b>Direct</b></span><span class="r">100 · 4.6%</span></div>
+        <div class="li"><span><b>Email &amp; SMS</b></span><span class="r">42 · 2.0%</span></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Worth knowing</h2></div>
+        <div style="padding:17px 20px;font-size:14px;color:var(--slate);line-height:1.7">
+          Customers who first bought on a discount come back at 11.2% within 90 days. Customers who paid full price come back at 26.4%. That's why the discount finding this month matters more than the headline margin number suggests.
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ PRODUCTS ============ -->
+<div class="page" id="products"><div class="wrap">
+  <div class="phead2">
+    <div class="ptitle">Products</div>
+    <p class="plede">Which products actually make money once product cost and returns come out — not just which ones sell the most.</p>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>Top products by what they earned you</h2><span class="meta">August 2026 · after cost and returns</span></div>
+    <table>
+      <thead><tr><th style="width:24%">Product</th><th class="num">Units</th><th class="num">Revenue</th><th class="num">Cost</th><th class="num">Margin</th><th class="num">Returns</th><th class="num">You kept</th></tr></thead>
+      <tbody>
+        <tr><td class="strong">Jaipur Block Rug 5×8<small>4 variants</small></td><td class="num">218</td><td class="num">$58,860</td><td class="num">$24,720</td><td class="num">58.0%</td><td class="num">2.1%</td><td class="num">$34,140</td></tr>
+        <tr><td class="strong">Kanthi Throw Blanket<small>6 variants</small></td><td class="num">412</td><td class="num">$41,200</td><td class="num">$19,780</td><td class="num">52.0%</td><td class="num">1.4%</td><td class="num">$21,420</td></tr>
+        <tr><td class="strong">Braided Jute Runner<small>3 variants</small></td><td class="num">386</td><td class="num">$34,740</td><td class="num">$17,020</td><td class="num">51.0%</td><td class="num">2.8%</td><td class="num">$17,720</td></tr>
+        <tr><td class="strong">Cotton Dhurrie 3×5<small>5 variants</small></td><td class="num">294</td><td class="num">$29,400</td><td class="num">$16,170</td><td class="num">45.0%</td><td class="num">3.2%</td><td class="num">$13,230</td></tr>
+        <tr><td class="strong">Handloom Cushion Set<small>8 variants</small></td><td class="num">521</td><td class="num">$26,050</td><td class="num">$14,590</td><td class="num">44.0%</td><td class="num">1.9%</td><td class="num">$11,460</td></tr>
+        <tr style="background:var(--rust-soft)"><td class="strong">Wool Shag Rug 8×10<small>2 variants · flagged</small></td><td class="num">64</td><td class="num">$25,600</td><td class="num">$15,360</td><td class="num">40.0%</td><td class="num"><span class="tag bad">14.2%</span></td><td class="num">$6,590</td></tr>
+        <tr><td class="strong">Kilim Floor Cushion<small>4 variants</small></td><td class="num">178</td><td class="num">$17,800</td><td class="num">$9,790</td><td class="num">45.0%</td><td class="num">2.4%</td><td class="num">$8,010</td></tr>
+      </tbody>
+    </table>
+    <div class="foot">The Wool Shag Rug is returned four times more often than your store average, and it took $4,900 of Meta spend in August.</div>
+  </div>
+
+  <div class="grid50">
+    <div class="panel">
+      <div class="phead"><h2>Discount codes</h2><span class="meta">August 2026</span></div>
+      <table>
+        <thead><tr><th style="width:28%">Code</th><th class="num">Orders</th><th class="num">Given away</th><th class="num">Average order</th><th class="num">Come back</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">WELCOME20</td><td class="num">861</td><td class="num">$14,120</td><td class="num">$142.80</td><td class="num"><span class="tag bad">11.2%</span></td></tr>
+          <tr><td class="strong">SUMMER15</td><td class="num">204</td><td class="num">$4,310</td><td class="num">$168.40</td><td class="num">18.6%</td></tr>
+          <tr><td class="strong">BUNDLE10</td><td class="num">118</td><td class="num">$2,760</td><td class="num">$241.90</td><td class="num">31.4%</td></tr>
+          <tr><td class="strong">No discount</td><td class="num">241</td><td class="num">—</td><td class="num">$204.10</td><td class="num"><span class="tag ok">26.4%</span></td></tr>
+        </tbody>
+      </table>
+      <div class="foot">Discounts were 18.7% of gross sales in August, up from 14.5% in July.</div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Stock on products you're advertising</h2><span class="meta">At current sales rate</span></div>
+      <table>
+        <thead><tr><th style="width:38%">Product</th><th class="num">In stock</th><th class="num">Days left</th><th class="num">Ad spend</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Jaipur Block Rug 5×8</td><td class="num">412</td><td class="num">57</td><td class="num">$11,200</td></tr>
+          <tr style="background:var(--gold-soft)"><td class="strong">Kanthi Throw Blanket</td><td class="num">108</td><td class="num"><span class="tag warn">8</span></td><td class="num">$9,400</td></tr>
+          <tr><td class="strong">Braided Jute Runner</td><td class="num">640</td><td class="num">50</td><td class="num">$6,800</td></tr>
+          <tr><td class="strong">Cotton Dhurrie 3×5</td><td class="num">388</td><td class="num">40</td><td class="num">$5,100</td></tr>
+        </tbody>
+      </table>
+      <div class="foot">The Kanthi Throw has eight days of stock left and $9,400 of ads still running behind it. Worth pausing or reordering this week.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ REPORTS ============ -->
+<div class="page" id="reports"><div class="wrap">
+  <div class="phead2">
+    <div class="ptitle">Reports</div>
+    <p class="plede">Every monthly report we've sent, and what we recommended in each. Recommendations carry forward, so you can see whether the change worked.</p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="panel">
+        <div class="phead"><h2>Report archive</h2><span class="meta">6 reports</span></div>
+        <table>
+          <thead><tr><th style="width:22%">Month</th><th class="num">Net sales</th><th class="num">Ad spend</th><th class="num">Return on ads</th><th class="num">You kept</th><th>Status</th><th class="num"></th></tr></thead>
+          <tbody>
+            <tr><td class="strong">August 2026</td><td class="num">$267,940</td><td class="num">$82,700</td><td class="num">3.24&times;</td><td class="num">$41,280</td><td><span class="tag warn">In review</span></td><td class="num">—</td></tr>
+            <tr><td class="strong">July 2026</td><td class="num">$247,600</td><td class="num">$69,700</td><td class="num">3.55&times;</td><td class="num">$43,970</td><td><span class="tag ok">Sent 3 Aug</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+            <tr><td class="strong">June 2026</td><td class="num">$231,400</td><td class="num">$64,200</td><td class="num">3.60&times;</td><td class="num">$41,880</td><td><span class="tag ok">Sent 4 Jul</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+            <tr><td class="strong">May 2026</td><td class="num">$218,900</td><td class="num">$61,400</td><td class="num">3.57&times;</td><td class="num">$39,110</td><td><span class="tag ok">Sent 3 Jun</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+            <tr><td class="strong">April 2026</td><td class="num">$196,200</td><td class="num">$55,800</td><td class="num">3.52&times;</td><td class="num">$34,240</td><td><span class="tag ok">Sent 4 May</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+            <tr><td class="strong">March 2026</td><td class="num">$188,700</td><td class="num">$52,100</td><td class="num">3.62&times;</td><td class="num">$33,900</td><td><span class="tag ok">Sent 3 Apr</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="phead"><h2>What we recommended, and what happened</h2><span class="meta">Carried forward each month</span></div>
+        <table>
+          <thead><tr><th style="width:34%">What we suggested</th><th>Month</th><th>Did you do it</th><th class="num">Result</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">Cut PMax budget by 70%</td><td>July</td><td>Yes, 8 Aug</td><td class="num up">$121 → $84 per order</td><td><span class="tag ok">Worked</span></td></tr>
+            <tr><td class="strong">Set Meta budget from store orders</td><td>June</td><td>Not yet</td><td class="num">—</td><td><span class="tag warn">Asked again</span></td></tr>
+            <tr><td class="strong">Raise free shipping to $95</td><td>June</td><td>Yes, 20 Jun</td><td class="num up">$171 → $188 average order</td><td><span class="tag ok">Worked</span></td></tr>
+            <tr><td class="strong">Pause Demand Gen</td><td>May</td><td>Yes, 12 Jun</td><td class="num">Orders unchanged</td><td><span class="tag ok">Worked</span></td></tr>
+            <tr><td class="strong">Tag your email links properly</td><td>April</td><td>Yes, 30 Apr</td><td class="num up">Direct 41% → 32%</td><td><span class="tag ok">Worked</span></td></tr>
+          </tbody>
+        </table>
+        <div class="foot">One recommendation has now been made three months running without being tried. It's this month's first finding.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="phead"><h2>Six-month trend</h2></div>
+        <div class="mini"><span>Sales growth</span><span class="v up">+42.0%</span></div>
+        <div class="mini"><span>Ad spend growth</span><span class="v down">+58.7%</span></div>
+        <div class="mini"><span>Return on ads</span><span class="v down">3.62&times; → 3.24&times;</span></div>
+        <div class="mini"><span>What you kept</span><span class="v up">+21.8%</span></div>
+        <div class="mini"><span>Average order</span><span class="v up">$164 → $188</span></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Delivery</h2></div>
+        <div class="mini"><span>Report arrives</span><span class="v">5th of month</span></div>
+        <div class="mini"><span>Weekly summary</span><span class="v">Monday 08:00</span></div>
+        <div class="mini"><span>Sent to</span><span class="v">2 people</span></div>
+        <div class="foot">Change who receives it under Settings.</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ SETTINGS ============ -->
+<div class="page" id="settings"><div class="wrap">
+  <div class="phead2">
+    <div class="ptitle">Settings</div>
+    <p class="plede">Your connections, your costs and who gets the report. Everything here affects the numbers on the other tabs.</p>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>Connected accounts</h2><span class="meta">All read-only</span></div>
+    <div class="srow">
+      <div><h3>Shopify</h3><div class="d">Orders, customers, products and stock.</div></div>
+      <div class="c"><b>Homespice main</b> · synced 04:12<br><b>Homespice EU</b> · synced 04:13</div>
+      <div><span class="tag ok">Connected</span></div>
+    </div>
+    <div class="srow">
+      <div><h3>Google Ads</h3><div class="d">Spend, clicks and results by campaign.</div></div>
+      <div class="c">Account <b>481-220-9917</b> · synced 04:14</div>
+      <div><span class="tag ok">Connected</span></div>
+    </div>
+    <div class="srow">
+      <div><h3>Meta Ads</h3><div class="d">Spend and results by campaign and ad.</div></div>
+      <div class="c">Account <b>act_2299104</b> · synced 04:15</div>
+      <div><span class="tag ok">Connected</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>Your costs</h2><span class="meta">These drive every profit figure</span></div>
+    <div class="srow">
+      <div><h3>What your products cost</h3><div class="d">Per item, with the date each cost started, so past months never change.</div></div>
+      <div class="c"><b>214 products</b> covered · none missing<br>Last updated <b>12 June 2026</b></div>
+      <div><button class="btn sm ghost">Upload</button></div>
+    </div>
+    <div class="srow">
+      <div><h3>Payment fees</h3><div class="d">What your payment provider charges per order.</div></div>
+      <div class="c"><b>2.4% + $0.30</b> per order</div>
+      <div><button class="btn sm ghost">Edit</button></div>
+    </div>
+    <div class="srow">
+      <div><h3>Shipping and packing</h3><div class="d">What it costs to get an order out the door.</div></div>
+      <div class="c">Shipping <b>$9.40</b> · packing <b>$3.20</b> per order</div>
+      <div><button class="btn sm ghost">Edit</button></div>
+    </div>
+    <div class="srow">
+      <div><h3>Monthly targets</h3><div class="d">Used for the pacing figures in your weekly summary.</div></div>
+      <div class="c">Sales <b>$280,000</b> · ad spend <b>$78,000</b> · return <b>3.50&times;</b></div>
+      <div><button class="btn sm ghost">Edit</button></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>People and delivery</h2></div>
+    <div class="srow">
+      <div><h3>Who can log in</h3><div class="d">Everyone here sees the same read-only view.</div></div>
+      <div class="c"><b>Priya Desai</b> · owner<br><b>Anand Shah</b> · viewer</div>
+      <div><button class="btn sm ghost">Invite</button></div>
+    </div>
+    <div class="srow">
+      <div><h3>Where reports go</h3><div class="d">The monthly PDF and the weekly summary.</div></div>
+      <div class="c">Monthly to <b>both</b> · 5th of the month<br>Weekly to <b>Priya</b> · Monday 08:00 IST</div>
+      <div><button class="btn sm ghost">Edit</button></div>
+    </div>
+    <div class="srow">
+      <div><h3>Your plan</h3><div class="d">Billed every three months, in advance.</div></div>
+      <div class="c"><b>Growth</b> · up to 3 stores · $949/month<br>Next invoice <b>1 October 2026</b> · <span class="tag ok">Paid</span></div>
+      <div><button class="btn sm ghost">Invoices</button></div>
+    </div>
+    <div class="srow">
+      <div><h3>Something look wrong?</h3><div class="d">If a number seems off, tell us. We'd rather hear it than have you stop trusting the report.</div></div>
+      <div class="c">We usually reply within a working day.</div>
+      <div><button class="btn sm">Report a problem</button></div>
+    </div>
+  </div>
+</div></div>
+
+<div class="trust"><div class="wrap">
+  <span>Last updated <b>4 September, 04:12 IST</b></span>
+  <span>Last 7 days are <b>provisional</b> — Meta revises recent days</span>
+  <span>Shown in <b>USD</b> · store time <b>IST</b></span>
+  <span>Checked against Shopify, Google and Meta on <b>3 September</b></span>
+</div></div>
+
+<footer><div class="wrap">Grossline · Every number here is explained on the <a href="#" style="text-decoration:underline">how we calculate</a> page.</div></footer>
+
+<script>
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
+    t.classList.add('on');
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+    document.getElementById(t.dataset.go).classList.add('on');
+    window.scrollTo(0,0);
+  });
+});
+</script>
+</body>
+</html>

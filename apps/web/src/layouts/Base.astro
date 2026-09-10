@@ -1,4 +1,8 @@
 ---
+// Single source of truth for every colour/radius/shadow (docs/design/design-tokens.css),
+// bundled globally by Astro so no hex is defined in this file.
+import '../../../../docs/design/design-tokens.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -41,24 +45,48 @@ const nav = [
     <meta name="robots" content="index, follow" />
     <title>{title}</title>
     <style is:global>
+      /* Self-hosted fonts (Step A) — no Google Fonts request; renders offline. */
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/inter.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Instrument Serif';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/instrument-serif.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Instrument Serif';
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/instrument-serif-italic.woff2') format('woff2');
+      }
+      /* Legacy aliases used by the current marketing pages — each maps to a
+         --gl-* token from design-tokens.css. Replaced when home.html is ported. */
       :root {
         color-scheme: light;
-        --ink: #16181d;
-        --muted: #5b6472;
-        --accent: #0f6f5c;
-        --accent-soft: #e8f2ef;
-        --rule: #e5e8ec;
-        --bg: #fbfaf8;
-        --panel: #ffffff;
-        --warn: #b4531a;
+        --ink: var(--gl-ink);
+        --muted: var(--gl-slate);
+        --accent: var(--gl-green);
+        --accent-soft: var(--gl-green-soft);
+        --rule: var(--gl-line);
+        --bg: var(--gl-cream);
+        --panel: var(--gl-white);
+        --warn: var(--gl-rust);
       }
       * { box-sizing: border-box; }
       body {
         margin: 0;
         background: var(--bg);
         color: var(--ink);
-        font: 17px/1.65 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        font-variant-numeric: tabular-nums;
+        font: 17px/1.65 var(--gl-font-body);
+        font-feature-settings: 'tnum' 1;
       }
       .wrap { max-width: 40rem; margin: 0 auto; padding: 0 1.5rem; }
       .wrap.wide { max-width: 60rem; }
@@ -98,7 +126,7 @@ const nav = [
       .tier ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.95rem; }
       .tier li { margin: 0.2rem 0; }
       .quote-slot { border: 1px dashed var(--rule); border-radius: 10px; padding: 2rem; text-align: center; color: var(--muted); font-size: 0.95rem; }
-      .btn { display: inline-block; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; padding: 0.7rem 1.3rem; border-radius: 8px; }
+      .btn { display: inline-block; background: var(--ink); color: var(--gl-white); text-decoration: none; font-weight: 600; padding: 0.7rem 1.3rem; border-radius: 8px; }
       .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
 
       footer.site { border-top: 1px solid var(--rule); margin-top: 3.5rem; padding: 1.75rem 0; color: var(--muted); font-size: 0.9rem; display: flex; gap: 1.25rem; flex-wrap: wrap; }

@@ -1267,3 +1267,35 @@ risk"` badge would have mislabelled them (and mislabelled resolved rows too).
   produces a carried-forward growth recommendation history — May→Jun held
   (MER 2.40 → 2.59), Jun→Jul tried-and-did-not-hold (MER 2.59 → 2.50, worsened,
   actioned), Jul→Aug held (MER 2.50 → 2.82).
+
+## 2026-09-11 — Design port: Step A (tokens + fonts)
+
+Visual port of every surface to `docs/design/` (mockups are the spec). Order:
+A tokens/fonts, B primitives, C report, D merchant dashboard + admin console.
+
+- **Merchant dashboard is built INTERNAL** (analyst-authenticated admin view,
+  styled to `merchant.html`), not a merchant-authenticated portal — resolving the
+  CLAUDE.md "v1 is admin-only / no merchant-facing features" guardrail, which I
+  flagged before starting. No new merchant auth/access is added.
+- **Single source of truth.** `docs/design/design-tokens.css` is imported verbatim
+  into both apps: admin (`app/globals.css` `@import '../../../docs/design/design-tokens.css'`,
+  which Tailwind v4 resolves) and web (Astro frontmatter `import` bundles it).
+  No colour/radius/shadow hex is defined anywhere else. The Tailwind theme
+  (`tailwind-theme.js`) is mirrored into admin's `@theme` with every `--color-*`,
+  `--radius-*`, `--shadow-*`, `--font-*` referencing a `--gl-*` token; the display
+  type scale (`d-hero`…`d-mer`) copies the px/line-height/tracking verbatim.
+- **Legacy token names kept as aliases.** The task-3.x components reference
+  `--color-paper/hairline/panel/good/attn/…`; each now maps to the nearest
+  `--gl-*` token so pages keep rendering until Step B rebuilds them, then the
+  aliases are removed. Adopting the token palette shifts the app to cream/green in
+  Step A — that IS the wiring, and is intended.
+- **Fonts self-hosted.** Inter (latin variable woff2) + Instrument Serif
+  (regular + italic latin woff2) in each app's `public/fonts`, `@font-face` with
+  `font-display: swap`. No Google Fonts request, so the report PDF renders
+  identically offline (design requirement). `font-feature-settings:"tnum" 1` on
+  body in both apps.
+- **The eslint arbitrary-value ban is deferred to a final lock-in PR.** The
+  existing components are full of `text-[13px]`/`rounded-[3px]` etc.; an
+  error-level rule in Step A would fail CI on code Step B/D will replace. It is
+  self-enforced through B–D and added (proving zero violations) once the tree is
+  clean.
