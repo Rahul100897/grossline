@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const intakeSchema = z.object({
-  type: z.enum(['bug', 'question', 'feedback', 'feature']),
+  type: z.enum(['bug', 'question', 'feedback', 'feature', 'free_report']),
   subject: z.string().min(1).max(300),
   body: z.string().min(1).max(20_000),
   submitterName: z.string().max(200).optional(),

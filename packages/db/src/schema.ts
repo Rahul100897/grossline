@@ -30,7 +30,9 @@ export const connectionHealth = pgEnum('connection_health', [
 ]);
 export const syncKind = pgEnum('sync_kind', ['backfill', 'incremental']);
 export const invoiceStatus = pgEnum('invoice_status', ['draft', 'sent', 'paid', 'void']);
-export const ticketType = pgEnum('ticket_type', ['bug', 'question', 'feedback', 'feature']);
+// 'free_report' (task 5.C3): a prospect requesting the free first report from
+// the marketing site — lands in the same inbox with its own type.
+export const ticketType = pgEnum('ticket_type', ['bug', 'question', 'feedback', 'feature', 'free_report']);
 export const ticketStatus = pgEnum('ticket_status', ['open', 'in_progress', 'closed']);
 export const ticketPriority = pgEnum('ticket_priority', ['low', 'normal', 'high']);
 export const ticketSource = pgEnum('ticket_source', ['marketing', 'in_app']);
