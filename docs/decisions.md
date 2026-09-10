@@ -1038,6 +1038,32 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.B5: Weekly digest
+
+- **Five numbers over the trailing seven days** — net sales, ad spend, MER,
+  orders, AOV — summed from the daily metric layer (ad spend = the platform-scoped
+  daily `ad_spend`), plus anything flagged since the last digest. Plain text, no
+  attachment; the full report follows at month end.
+- **"Since the last digest" is a stateless 7-day window.** Rather than track a
+  per-tenant last-sent timestamp, the digest reports findings created within the
+  window, deduped by rule+entity (a recurring finding lists once) and capped at
+  five for a phone. In normal operation findings are computed monthly, so
+  created_at aligns with the month; the window catches the fresh set. Simplest
+  option satisfying the spec.
+- **Per-tenant schedule** lives in the settings blob (`digest.enabled`,
+  `defaultDay` 0–6, per-tenant `days` override). `isDigestDay` / `resolveDigestDay`
+  are pure and golden-tested; `sendWeeklyDigests` sends to each active
+  (non-paused/churned) tenant on its day unless forced, and skips a tenant with
+  no recipients. Recipients are passed per send (v1: the analyst), like reports.
+- **Worker gained a dependency-free Resend email helper** (mirrors the admin one
+  and the Anthropic commentary call); no SDK. CLI `pnpm digest:send <tenant>
+  <YYYY-MM-DD> [email]` prints the digest (dry run) and optionally sends.
+- Verified on the demo (2026-08-15 window): "Net sales USD 5,277.59 · Ad spend
+  USD 1,594.50 · MER 3.31 · Orders 58 · AOV USD 90.99" with three deduped flags —
+  a digest you would send.
+- Fixed a pre-existing hand-built `AppSettings` fallback literal in the plans page
+  to use `settingsSchema.parse({})` so new settings fields never break it again.
+
 ## 2026-09-10 — Task 5.B4: Reports console + send gate
 
 - **`reconciliation_runs` table** (RLS-isolated) records that reconciliation ran

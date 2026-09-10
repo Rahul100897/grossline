@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getSettings, type AppSettings } from '@grossline/db';
+import { getSettings, settingsSchema, type AppSettings } from '@grossline/db';
 import { minorUnitExponent } from '@grossline/core';
 import { requireSession } from '../../../../lib/auth';
 import { PageHeader, Panel, Table, Td, Th } from '../../../../components/ui';
@@ -22,7 +22,7 @@ export default async function PlansPage({
 }) {
   await requireSession();
   const { saved, error } = await searchParams;
-  let settings: AppSettings = { plans: [], thresholds: { costCompleteness: 1, onboardingStaleDays: 3 }, alerts: { emailOnNewTicket: true, emailOnBlockingIssue: false } };
+  let settings: AppSettings = settingsSchema.parse({});
   try {
     settings = await getSettings();
   } catch {

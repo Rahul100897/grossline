@@ -29,6 +29,18 @@ export const settingsSchema = z.object({
       emailOnBlockingIssue: z.boolean().default(false),
     })
     .default({ emailOnNewTicket: true, emailOnBlockingIssue: false }),
+  // Weekly digest schedule (task 5.B5). A configurable send day (0=Sun..6=Sat)
+  // with a per-tenant override map; the worker digest job sends on each tenant's
+  // day. Recipients live per tenant on the send, like reports.
+  digest: z
+    .object({
+      enabled: z.boolean().default(true),
+      /** Default weekday to send (0=Sunday … 6=Saturday). */
+      defaultDay: z.number().int().min(0).max(6).default(1),
+      /** Per-tenant weekday override, keyed by tenant id. */
+      days: z.record(z.number().int().min(0).max(6)).default({}),
+    })
+    .default({ enabled: true, defaultDay: 1, days: {} }),
 });
 
 export type AppSettings = z.infer<typeof settingsSchema>;

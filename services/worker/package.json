@@ -9,6 +9,7 @@
     "./report-html": "./src/reports/report-html.ts",
     "./report-model": "./src/reports/build-model.ts",
     "./reports-pipeline": "./src/reports/pipeline.ts",
+    "./digest": "./src/reports/digest.ts",
     "./pdf": "./src/pdf/render.ts",
     "./reconcile": "./src/reconcile.ts",
     "./findings-calibrate": "./src/findings/calibrate.ts",
@@ -33,7 +34,8 @@
     "findings:calibrate": "tsx src/cli/findings-calibrate.ts",
     "findings:compute": "tsx src/cli/findings-compute.ts",
     "findings:draft": "tsx src/cli/findings-draft.ts",
-    "reports:build": "tsx src/cli/reports-build.ts"
+    "reports:build": "tsx src/cli/reports-build.ts",
+    "digest:send": "tsx src/cli/digest-send.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",
