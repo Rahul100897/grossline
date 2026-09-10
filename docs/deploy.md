@@ -41,3 +41,27 @@ that is Phase 2, nothing to do now.)
 - Every push to `main` that touches `apps/web` redeploys automatically.
 - The live URL unblocks the Google Ads developer-token application, which
   wants a real company website.
+
+## Phase 5 additions (marketing site)
+
+Part C runs locally; deploy is still gated on the Cloudflare account. When the
+site does go up, the Phase 5 pieces need:
+
+- **`PUBLIC_ADMIN_URL`** must be set as a Pages build-time environment variable
+  pointing at the deployed admin origin (e.g. `https://admin.getgrossline.com`).
+  The Contact and Free-report forms post to `${PUBLIC_ADMIN_URL}/api/tickets/intake`;
+  it falls back to `http://localhost:3000` in dev. Without it, live intake would
+  POST to localhost and silently fail. (The admin intake route already sends
+  permissive CORS for the static site to POST cross-origin.)
+- **The sample report is a committed static asset** (`apps/web/public/sample-report.pdf`
+  and `.png`), generated from the demo tenant by the Part B pipeline — no build
+  step renders it. Regenerate and re-commit it when the report definition or the
+  demo data changes (re-run `reports:build` for the demo, then re-render the
+  PDF/PNG into `apps/web/public`). Every push to `main` touching `apps/web`
+  redeploys, so the refreshed asset ships automatically.
+- **No third-party analytics** is wired, by design (privacy-first). If analytics
+  are ever wanted, use a privacy-preserving, cookieless option only.
+- The site references `hello@getgrossline.com`; outbound report emails (Resend)
+  and the admin/worker runtime (Playwright/Chromium for PDFs, the Postgres
+  migrations for the `reports`/`reconciliation_runs` tables) are a separate,
+  still-unwired admin/worker deploy — not part of the marketing-site Pages deploy.
