@@ -232,6 +232,13 @@
       "when": 1789006702912,
       "tag": "0032_tenant_trial_status",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1789008570438,
+      "tag": "0033_ticket_free_report",
+      "breakpoints": true
     }
   ]
 }

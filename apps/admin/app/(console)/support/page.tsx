@@ -78,9 +78,9 @@ export default async function SupportPage({
         </select>
         <select name="type" defaultValue={query.type ?? ''} className={filterInput}>
           <option value="">any type</option>
-          {['bug', 'question', 'feedback', 'feature'].map((t) => (
+          {['bug', 'question', 'feedback', 'feature', 'free_report'].map((t) => (
             <option key={t} value={t}>
-              {t}
+              {t === 'free_report' ? 'free report' : t}
             </option>
           ))}
         </select>

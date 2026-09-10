@@ -12,7 +12,7 @@ export type TicketMessage = typeof ticketMessages.$inferSelect;
 export type TicketWithMessages = Ticket & { messages: TicketMessage[] };
 
 const createTicketSchema = z.object({
-  type: z.enum(['bug', 'question', 'feedback', 'feature']),
+  type: z.enum(['bug', 'question', 'feedback', 'feature', 'free_report']),
   source: z.enum(['marketing', 'in_app']),
   subject: z.string().min(1).max(300),
   body: z.string().min(1).max(20_000),

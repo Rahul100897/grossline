@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+
+// The free-first-report request posts to the same public intake endpoint as the
+// contact form (task 3.7), with its own ticket type `free_report` so it lands in
+// the same inbox, filterable on its own (task 5.C3).
+const intakeUrl =
+  (import.meta.env.PUBLIC_ADMIN_URL ?? 'http://localhost:3000') + '/api/tickets/intake';
+---
+
+<Base
+  title="Grossline — request your free first report"
+  description="Request the free first report. Tell us about your store and we'll deliver one full monthly report at no charge."
+  path="/free-report"
+>
+  <h1>Request your free first report</h1>
+  <p class="lede">
+    The free first report is the service delivered once, at no charge — not a demo of software.
+    Tell us about your store and we'll be in touch.
+  </p>
+
+  <form id="fr-form" novalidate>
+    <label>
+      Your name
+      <input name="name" type="text" autocomplete="name" />
+    </label>
+    <label>
+      Email
+      <input name="email" type="email" autocomplete="email" required />
+    </label>
+    <label>
+      Store URL
+      <input name="store" type="text" placeholder="yourstore.myshopify.com or your domain" required />
+    </label>
+    <label>
+      Rough monthly ad spend
+      <input name="spend" type="text" placeholder="e.g. $20k across Google + Meta" />
+    </label>
+    <label>
+      Anything we should know?
+      <textarea name="message" rows="5"></textarea>
+    </label>
+    <!-- Honeypot: hidden from people, tempting to bots. -->
+    <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px">
+      <label>Company<input name="company" type="text" tabindex="-1" autocomplete="off" /></label>
+    </div>
+    <button type="submit">Request my free report</button>
+    <p id="status" role="status"></p>
+  </form>
+
+  <p><a href="/the-report">← See what's in the report first</a></p>
+</Base>
+
+<style>
+  form { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; max-width: 34rem; }
+  label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.95rem; color: var(--muted); }
+  input, textarea { font: inherit; color: var(--ink); padding: 0.55rem 0.7rem; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
+  button { align-self: flex-start; font: inherit; font-weight: 600; color: #fff; background: var(--ink); border: 0; border-radius: 6px; padding: 0.6rem 1.1rem; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  #status { font-size: 0.95rem; margin: 0; }
+  #status.ok { color: var(--accent); }
+  #status.err { color: var(--warn); }
+</style>
+
+<script define:vars={{ intakeUrl }}>
+  const form = document.getElementById('fr-form');
+  const status = document.getElementById('status');
+  const button = form.querySelector('button');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    status.textContent = '';
+    status.className = '';
+    const d = Object.fromEntries(new FormData(form).entries());
+    if (!d.email || !d.store) {
+      status.textContent = 'An email and your store URL are required.';
+      status.className = 'err';
+      return;
+    }
+    const body = [
+      `Store: ${d.store}`,
+      d.spend ? `Monthly ad spend: ${d.spend}` : null,
+      d.message ? `\n${d.message}` : null,
+    ]
+      .filter(Boolean)
+      .join('\n');
+    button.disabled = true;
+    button.textContent = 'Sending…';
+    try {
+      const response = await fetch(intakeUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          type: 'free_report',
+          subject: `Free first report — ${d.store}`,
+          body,
+          submitterName: d.name || undefined,
+          submitterEmail: d.email || undefined,
+          company: d.company || undefined,
+        }),
+      });
+      if (!response.ok) throw new Error('bad status');
+      form.reset();
+      status.textContent = 'Thank you — we have it and will be in touch about your free report.';
+      status.className = 'ok';
+    } catch {
+      status.textContent = 'Something went wrong. Please email hello@getgrossline.com instead.';
+      status.className = 'err';
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Request my free report';
+    }
+  });
+</script>
