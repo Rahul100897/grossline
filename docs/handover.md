@@ -5,8 +5,9 @@ The consolidated reference for the whole project. Per-phase detail lives in
 `docs/metrics.md`; every decision in `docs/decisions.md`. Read `CLAUDE.md`
 first — it holds the non-negotiables and the current phase marker.
 
-**Status: Phases 0–4 complete. Current phase: Phase 5 — Report delivery** (spec
-not yet written).
+**Status: Phases 0–5 complete. Current phase: Phase 7 — Operations hardening**
+(spec not yet written; Phase 6 is intentionally unused). Per-phase detail for
+the latest work is in `docs/phase-5-handover.md`.
 
 ---
 
@@ -85,7 +86,7 @@ store or ad accounts (the answer is always no).
 
 ## 4. Data model
 
-29 migrations (through `0028_rls_findings`). Tables:
+34 migrations (through `0033_ticket_free_report`). Tables:
 
 - **Tenancy & auth:** `tenants`, `stores`, `connections`, `credentials`
   (encrypted), `admin_users`, `audit_log`.
@@ -100,7 +101,13 @@ store or ad accounts (the answer is always no).
   `invoices`, `invoice_lines`, `payments`, `business_profile`, `tickets`,
   `ticket_messages`, `app_settings`.
 - **Findings (Phase 4):** `tenant_calibration` (per-tenant thresholds),
-  `findings`.
+  `findings` (Phase 5 added `family` waste|growth|measurement + a nullable
+  `opportunity_value_minor`, mutually exclusive with `money_impact_minor`).
+- **Reports (Phase 5):** `reports` (one per tenant×period; status
+  draft|approved|sent; a jsonb `snapshot` of the rendered report), and
+  `reconciliation_runs` (records that reconciliation ran for a period — the send
+  gate reads it). `ticket_type` gained `free_report`; `tenant_status` gained
+  `trial`.
 
 Every tenant-scoped table carries the standard `tenant_isolation` RLS policy.
 Money everywhere is integer minor units.
@@ -165,6 +172,23 @@ machine (new→recurring→resolved, sticky dismissals); ranking (impact floor, 
 3, claim-gap exempt); two-tier commentary (deterministic template + guarded
 Anthropic narrative); recommendation history; and findings-as-issues (an
 unreviewed month is blocking).
+
+### Phase 5 — Growth findings, report delivery, marketing site
+See `docs/phase-5-handover.md`. **Growth findings:** two rules (`spend_headroom`,
+`scale_signal`) that point at money available, ranked across families (waste
+above growth at equal value, cap 3, at most one growth, growth suppressed when
+no waste fires); the figure guard is unchanged and growth outcomes track a
+tried-and-didn't-hold result. **Report delivery:** one pure HTML template →
+both PDF (print CSS, repeating table headers, page numbers) and web preview;
+a `reports` table whose jsonb snapshot makes a past report immune to later
+definition/cost changes; a console Reports surface (build/preview/download/
+send/archive) with a send gate that blocks on unapproved findings **or** missing
+reconciliation; a weekly digest (five numbers + new flags, per-tenant schedule);
+a copyable WhatsApp block; and a `trial` status with a free-first-report footer,
+a 14-day trial-decision Issue, and one-action offboarding. **Marketing site:**
+the full Astro site (home leads with the real demo claim gap, three pricing
+tiers, a sample-report PDF from the real pipeline, free-report intake to the
+tickets inbox, favicon/robots/sitemap/OG).
 
 ---
 
@@ -254,16 +278,25 @@ yet; the app runs locally. Playwright needs Chromium
 
 ---
 
-## 10. What Phase 5 (Report delivery) inherits
+## 10. What Phase 7 (Operations hardening) inherits
 
-- **The approved-set contract.** A finding is sendable when `approved_at` is set;
-  its prose is `final_text` → `draft_text` → the live four-part template. The
-  note already names next month's check-metric.
-- **HTML→PDF plumbing exists** — the pure-template pattern
-  (`services/worker/src/billing/invoice-html.ts`) and the Playwright wrapper
-  (`services/worker/src/pdf/render.ts` for the worker/report runtime;
-  `apps/admin/lib/pdf.ts` for Next, with Playwright kept `serverExternal`).
-- **A month with unreviewed findings is a blocking issue** (`findings` type) —
-  Phase 5 must not send an unreviewed month.
-- Do **not** build the report before the Phase 5 spec exists (CLAUDE.md rule:
-  no building ahead of the current phase).
+- **The four dormant entity-level rules** (dead-campaign, branded-search,
+  search-term-waste, refund-outlier) are golden-tested but skip on real data —
+  the metric layer does not yet compute per-campaign order attribution,
+  keyword-level data, or per-product refund rates. `scale_signal` does fire (it
+  needs only platform-reported campaign ROAS, which exists). A real merchant gets
+  findings from five rules + two growth rules, not nine; no report/site copy
+  promises the four. Closing those metric gaps is Phase 7 or later.
+- **No scheduled worker jobs** for report build or the weekly digest — both are
+  CLI/console-triggered (`reports:build`, `digest:send`). Backfills and
+  metric/findings computation are likewise CLI-triggered. Wiring the nightly
+  scheduler is Phase 7.
+- **No production deploy target.** The apps run locally; the marketing-site
+  Cloudflare Pages steps (incl. the Phase 5 additions) are in `docs/deploy.md`,
+  gated on Rahul's Cloudflare account. Admin/worker deploy (Playwright/Chromium,
+  Resend, migrations) is unwired.
+- **Meta & Google Ads are still on fixtures**; only Shopify connects live, only
+  for the dev store.
+- **Report delivery inherits from Phase 4** the approved-set contract (sendable
+  when `approved_at` is set; prose `final_text` → `draft_text` → template) and the
+  blocking unreviewed-findings issue — both now enforced at the send step.
