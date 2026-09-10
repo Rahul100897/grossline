@@ -9,17 +9,17 @@ One admin user (Rahul). No merchant login, no roles, no signup.
 
 ## What shipped, by task
 
-| Task | What | Where |
-|---|---|---|
-| 3.1 App shell | Tokens, sidebar, off-canvas below 900px, shared table/panel/form primitives | `apps/admin/components/{ui,chrome,forms,tabs}.tsx`, `app/globals.css` |
-| 3.2 Overview | Four numbers (MRR, collected this quarter, open issues, reports due) + a prioritised "needs your attention" list | `app/(console)/page.tsx`, `lib/issues.ts` |
-| 3.3 Merchants | List with search/filter; detail tabs (Overview/Connections/Stores/Metrics/Costs/Billing/Notes); tenant creation and store connect from the UI | `app/(console)/merchants/**`, `lib/merchants.ts` |
-| 3.4 Issues | One derived list across every merchant; search + severity/type filters; 90-day resolved history | `app/(console)/issues/page.tsx`, `packages/db/src/issue-log.ts` |
-| 3.5 Metrics explorer | Tenant+month picker; every metric with MoM/YoY; monthly→daily→campaign drill; the display rules | `app/(console)/metrics/page.tsx`, `lib/metrics-explorer.ts`, `lib/metric-format.ts` |
-| 3.6 Billing | Invoices, payments (Xflow fee + net INR), revenue by plan, renewals; Playwright invoice PDF; manual paid marking | `app/(console)/billing/**`, `packages/db/src/billing.ts`, `services/worker/src/{billing/invoice-html,pdf/render}.ts` |
-| 3.7 Support inbox | Tickets from a marketing-site form and an in-app widget → one inbox; reply, close; email notify | `app/(console)/support/**`, `app/api/tickets/intake/route.ts`, `apps/web/src/pages/contact.astro` |
-| 3.8 Settings | Metric definitions rendered from `docs/metrics.md`; plan prices, thresholds, alerts, business details, admin account | `app/(console)/settings/**`, `packages/db/src/settings.ts`, `lib/doc-render.ts` |
-| 3.9 Reconciliation | The 1.7 harness in the browser: ours vs platform vs variance vs tolerance vs structural reason | `app/(console)/reconciliation/page.tsx` |
+| Task                 | What                                                                                                                                          | Where                                                                                                                |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 3.1 App shell        | Tokens, sidebar, off-canvas below 900px, shared table/panel/form primitives                                                                   | `apps/admin/components/{ui,chrome,forms,tabs}.tsx`, `app/globals.css`                                                |
+| 3.2 Overview         | Four numbers (MRR, collected this quarter, open issues, reports due) + a prioritised "needs your attention" list                              | `app/(console)/page.tsx`, `lib/issues.ts`                                                                            |
+| 3.3 Merchants        | List with search/filter; detail tabs (Overview/Connections/Stores/Metrics/Costs/Billing/Notes); tenant creation and store connect from the UI | `app/(console)/merchants/**`, `lib/merchants.ts`                                                                     |
+| 3.4 Issues           | One derived list across every merchant; search + severity/type filters; 90-day resolved history                                               | `app/(console)/issues/page.tsx`, `packages/db/src/issue-log.ts`                                                      |
+| 3.5 Metrics explorer | Tenant+month picker; every metric with MoM/YoY; monthly→daily→campaign drill; the display rules                                               | `app/(console)/metrics/page.tsx`, `lib/metrics-explorer.ts`, `lib/metric-format.ts`                                  |
+| 3.6 Billing          | Invoices, payments (Xflow fee + net INR), revenue by plan, renewals; Playwright invoice PDF; manual paid marking                              | `app/(console)/billing/**`, `packages/db/src/billing.ts`, `services/worker/src/{billing/invoice-html,pdf/render}.ts` |
+| 3.7 Support inbox    | Tickets from a marketing-site form and an in-app widget → one inbox; reply, close; email notify                                               | `app/(console)/support/**`, `app/api/tickets/intake/route.ts`, `apps/web/src/pages/contact.astro`                    |
+| 3.8 Settings         | Metric definitions rendered from `docs/metrics.md`; plan prices, thresholds, alerts, business details, admin account                          | `app/(console)/settings/**`, `packages/db/src/settings.ts`, `lib/doc-render.ts`                                      |
+| 3.9 Reconciliation   | The 1.7 harness in the browser: ours vs platform vs variance vs tolerance vs structural reason                                                | `app/(console)/reconciliation/page.tsx`                                                                              |
 
 Nav order: Overview · Merchants · Issues · Metrics · Billing · Support ·
 Connections · Reconciliation · Settings. **No Reports item** (Phase 5), no
@@ -57,7 +57,7 @@ All money is integer minor units; every tenant-scoped table has the standard
   connections and scope warnings are blocking; degraded/never-synced, failed
   syncs, incomplete backfills, missing cost data and stalled onboarding are
   attention. New sources add a case here — **Phase 4 findings can surface as
-  issues the same way**, and the reconciliation/overdue-invoice issue *types*
+  issues the same way**, and the reconciliation/overdue-invoice issue _types_
   are already declared for when their emitters are wired. Thresholds
   (cost-completeness floor, onboarding-stale window) are configurable in
   Settings and read by the engine.

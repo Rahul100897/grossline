@@ -28,7 +28,10 @@ export function recentQuarters(now: Date = new Date(), count = 6): Quarter[] {
 }
 
 /** The three months of a quarter as {periodStart, periodEnd, label} lines. */
-export function quarterMonths(year: number, q: number): {
+export function quarterMonths(
+  year: number,
+  q: number,
+): {
   periodStart: string;
   periodEnd: string;
   label: string;
@@ -38,7 +41,11 @@ export function quarterMonths(year: number, q: number): {
     const month = firstMonth + offset;
     const start = new Date(Date.UTC(year, month, 1));
     const end = new Date(Date.UTC(year, month + 1, 0)); // last day of month
-    const label = start.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const label = start.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
     return {
       periodStart: start.toISOString().slice(0, 10),
       periodEnd: end.toISOString().slice(0, 10),
@@ -62,7 +69,11 @@ export type CollectedTotals = {
 };
 
 /** Sum payments received within [start, end] (inclusive), by currency. */
-export function sumPayments(payments: PaymentListRow[], start: string, end: string): CollectedTotals {
+export function sumPayments(
+  payments: PaymentListRow[],
+  start: string,
+  end: string,
+): CollectedTotals {
   const grossByCurrency = new Map<string, number>();
   const xflowFeeByCurrency = new Map<string, number>();
   let netInrMinor = 0;
@@ -70,7 +81,10 @@ export function sumPayments(payments: PaymentListRow[], start: string, end: stri
   for (const p of payments) {
     if (p.receivedOn < start || p.receivedOn > end) continue;
     count += 1;
-    grossByCurrency.set(p.grossCurrency, (grossByCurrency.get(p.grossCurrency) ?? 0) + p.grossMinor);
+    grossByCurrency.set(
+      p.grossCurrency,
+      (grossByCurrency.get(p.grossCurrency) ?? 0) + p.grossMinor,
+    );
     if (p.xflowFeeMinor !== null) {
       xflowFeeByCurrency.set(
         p.grossCurrency,

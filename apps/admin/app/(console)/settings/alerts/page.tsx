@@ -32,11 +32,19 @@ export default async function AlertsPage({
       <FormNotice saved={saved} error={error} />
       <form action={saveAlerts} className="flex max-w-xl flex-col gap-3">
         <label className="flex items-center gap-2 text-[13px]">
-          <input type="checkbox" name="emailOnNewTicket" defaultChecked={settings.alerts.emailOnNewTicket} />
+          <input
+            type="checkbox"
+            name="emailOnNewTicket"
+            defaultChecked={settings.alerts.emailOnNewTicket}
+          />
           Email me when a support ticket arrives
         </label>
         <label className="flex items-center gap-2 text-[13px]">
-          <input type="checkbox" name="emailOnBlockingIssue" defaultChecked={settings.alerts.emailOnBlockingIssue} />
+          <input
+            type="checkbox"
+            name="emailOnBlockingIssue"
+            defaultChecked={settings.alerts.emailOnBlockingIssue}
+          />
           Email me when a blocking issue appears
         </label>
         <div>

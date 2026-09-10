@@ -62,15 +62,15 @@ anchoring, Google rounding grain) before anything shipped.
 
 ## Exit criteria
 
-| Criterion | Status |
-|---|---|
-| Every metric in docs/metrics.md computes for any tenant/month | ✅ |
-| Golden test per metric, hand-calculated values | ✅ (+ diff-harness files) |
-| Metric layer and 1.7 reference math agree independently | ✅ exact, by test |
-| Recompute from raw: single command, idempotent | ✅ proven by test |
-| Missing cost data → completeness flag, never a wrong number | ✅ |
-| Open questions closed | ✅ four decisions + changelog (PR #19) |
-| `pnpm verify` green | ✅ incl. clean clone from GitHub, no .env |
+| Criterion                                                     | Status                                    |
+| ------------------------------------------------------------- | ----------------------------------------- |
+| Every metric in docs/metrics.md computes for any tenant/month | ✅                                        |
+| Golden test per metric, hand-calculated values                | ✅ (+ diff-harness files)                 |
+| Metric layer and 1.7 reference math agree independently       | ✅ exact, by test                         |
+| Recompute from raw: single command, idempotent                | ✅ proven by test                         |
+| Missing cost data → completeness flag, never a wrong number   | ✅                                        |
+| Open questions closed                                         | ✅ four decisions + changelog (PR #19)    |
+| `pnpm verify` green                                           | ✅ incl. clean clone from GitHub, no .env |
 
 ## Caveats for Phase 3 (admin console)
 

@@ -17,10 +17,15 @@ import { requireSession } from '../../../lib/auth';
 const back = (tenantId: string, period: string, extra = ''): string =>
   `/findings?tenant=${tenantId}&period=${period}${extra}`;
 
-async function tenantPeriodFrom(formData: FormData): Promise<{ tenantId: string; period: string; id: string }> {
+async function tenantPeriodFrom(
+  formData: FormData,
+): Promise<{ tenantId: string; period: string; id: string }> {
   return {
     tenantId: z.string().uuid().parse(formData.get('tenantId')),
-    period: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).parse(formData.get('period')),
+    period: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .parse(formData.get('period')),
     id: z.string().uuid().parse(formData.get('id')),
   };
 }
@@ -68,7 +73,10 @@ export async function reopen(formData: FormData): Promise<void> {
 export async function saveText(formData: FormData): Promise<void> {
   const session = await requireSession();
   const { tenantId, period, id } = await tenantPeriodFrom(formData);
-  const finalText = z.string().max(20_000).parse(formData.get('finalText') ?? '');
+  const finalText = z
+    .string()
+    .max(20_000)
+    .parse(formData.get('finalText') ?? '');
   const finding = await getFinding(tenantId, id);
   if (!finding) redirect(back(tenantId, period));
   await saveFindingText(tenantId, id, finalText);
@@ -79,13 +87,22 @@ export async function saveText(formData: FormData): Promise<void> {
 export async function recompute(formData: FormData): Promise<void> {
   const session = await requireSession();
   const tenantId = z.string().uuid().parse(formData.get('tenantId'));
-  const period = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).parse(formData.get('period'));
+  const period = z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .parse(formData.get('period'));
   let failure: string | null = null;
   try {
     await runFindings(tenantId, period);
-    await writeAuditLog({ actor: session.sub, action: 'findings.recompute', tenantId, subject: period });
+    await writeAuditLog({
+      actor: session.sub,
+      action: 'findings.recompute',
+      tenantId,
+      subject: period,
+    });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'recompute failed';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'recompute failed';
   }
   if (failure !== null) redirect(back(tenantId, period, `&error=${encodeURIComponent(failure)}`));
   redirect(back(tenantId, period, '&saved=1'));

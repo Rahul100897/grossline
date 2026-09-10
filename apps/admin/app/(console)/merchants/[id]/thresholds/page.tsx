@@ -59,12 +59,19 @@ export default async function ThresholdsPage({
         <>
           <div className="mb-4 flex flex-wrap items-center gap-3 text-[12px] text-slate">
             <span>
-              {cal.edited ? <Badge tone="attn">hand-edited</Badge> : <Badge tone="good">auto-calibrated</Badge>}
+              {cal.edited ? (
+                <Badge tone="attn">hand-edited</Badge>
+              ) : (
+                <Badge tone="good">auto-calibrated</Badge>
+              )}
             </span>
             <span>computed {formatDate(cal.computedAt)}</span>
             <form action={recalibrate}>
               <input type="hidden" name="tenantId" value={tenant.id} />
-              <button type="submit" className="rounded border border-hairline px-2.5 py-1 hover:bg-hover">
+              <button
+                type="submit"
+                className="rounded border border-hairline px-2.5 py-1 hover:bg-hover"
+              >
                 Recalibrate from history
               </button>
             </form>
@@ -76,8 +83,14 @@ export default async function ThresholdsPage({
               label="Break-even MER"
               name="breakEvenMer"
               inputMode="decimal"
-              defaultValue={cal.thresholds.breakEvenMer === null ? '' : String(cal.thresholds.breakEvenMer)}
-              hint={cal.thresholds.breakEvenMer === null ? 'no margin data — leave blank' : 'from contribution margin'}
+              defaultValue={
+                cal.thresholds.breakEvenMer === null ? '' : String(cal.thresholds.breakEvenMer)
+              }
+              hint={
+                cal.thresholds.breakEvenMer === null
+                  ? 'no margin data — leave blank'
+                  : 'from contribution margin'
+              }
             />
             <Field
               label={`Min impact (${tenant.reportingCurrency} minor)`}
@@ -120,7 +133,11 @@ export default async function ThresholdsPage({
               label={`CAC ceiling (${tenant.reportingCurrency} minor)`}
               name="cacCeilingMinor"
               inputMode="decimal"
-              defaultValue={cal.thresholds.cacCeilingMinor === null ? '' : String(cal.thresholds.cacCeilingMinor)}
+              defaultValue={
+                cal.thresholds.cacCeilingMinor === null
+                  ? ''
+                  : String(cal.thresholds.cacCeilingMinor)
+              }
               hint={cal.thresholds.cacCeilingMinor === null ? 'too little history' : ''}
             />
             <Field

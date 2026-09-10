@@ -26,23 +26,23 @@ pnpm reconcile <tenant-slug> 2026-06
 Read every figure **with the date range set to the calendar month in the
 tenant's reporting timezone**, and write down the number exactly as displayed.
 
-| Metric key | Where to read it |
-|---|---|
+| Metric key        | Where to read it                                                                                                                                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `shopifyNetSales` | Shopify admin → Analytics → Reports → **Sales over time** → the month → the **Net sales** column total. Shopify's net sales = gross − discounts − returns, excluding shipping and taxes — the same definition as `docs/metrics.md`. |
-| `shopifyOrders` | Same report, **Orders** total (or Analytics → Orders over time). Shopify counts an order in the day it was created, store timezone. |
-| `newCustomers` | Shopify admin → Analytics → Reports → **First-time vs returning customer sales** → count of first-time customers for the month. |
-| `metaSpend` | Meta Ads Manager → the ad account → date range set to the month (account timezone) → **Amount spent**, account level (the campaigns-table footer total). |
-| `googleCost` | Google Ads → Campaigns → date range set to the month (account timezone) → **Cost** column total across all campaigns. |
+| `shopifyOrders`   | Same report, **Orders** total (or Analytics → Orders over time). Shopify counts an order in the day it was created, store timezone.                                                                                                 |
+| `newCustomers`    | Shopify admin → Analytics → Reports → **First-time vs returning customer sales** → count of first-time customers for the month.                                                                                                     |
+| `metaSpend`       | Meta Ads Manager → the ad account → date range set to the month (account timezone) → **Amount spent**, account level (the campaigns-table footer total).                                                                            |
+| `googleCost`      | Google Ads → Campaigns → date range set to the month (account timezone) → **Cost** column total across all campaigns.                                                                                                               |
 
 ## 3. Tolerances
 
-| Metric | Tolerance | Why |
-|---|---|---|
-| `shopifyOrders` | exact (0%) | Both sides count the same discrete events. |
-| `newCustomers` | exact (0%) | Same. |
-| `shopifyNetSales` | 0.5% | Rounding across line-level discounts/returns; Shopify Analytics can lag hours behind admin data. |
-| `googleCost` | 1% | Phase-1 exit criterion (task 1.4). Cost is stable after a day or two. |
-| `metaSpend` | 2% | Phase-1 exit criterion (task 1.3). Meta restates the trailing 28 days. |
+| Metric            | Tolerance  | Why                                                                                              |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------------ |
+| `shopifyOrders`   | exact (0%) | Both sides count the same discrete events.                                                       |
+| `newCustomers`    | exact (0%) | Same.                                                                                            |
+| `shopifyNetSales` | 0.5%       | Rounding across line-level discounts/returns; Shopify Analytics can lag hours behind admin data. |
+| `googleCost`      | 1%         | Phase-1 exit criterion (task 1.4). Cost is stable after a day or two.                            |
+| `metaSpend`       | 2%         | Phase-1 exit criterion (task 1.3). Meta restates the trailing 28 days.                           |
 
 ## 4. Known structural differences (the harness prints these itself)
 
@@ -67,12 +67,12 @@ tenant's reporting timezone**, and write down the number exactly as displayed.
    failed sync day is the most common cause. Check `/connections` for health
    and completeness first.
 3. Diff at a finer grain: run the month's days individually (temporary GAQL /
-   insights queries) to find *which day* diverges, then compare that day's
+   insights queries) to find _which day_ diverges, then compare that day's
    orders/campaign rows against the UI's day view.
 4. If the difference is explainable (restatement mid-window, a refund shown in
    a different month by the UI's grouping, a deleted campaign, currency
    rounding), write the explanation into that metric's `explanation` field in
    the expected file — the harness then reports EXPLAINED and passes. An
-   explanation must say *why*, not "close enough".
+   explanation must say _why_, not "close enough".
 5. If it is not explainable, it is a bug in a connector or in the totals —
    treat it as such before Phase 2 builds on the data.

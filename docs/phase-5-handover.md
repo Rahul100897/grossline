@@ -12,7 +12,7 @@ unused (the Phase 5 spec set the next marker directly to 7).
 
 ## Part A — Growth findings
 
-Findings that point at money *available*, not only money being lost. Waste is
+Findings that point at money _available_, not only money being lost. Waste is
 provable; growth is a hypothesis, and the two are never presented as the same
 kind of claim.
 
@@ -27,12 +27,12 @@ kind of claim.
   waste finding fires** (a report is never only growth). `GROWTH_CAP = 1`.
 - **A3 — `spend_headroom` (growth).** Fires when blended MER is comfortably above
   break-even (`× 1.2`) and spend is not pacing over target. Opportunity =
-  `round(totalAdSpend × (MER ÷ break-even − 1))` — deployable spend at *today's*
+  `round(totalAdSpend × (MER ÷ break-even − 1))` — deployable spend at _today's_
   efficiency; the note frames it as a ceiling, not a target. Check metric MER.
 - **A4 — `scale_signal` (growth).** A campaign whose **platform-reported** ROAS is
   ≥ 1.5× the spend-weighted account average while holding ≤ 25% of spend.
   Opportunity is conservative: `round(shareShift × (campaignRoas − avgRoas))`,
-  `shareShift = 25%` of the campaign's spend — the revenue *difference*, not the
+  `shareShift = 25%` of the campaign's spend — the revenue _difference_, not the
   ROAS applied to more budget. Stays labelled platform-reported, never blended.
 - **A5 — review console + commentary.** The review card badges by **family**
   (green accent + "growth opportunity" for growth, "measurement risk" for claim
@@ -48,7 +48,7 @@ kind of claim.
 The four defensive entity-level rules (dead-campaign, branded-search,
 search-term-waste, refund-outlier) still skip on real data — unchanged from
 Phase 4. `scale_signal` fires on the demo because per-campaign platform ROAS
-exists; per-campaign *order attribution* is what the four skippers still lack.
+exists; per-campaign _order attribution_ is what the four skippers still lack.
 
 ---
 

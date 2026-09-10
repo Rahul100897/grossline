@@ -68,8 +68,22 @@ export function computeMarginMetrics(input: {
   const contributionAfterAdSpend = grossProfit - input.adSpend.totalMinor;
 
   const points: MetricPoint[] = [
-    { metric: 'cogs', grain: 'month', period: monthPeriod, value: cogsMinor, currency, meta: completenessMeta },
-    { metric: 'gross_profit', grain: 'month', period: monthPeriod, value: grossProfit, currency, meta: completenessMeta },
+    {
+      metric: 'cogs',
+      grain: 'month',
+      period: monthPeriod,
+      value: cogsMinor,
+      currency,
+      meta: completenessMeta,
+    },
+    {
+      metric: 'gross_profit',
+      grain: 'month',
+      period: monthPeriod,
+      value: grossProfit,
+      currency,
+      meta: completenessMeta,
+    },
     {
       metric: 'gross_margin_pct',
       grain: 'month',
@@ -83,7 +97,10 @@ export function computeMarginMetrics(input: {
       period: monthPeriod,
       value: contributionAfterAdSpend,
       currency,
-      meta: { ...completenessMeta, ...(input.adSpend.conversion ? { fx: input.adSpend.conversion } : {}) },
+      meta: {
+        ...completenessMeta,
+        ...(input.adSpend.conversion ? { fx: input.adSpend.conversion } : {}),
+      },
     },
   ];
 

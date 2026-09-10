@@ -22,9 +22,7 @@ export function SectionHeader({ title, right }: { title: string; right?: ReactNo
 
 /** Bordered container; wide tables scroll horizontally inside it. */
 export function Panel({ children }: { children: ReactNode }) {
-  return (
-    <div className="overflow-x-auto rounded border border-hairline bg-panel">{children}</div>
-  );
+  return <div className="overflow-x-auto rounded border border-hairline bg-panel">{children}</div>;
 }
 
 export function Table({ children }: { children: ReactNode }) {
@@ -83,7 +81,9 @@ export function Badge({ tone = 'neutral', children }: { tone?: BadgeTone; childr
     good: 'border-good-line bg-good-soft text-good',
   };
   return (
-    <span className={`inline-block rounded-[3px] border px-1.5 text-[11px] leading-[17px] ${tones[tone]}`}>
+    <span
+      className={`inline-block rounded-[3px] border px-1.5 text-[11px] leading-[17px] ${tones[tone]}`}
+    >
       {children}
     </span>
   );
@@ -93,11 +93,7 @@ export function HealthDot({ health }: { health: string }) {
   const color =
     health === 'healthy' ? 'text-good' : health === 'unknown' ? 'text-slate' : 'text-attn';
   const label = health === 'unknown' ? 'never synced' : health;
-  return (
-    <span className={color}>
-      ● {label}
-    </span>
-  );
+  return <span className={color}>● {label}</span>;
 }
 
 /** The quiet numbers strip — four numbers, not a stat-tile wall. */

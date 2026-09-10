@@ -2,12 +2,27 @@
 // day's rate, with full FX traceability (every converted day records the rate
 // and rate date used). A missing FX rate is a loud failure, never a zero.
 import { and, eq, inArray } from 'drizzle-orm';
-import { convertMinorUnits, decimalToMinorUnits, minorUnitExponent, type AdSpendForMonth } from '@grossline/core';
+import {
+  convertMinorUnits,
+  decimalToMinorUnits,
+  minorUnitExponent,
+  type AdSpendForMonth,
+} from '@grossline/core';
 import { getFxRate, listConnections, schema, withTenant } from '@grossline/db';
 
-export type FxTrace = { platform: string; from: string; to: string; date: string; rate: string; rateDate: string };
+export type FxTrace = {
+  platform: string;
+  from: string;
+  to: string;
+  date: string;
+  rate: string;
+  rateDate: string;
+};
 
-async function eurRateFor(currency: string, date: string): Promise<{ rate: number; rateDate: string }> {
+async function eurRateFor(
+  currency: string,
+  date: string,
+): Promise<{ rate: number; rateDate: string }> {
   if (currency === 'EUR') return { rate: 1, rateDate: date };
   const row = await getFxRate(currency, date);
   if (!row) {
@@ -74,7 +89,9 @@ export async function loadAdSpendForMonth(
   reportingCurrency: string,
 ): Promise<AdSpendForMonth> {
   const connections = await listConnections(tenantId);
-  const currencyByConnection = new Map(connections.map((c) => [c.id, c.accountCurrency ?? reportingCurrency]));
+  const currencyByConnection = new Map(
+    connections.map((c) => [c.id, c.accountCurrency ?? reportingCurrency]),
+  );
   const trace: FxTrace[] = [];
   const byPlatform: Record<string, number> = {};
 
@@ -88,16 +105,23 @@ export async function loadAdSpendForMonth(
       })
       .from(schema.rawMetaInsights)
       .where(
-        and(eq(schema.rawMetaInsights.level, 'account'), inArray(schema.rawMetaInsights.date, dateStrings)),
+        and(
+          eq(schema.rawMetaInsights.level, 'account'),
+          inArray(schema.rawMetaInsights.date, dateStrings),
+        ),
       ),
   );
   const metaByCurrency = new Map<string, Map<string, number>>();
   for (const row of metaRows) {
     const payload = row.payload as { spend?: string; account_currency?: string };
     if (!payload.spend) continue;
-    const currency = payload.account_currency ?? currencyByConnection.get(row.connectionId) ?? reportingCurrency;
+    const currency =
+      payload.account_currency ?? currencyByConnection.get(row.connectionId) ?? reportingCurrency;
     const byDate = metaByCurrency.get(currency) ?? new Map<string, number>();
-    byDate.set(row.date, (byDate.get(row.date) ?? 0) + decimalToMinorUnits(payload.spend, currency));
+    byDate.set(
+      row.date,
+      (byDate.get(row.date) ?? 0) + decimalToMinorUnits(payload.spend, currency),
+    );
     metaByCurrency.set(currency, byDate);
   }
   let metaTotal = 0;

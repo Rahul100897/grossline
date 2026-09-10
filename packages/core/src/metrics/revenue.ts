@@ -93,7 +93,13 @@ export function computeRevenueMetrics(input: {
       ['units', bucket.units, false],
     ];
     for (const [metric, value, isMoney] of daily) {
-      points.push({ metric, grain: 'day', period: day, value, currency: isMoney ? currency : null });
+      points.push({
+        metric,
+        grain: 'day',
+        period: day,
+        value,
+        currency: isMoney ? currency : null,
+      });
     }
   }
 
@@ -114,7 +120,13 @@ export function computeRevenueMetrics(input: {
     ['cancelled_rate', rate(cancelledCount, totals.orders + cancelledCount), false],
   ];
   for (const [metric, value, isMoney] of monthly) {
-    points.push({ metric, grain: 'month', period: monthPeriod, value, currency: isMoney ? currency : null });
+    points.push({
+      metric,
+      grain: 'month',
+      period: monthPeriod,
+      value,
+      currency: isMoney ? currency : null,
+    });
   }
   return points;
 }

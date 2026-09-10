@@ -27,7 +27,9 @@ export async function computeSendGate(tenantId: string, period: string): Promise
     );
   }
   if (reconRun === null) {
-    reasons.push('Reconciliation has not been run for this period — open the Reconciliation panel for this month.');
+    reasons.push(
+      'Reconciliation has not been run for this period — open the Reconciliation panel for this month.',
+    );
   }
   return {
     canSend: reasons.length === 0,

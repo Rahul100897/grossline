@@ -1,7 +1,13 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { beforeAll, afterAll, describe, expect, it } from 'vitest';
 import { createSessionToken } from '@grossline/core';
-import { closeDbPools, createTenant, getConnection, getCredential, listStores } from '@grossline/db';
+import {
+  closeDbPools,
+  createTenant,
+  getConnection,
+  getCredential,
+  listStores,
+} from '@grossline/db';
 import { handleShopifyCallback } from '../lib/shopify-install';
 
 const CLIENT_SECRET = 'shpss_synthetic_secret'; // gitleaks:allow — fake
@@ -78,7 +84,9 @@ describe('shopify oauth callback', () => {
     });
     const result = await handleShopifyCallback(
       params,
-      makeFetch({ scope: 'read_orders,read_all_orders,read_customers,read_products,read_inventory' }),
+      makeFetch({
+        scope: 'read_orders,read_all_orders,read_customers,read_products,read_inventory',
+      }),
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;

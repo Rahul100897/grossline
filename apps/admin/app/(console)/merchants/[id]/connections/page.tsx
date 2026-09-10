@@ -156,9 +156,15 @@ export default async function MerchantConnectionsPage({
           name="strategy"
           defaultValue="client_credentials"
           options={[
-            { value: 'client_credentials', label: 'client_credentials — our own org (Dev Dashboard app)' },
+            {
+              value: 'client_credentials',
+              label: 'client_credentials — our own org (Dev Dashboard app)',
+            },
             { value: 'legacy_static', label: 'legacy_static — existing custom-app token' },
-            { value: 'authorization_code', label: 'authorization_code — merchant store (install link)' },
+            {
+              value: 'authorization_code',
+              label: 'authorization_code — merchant store (install link)',
+            },
           ]}
         />
         <Field

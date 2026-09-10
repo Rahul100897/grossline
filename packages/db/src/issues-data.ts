@@ -37,9 +37,12 @@ export async function latestSyncRun(
  * values (Phase 2 already computed and attached it). Null when no cogs metric
  * exists yet.
  */
-export async function latestCostCompleteness(
-  tenantId: string,
-): Promise<{ period: string; completeness: number; costedLines: number; totalLines: number } | null> {
+export async function latestCostCompleteness(tenantId: string): Promise<{
+  period: string;
+  completeness: number;
+  costedLines: number;
+  totalLines: number;
+} | null> {
   const [row] = await withTenant(tenantId, (tx) =>
     tx
       .select({ period: metricValues.period, meta: metricValues.meta })
@@ -68,7 +71,11 @@ export async function lastMetricRun(
 ): Promise<{ status: string; error: string | null; finishedAt: Date | null } | null> {
   const [row] = await withTenant(tenantId, (tx) =>
     tx
-      .select({ status: metricRuns.status, error: metricRuns.error, finishedAt: metricRuns.finishedAt })
+      .select({
+        status: metricRuns.status,
+        error: metricRuns.error,
+        finishedAt: metricRuns.finishedAt,
+      })
       .from(metricRuns)
       .orderBy(desc(metricRuns.startedAt))
       .limit(1),

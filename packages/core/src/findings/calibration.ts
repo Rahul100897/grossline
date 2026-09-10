@@ -85,7 +85,9 @@ export function calibrateThresholds(input: CalibrationInput): FindingThresholds 
 
   // Break-even MER from margin structure: prefer the computed break-even ROAS
   // (1 ÷ contribution margin rate), else derive from the margin rate itself.
-  const breakEvenRoasValues = months.map((m) => m.breakEvenRoas).filter((v): v is number => v !== null && v > 0);
+  const breakEvenRoasValues = months
+    .map((m) => m.breakEvenRoas)
+    .filter((v): v is number => v !== null && v > 0);
   const marginRates = months
     .map((m) => m.contributionMarginRate)
     .filter((v): v is number => v !== null && v > 0);

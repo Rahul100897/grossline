@@ -16,7 +16,11 @@ export async function savePlans(formData: FormData): Promise<void> {
   let failure: string | null = null;
   try {
     const plans = names
-      .map((name, i) => ({ name: name.trim(), fee: (fees[i] ?? '').trim(), currency: (currencies[i] ?? 'USD').trim().toUpperCase() }))
+      .map((name, i) => ({
+        name: name.trim(),
+        fee: (fees[i] ?? '').trim(),
+        currency: (currencies[i] ?? 'USD').trim().toUpperCase(),
+      }))
       .filter((p) => p.name !== '' && p.fee !== '')
       .map((p) => ({
         plan: p.name,
@@ -26,7 +30,8 @@ export async function savePlans(formData: FormData): Promise<void> {
     await updateSettings({ plans });
     await writeAuditLog({ actor: session.sub, action: 'settings.plans' });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
   }
   if (failure !== null) redirect(`/settings/plans?error=${encodeURIComponent(failure)}`);
   redirect('/settings/plans?saved=1');
@@ -52,7 +57,8 @@ export async function saveThresholds(formData: FormData): Promise<void> {
     });
     await writeAuditLog({ actor: session.sub, action: 'settings.thresholds' });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
   }
   if (failure !== null) redirect(`/settings/thresholds?error=${encodeURIComponent(failure)}`);
   redirect('/settings/thresholds?saved=1');
@@ -88,7 +94,8 @@ export async function saveBusiness(formData: FormData): Promise<void> {
     });
     await writeAuditLog({ actor: session.sub, action: 'settings.business' });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
   }
   if (failure !== null) redirect(`/settings/business?error=${encodeURIComponent(failure)}`);
   redirect('/settings/business?saved=1');

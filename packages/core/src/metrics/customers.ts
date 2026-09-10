@@ -107,19 +107,35 @@ export function computeCustomerMetrics(input: {
   }
   points.push(
     { metric: 'new_customer_count', grain: 'month', period: monthPeriod, value: cohort.length },
-    { metric: 'new_customer_revenue', grain: 'month', period: monthPeriod, value: newCustomerNet, currency },
-    { metric: 'new_customer_revenue_share', grain: 'month', period: monthPeriod, value: rate(newCustomerNet, monthNet) },
+    {
+      metric: 'new_customer_revenue',
+      grain: 'month',
+      period: monthPeriod,
+      value: newCustomerNet,
+      currency,
+    },
+    {
+      metric: 'new_customer_revenue_share',
+      grain: 'month',
+      period: monthPeriod,
+      value: rate(newCustomerNet, monthNet),
+    },
   );
 
   // ---- repeat rates (30/60/90) and time to second order ----
-  const nextAfterAnchor = (c: { entry: CustomerOrders; anchor: OrderFacts }): OrderFacts | undefined =>
-    c.entry.orders.find((o) => o.processedAt > c.anchor.processedAt);
+  const nextAfterAnchor = (c: {
+    entry: CustomerOrders;
+    anchor: OrderFacts;
+  }): OrderFacts | undefined => c.entry.orders.find((o) => o.processedAt > c.anchor.processedAt);
 
   for (const days of [30, 60, 90]) {
     const windowMs = days * DAY_MS;
     const repeated = cohort.filter((c) => {
       const second = nextAfterAnchor(c);
-      return second !== undefined && second.processedAt.getTime() - c.anchor.processedAt.getTime() <= windowMs;
+      return (
+        second !== undefined &&
+        second.processedAt.getTime() - c.anchor.processedAt.getTime() <= windowMs
+      );
     }).length;
     // The N-day figure is final only once every cohort member's window closed.
     const provisional = window.endUtc.getTime() + windowMs > input.now.getTime();
@@ -134,7 +150,9 @@ export function computeCustomerMetrics(input: {
   const gaps = cohort
     .map((c) => {
       const second = nextAfterAnchor(c);
-      return second ? (second.processedAt.getTime() - c.anchor.processedAt.getTime()) / DAY_MS : null;
+      return second
+        ? (second.processedAt.getTime() - c.anchor.processedAt.getTime()) / DAY_MS
+        : null;
     })
     .filter((g): g is number => g !== null);
   points.push({

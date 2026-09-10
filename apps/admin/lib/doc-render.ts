@@ -33,10 +33,7 @@ export async function readDoc(relativePath: string): Promise<string | null> {
 }
 
 function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 /** Inline: `code`, **bold**, [text](href). Order matters — code first. */

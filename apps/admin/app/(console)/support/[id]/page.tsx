@@ -3,13 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTicketWithMessages, getTenant, type TicketWithMessages } from '@grossline/db';
 import { requireSession } from '../../../../lib/auth';
 import { formatDate } from '../../../../lib/format';
-import {
-  Absent,
-  Badge,
-  ErrorState,
-  Panel,
-  SectionHeader,
-} from '../../../../components/ui';
+import { Absent, Badge, ErrorState, Panel, SectionHeader } from '../../../../components/ui';
 import { FormNotice, SelectField, SubmitButton, TextAreaField } from '../../../../components/forms';
 import { replyToTicket, updateTicketMeta } from './actions';
 
@@ -82,13 +76,11 @@ export default async function TicketDetailPage({
               <div
                 key={m.id}
                 className={`rounded border p-3 ${
-                  m.author === 'admin'
-                    ? 'border-hairline bg-panel'
-                    : 'border-hairline bg-hover'
+                  m.author === 'admin' ? 'border-hairline bg-panel' : 'border-hairline bg-hover'
                 }`}
               >
                 <div className="mb-1 text-[12px] text-slate">
-                  {m.author === 'admin' ? 'You' : ticket.submitterName ?? 'Submitter'} ·{' '}
+                  {m.author === 'admin' ? 'You' : (ticket.submitterName ?? 'Submitter')} ·{' '}
                   {formatDate(m.createdAt)}
                   {m.author === 'admin' ? (m.emailed ? ' · emailed' : ' · not emailed') : ''}
                 </div>
@@ -102,7 +94,15 @@ export default async function TicketDetailPage({
       <SectionHeader title="Reply" />
       <form action={replyToTicket} className="flex max-w-2xl flex-col gap-3">
         <input type="hidden" name="ticketId" value={ticket.id} />
-        <TextAreaField label={ticket.submitterEmail ? `Reply (emails ${ticket.submitterEmail})` : 'Reply (no email on file — recorded only)'} name="body" rows={6} />
+        <TextAreaField
+          label={
+            ticket.submitterEmail
+              ? `Reply (emails ${ticket.submitterEmail})`
+              : 'Reply (no email on file — recorded only)'
+          }
+          name="body"
+          rows={6}
+        />
         <label className="flex items-center gap-2 text-[13px]">
           <input type="checkbox" name="close" defaultChecked />
           close the ticket after replying
@@ -119,7 +119,10 @@ export default async function TicketDetailPage({
           label="Status"
           name="status"
           defaultValue={ticket.status}
-          options={['open', 'in_progress', 'closed'].map((s) => ({ value: s, label: s.replace('_', ' ') }))}
+          options={['open', 'in_progress', 'closed'].map((s) => ({
+            value: s,
+            label: s.replace('_', ' '),
+          }))}
         />
         <SelectField
           label="Priority"
@@ -128,7 +131,12 @@ export default async function TicketDetailPage({
           options={['low', 'normal', 'high'].map((p) => ({ value: p, label: p }))}
         />
         <div className="sm:col-span-2">
-          <TextAreaField label="Internal notes (never shown to the submitter)" name="notes" defaultValue={ticket.notes ?? ''} rows={4} />
+          <TextAreaField
+            label="Internal notes (never shown to the submitter)"
+            name="notes"
+            defaultValue={ticket.notes ?? ''}
+            rows={4}
+          />
         </div>
         <div className="sm:col-span-2">
           <SubmitButton>Save</SubmitButton>

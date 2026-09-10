@@ -78,8 +78,8 @@ export default async function MerchantMetricsPage({
   if (months.length === 0 || !period) {
     return (
       <EmptyState>
-        No metrics computed yet. Run <code>pnpm --filter @grossline/worker metrics:compute {id}</code>{' '}
-        after a sync.
+        No metrics computed yet. Run{' '}
+        <code>pnpm --filter @grossline/worker metrics:compute {id}</code> after a sync.
       </EmptyState>
     );
   }

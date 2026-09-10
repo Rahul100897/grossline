@@ -37,9 +37,14 @@ export async function buildReport(formData: FormData): Promise<void> {
     await buildAndSaveReport(tenantId, period);
     await writeAuditLog({ actor: session.sub, action: 'report.build', tenantId, subject: period });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'build failed';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'build failed';
   }
-  redirect(failure ? back(tenantId, period, `&error=${encodeURIComponent(failure)}`) : back(tenantId, period, '&saved=1'));
+  redirect(
+    failure
+      ? back(tenantId, period, `&error=${encodeURIComponent(failure)}`)
+      : back(tenantId, period, '&saved=1'),
+  );
 }
 
 export async function approveReport(formData: FormData): Promise<void> {
@@ -48,7 +53,12 @@ export async function approveReport(formData: FormData): Promise<void> {
   const report = await getReport(tenantId, period);
   if (report) {
     await markReportApproved(tenantId, report.id);
-    await writeAuditLog({ actor: session.sub, action: 'report.approve', tenantId, subject: period });
+    await writeAuditLog({
+      actor: session.sub,
+      action: 'report.approve',
+      tenantId,
+      subject: period,
+    });
   }
   redirect(back(tenantId, period, '&saved=1'));
 }
@@ -63,7 +73,8 @@ export async function sendReport(formData: FormData): Promise<void> {
     .filter((r) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r));
 
   const report = await getReport(tenantId, period);
-  if (!report) redirect(back(tenantId, period, `&error=${encodeURIComponent('Build the report first.')}`));
+  if (!report)
+    redirect(back(tenantId, period, `&error=${encodeURIComponent('Build the report first.')}`));
 
   // The send gate: nothing goes out unreviewed or unreconciled.
   const gate = await computeSendGate(tenantId, period);
@@ -71,7 +82,13 @@ export async function sendReport(formData: FormData): Promise<void> {
     redirect(back(tenantId, period, `&error=${encodeURIComponent(gate.reasons.join(' '))}`));
   }
   if (recipients.length === 0) {
-    redirect(back(tenantId, period, `&error=${encodeURIComponent('Enter at least one valid recipient email.')}`));
+    redirect(
+      back(
+        tenantId,
+        period,
+        `&error=${encodeURIComponent('Enter at least one valid recipient email.')}`,
+      ),
+    );
   }
 
   const tenant = await getTenant(tenantId);
@@ -82,9 +99,13 @@ export async function sendReport(formData: FormData): Promise<void> {
       to: recipients,
       subject: `${tenant?.name ?? 'Your'} monthly report — ${period.slice(0, 7)}`,
       text: 'Your monthly report is attached.',
-      attachments: [{ filename: `report-${period.slice(0, 7)}.pdf`, content: pdf.toString('base64') }],
+      attachments: [
+        { filename: `report-${period.slice(0, 7)}.pdf`, content: pdf.toString('base64') },
+      ],
     });
-    emailNote = result.sent ? 'emailed' : `recorded as sent (email not sent: ${result.reason ?? 'unknown'})`;
+    emailNote = result.sent
+      ? 'emailed'
+      : `recorded as sent (email not sent: ${result.reason ?? 'unknown'})`;
   } catch (error) {
     emailNote = `recorded as sent (PDF/email failed: ${error instanceof Error ? error.message : 'unknown'})`;
   }

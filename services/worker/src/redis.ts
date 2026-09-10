@@ -16,5 +16,7 @@ export function createRedis(): IORedis {
 
 /** Key prefix so test runs never collide with a locally running worker. */
 export function queuePrefix(): string {
-  return process.env.BULLMQ_PREFIX ?? (process.env.NODE_ENV === 'test' ? 'grossline-test' : 'grossline');
+  return (
+    process.env.BULLMQ_PREFIX ?? (process.env.NODE_ENV === 'test' ? 'grossline-test' : 'grossline')
+  );
 }

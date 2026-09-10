@@ -33,8 +33,18 @@ import type {
 } from './report-html';
 
 const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 function periodLabel(period: string): string {
@@ -66,7 +76,12 @@ const CHECK_LABEL: Record<string, string> = {
   platform_roas: 'the campaign’s platform-reported ROAS (platform-reported)',
 };
 
-const MONEY_CHECK = new Set(['blended_cac', 'spend_projected_month_end', 'ad_spend', 'search_term_cost']);
+const MONEY_CHECK = new Set([
+  'blended_cac',
+  'spend_projected_month_end',
+  'ad_spend',
+  'search_term_cost',
+]);
 const RATE_CHECK = new Set(['claim_gap', 'discount_share', 'branded_search_share', 'refund_rate']);
 
 const RULE_TITLES: Record<string, string> = {
@@ -88,7 +103,11 @@ function tenantVal(bundle: MetricBundle, metric: string): number | null {
 }
 
 /** Delta rendered in the metric's own units (money / points / ratio). */
-function formatDeltaFor(kind: 'money' | 'rate' | 'ratio', cmp: MetricComparison, currency: string): string | null {
+function formatDeltaFor(
+  kind: 'money' | 'rate' | 'ratio',
+  cmp: MetricComparison,
+  currency: string,
+): string | null {
   if (cmp.delta === null) return null;
   const sign = cmp.delta > 0 ? '+' : cmp.delta < 0 ? '−' : '';
   const abs = Math.abs(cmp.delta);
@@ -97,7 +116,11 @@ function formatDeltaFor(kind: 'money' | 'rate' | 'ratio', cmp: MetricComparison,
   return `${sign}${abs.toFixed(2)}`;
 }
 
-function formatCurrent(kind: 'money' | 'rate' | 'ratio', value: number | null, currency: string): string {
+function formatCurrent(
+  kind: 'money' | 'rate' | 'ratio',
+  value: number | null,
+  currency: string,
+): string {
   if (value === null) return '—';
   if (kind === 'money') return money(value, currency);
   if (kind === 'rate') return `${(value * 100).toFixed(1)}%`;
@@ -110,7 +133,9 @@ function findingKind(f: Finding): ReportFindingKind {
 
 function findingValueLabel(f: Finding, currency: string): string {
   if (f.family === 'growth') {
-    return f.opportunityValueMinor === null ? 'opportunity' : `+${money(f.opportunityValueMinor, currency)} opportunity`;
+    return f.opportunityValueMinor === null
+      ? 'opportunity'
+      : `+${money(f.opportunityValueMinor, currency)} opportunity`;
   }
   if (f.family === 'measurement') return 'no money at stake';
   return `${money(f.moneyImpactMinor, currency)} at stake`;
@@ -191,19 +216,40 @@ export async function buildReportModel(
   const marginMeta = (bundle.tenant('contribution_after_ad_spend')?.meta ??
     bundle.tenant('cogs')?.meta ??
     {}) as Record<string, unknown>;
-  const costCompleteness = typeof marginMeta.completeness === 'number' ? marginMeta.completeness : null;
+  const costCompleteness =
+    typeof marginMeta.completeness === 'number' ? marginMeta.completeness : null;
   const netMeta = (bundle.tenant('net_sales')?.meta ?? {}) as Record<string, unknown>;
   const provisional = netMeta.provisional === true;
 
   // ---- headline (contribution + direction) ----
   const contribution = tenantVal(bundle, 'contribution_after_ad_spend');
-  const contribCmp = await compareMetric(tenantId, { metric: 'contribution_after_ad_spend', period, kind: 'previous_period' });
+  const contribCmp = await compareMetric(tenantId, {
+    metric: 'contribution_after_ad_spend',
+    period,
+    kind: 'previous_period',
+  });
   const direction: Direction | null =
-    contribCmp.delta === null ? null : contribCmp.delta > 0 ? 'up' : contribCmp.delta < 0 ? 'down' : 'flat';
+    contribCmp.delta === null
+      ? null
+      : contribCmp.delta > 0
+        ? 'up'
+        : contribCmp.delta < 0
+          ? 'down'
+          : 'flat';
   const mer = tenantVal(bundle, 'mer');
   const breakEvenMer = thresholds.breakEvenMer;
-  const worked = mer !== null && breakEvenMer !== null ? mer >= breakEvenMer : contribution !== null && contribution >= 0;
-  const dirWord = direction === 'up' ? 'up on last month' : direction === 'down' ? 'down on last month' : direction === 'flat' ? 'level with last month' : 'with no prior month to compare';
+  const worked =
+    mer !== null && breakEvenMer !== null
+      ? mer >= breakEvenMer
+      : contribution !== null && contribution >= 0;
+  const dirWord =
+    direction === 'up'
+      ? 'up on last month'
+      : direction === 'down'
+        ? 'down on last month'
+        : direction === 'flat'
+          ? 'level with last month'
+          : 'with no prior month to compare';
   const headlineSentence =
     contribution === null
       ? `${periodLabel(period)}: contribution after ad spend is not yet computable for this period.`
@@ -262,7 +308,9 @@ export async function buildReportModel(
 
   // ---- findings (the approved / sendable set) + measurement ----
   const sendable = allFindings.filter(
-    (f) => (opts.includeUnapproved || f.approvedAt !== null) && (f.status === 'new' || f.status === 'recurring'),
+    (f) =>
+      (opts.includeUnapproved || f.approvedAt !== null) &&
+      (f.status === 'new' || f.status === 'recurring'),
   );
   const findings: ReportFinding[] = sendable.map((f) => ({
     title: RULE_TITLES[f.ruleId] ?? f.ruleId,
@@ -287,11 +335,19 @@ export async function buildReportModel(
     priorApproved.map(async (f) => {
       let measured: number | null = null;
       if (nextComputed && f.checkMetric) {
-        const rows = await getMetricValues(tenantId, { metric: f.checkMetric, grain: 'month', periods: [period], scope: scopeFor(f) });
+        const rows = await getMetricValues(tenantId, {
+          metric: f.checkMetric,
+          grain: 'month',
+          periods: [period],
+          scope: scopeFor(f),
+        });
         measured = rows[0] ? Number(rows[0].value) : null;
       }
-      const nextFinding = allFindings.find((x) => x.ruleId === f.ruleId && x.entityKey === f.entityKey);
-      const resolvedNextPeriod = nextComputed && (nextFinding === undefined || nextFinding.status === 'resolved');
+      const nextFinding = allFindings.find(
+        (x) => x.ruleId === f.ruleId && x.entityKey === f.entityKey,
+      );
+      const resolvedNextPeriod =
+        nextComputed && (nextFinding === undefined || nextFinding.status === 'resolved');
       const baseline = f.checkBaseline === null ? null : Number(f.checkBaseline);
       const judge = classifyRecommendation({
         checkMetric: f.checkMetric,
@@ -302,14 +358,24 @@ export async function buildReportModel(
         family: f.family as CommentaryFinding['family'],
       });
       const fmt = (v: number | null): string =>
-        v === null ? '—' : MONEY_CHECK.has(f.checkMetric as string) ? money(v, currency) : RATE_CHECK.has(f.checkMetric as string) ? `${(v * 100).toFixed(1)}%` : v.toFixed(2);
+        v === null
+          ? '—'
+          : MONEY_CHECK.has(f.checkMetric as string)
+            ? money(v, currency)
+            : RATE_CHECK.has(f.checkMetric as string)
+              ? `${(v * 100).toFixed(1)}%`
+              : v.toFixed(2);
       const result =
         judge.status === 'pending'
           ? 'awaiting this month'
           : judge.status === 'resolved'
             ? `resolved — ${f.checkMetric} now ${fmt(measured)}`
             : `${f.checkMetric} ${fmt(baseline)} → ${fmt(measured)}`;
-      return { label: `${RULE_TITLES[f.ruleId] ?? f.ruleId} · ${f.entityLabel}`, result, status: judge.status };
+      return {
+        label: `${RULE_TITLES[f.ruleId] ?? f.ruleId} · ${f.entityLabel}`,
+        result,
+        status: judge.status,
+      };
     }),
   );
 

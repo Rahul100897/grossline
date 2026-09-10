@@ -2,11 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import {
-  SHOPIFY_OAUTH_SCOPES,
-  buildShopifyInstallUrl,
-  createSessionToken,
-} from '@grossline/core';
+import { SHOPIFY_OAUTH_SCOPES, buildShopifyInstallUrl, createSessionToken } from '@grossline/core';
 import { writeAuditLog } from '@grossline/db';
 import { connectShopifyStore } from '@grossline/worker/shopify-connect';
 import { requireSession, sessionSecret } from '../../../../../lib/auth';
@@ -86,7 +82,9 @@ export async function connectStore(formData: FormData): Promise<void> {
     const clientSecret = data.clientSecret || process.env.SHOPIFY_CLIENT_SECRET || '';
     if (!clientId || !clientSecret) {
       redirect(
-        errorUrl('client_credentials needs client id and secret (or SHOPIFY_CLIENT_ID/SECRET in env)'),
+        errorUrl(
+          'client_credentials needs client id and secret (or SHOPIFY_CLIENT_ID/SECRET in env)',
+        ),
       );
     }
     input = { strategy: 'client_credentials', clientId, clientSecret };
@@ -101,7 +99,8 @@ export async function connectStore(formData: FormData): Promise<void> {
       ...input,
     }));
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'connect failed';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'connect failed';
   }
   if (failure !== null) redirect(errorUrl(failure));
 

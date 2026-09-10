@@ -7,11 +7,7 @@ import { z } from 'zod';
 import { logger } from '@grossline/core';
 import { createConnection, putCredential, updateConnectionHealth } from '@grossline/db';
 import type { SyncContext } from '../types';
-import {
-  GoogleAdsUnlinkedAccountError,
-  digitsOnly,
-  googleAdsSearchStream,
-} from './client';
+import { GoogleAdsUnlinkedAccountError, digitsOnly, googleAdsSearchStream } from './client';
 
 const customerRowSchema = z
   .object({

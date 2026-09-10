@@ -62,7 +62,10 @@ const CHECK_LABEL: Record<string, string> = {
 };
 
 function combine(parts: Omit<FourPart, 'text'>): FourPart {
-  return { ...parts, text: `${parts.whatHappened} ${parts.atStake} ${parts.whatToDo} ${parts.whatWeCheck}` };
+  return {
+    ...parts,
+    text: `${parts.whatHappened} ${parts.atStake} ${parts.whatToDo} ${parts.whatWeCheck}`,
+  };
 }
 
 export function renderTemplate(f: CommentaryFinding): FourPart {
@@ -203,7 +206,9 @@ function extractFigures(text: string): { raw: string; interpretations: number[] 
 const TOLERANCE = 0.02;
 
 function matches(value: number, allowed: number[]): boolean {
-  return allowed.some((a) => Math.abs(a - value) <= TOLERANCE || (a !== 0 && Math.abs((a - value) / a) <= 0.005));
+  return allowed.some(
+    (a) => Math.abs(a - value) <= TOLERANCE || (a !== 0 && Math.abs((a - value) / a) <= 0.005),
+  );
 }
 
 /**

@@ -16,7 +16,10 @@ export async function recalibrate(formData: FormData): Promise<void> {
     await calibrateTenant(tenantId, { force: true });
     await writeAuditLog({ actor: session.sub, action: 'tenant.thresholds.recalibrate', tenantId });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not recalibrate';
+    failure =
+      error instanceof Error
+        ? (error.message.split('\n')[0] ?? error.message)
+        : 'could not recalibrate';
   }
   if (failure !== null) redirect(`${back}?error=${encodeURIComponent(failure)}`);
   redirect(`${back}?recalibrated=1`);
@@ -68,14 +71,16 @@ export async function saveThresholds(formData: FormData): Promise<void> {
       refundRateMultiple: Number(raw.refundRateMultiple),
       discountLeakageDeltaCeil: Number(raw.discountLeakageDeltaCeil) / 100,
       claimGapTolerance: Number(raw.claimGapTolerance) / 100,
-      cacCeilingMinor: raw.cacCeilingMinor.trim() === '' ? null : Math.round(Number(raw.cacCeilingMinor)),
+      cacCeilingMinor:
+        raw.cacCeilingMinor.trim() === '' ? null : Math.round(Number(raw.cacCeilingMinor)),
       pacingOveragePct: Number(raw.pacingOveragePct) / 100,
       searchTermWasteFloorMinor: Math.round(Number(raw.searchTermWasteFloorMinor)),
     });
     await saveEditedCalibration(tenantId, thresholds);
     await writeAuditLog({ actor: session.sub, action: 'tenant.thresholds.edit', tenantId });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
   }
   if (failure !== null) redirect(`${back}?error=${encodeURIComponent(failure)}`);
   redirect(`${back}?saved=1`);

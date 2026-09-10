@@ -198,7 +198,10 @@ export async function importShopifyCosts(
           source: 'shopify',
         });
         inserted++;
-      } else if (latest.unitCostMinor !== unitCostMinor || latest.currency !== unitCost.currencyCode) {
+      } else if (
+        latest.unitCostMinor !== unitCostMinor ||
+        latest.currency !== unitCost.currencyCode
+      ) {
         toUpsert.push({
           sku,
           variantId: variant.id,

@@ -19,7 +19,7 @@ metric" rule.
   amounts yet. Phase 2's blended metrics ("converted at the daily rate") plug
   in here. Run `pnpm fx:pull 500` once before computing over history.
 - **COGS**: variant `unitCost` is captured (current value only). metrics.md
-  wants costs *effective on the order date* — Phase 2 needs a cost-history
+  wants costs _effective on the order date_ — Phase 2 needs a cost-history
   table (effective-from dates) fed at sync time, since Shopify only exposes
   the current cost.
 - **`raw_shopify_customers` completeness**: customers untouched for >13 months

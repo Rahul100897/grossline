@@ -4,9 +4,29 @@
 
 /** Currencies whose minor unit is not 1/100. Everything else defaults to 2. */
 const MINOR_UNIT_EXPONENTS: Record<string, number> = {
-  BIF: 0, CLP: 0, DJF: 0, GNF: 0, ISK: 0, JPY: 0, KMF: 0, KRW: 0, PYG: 0,
-  RWF: 0, UGX: 0, VND: 0, VUV: 0, XAF: 0, XOF: 0, XPF: 0,
-  BHD: 3, IQD: 3, JOD: 3, KWD: 3, LYD: 3, OMR: 3, TND: 3,
+  BIF: 0,
+  CLP: 0,
+  DJF: 0,
+  GNF: 0,
+  ISK: 0,
+  JPY: 0,
+  KMF: 0,
+  KRW: 0,
+  PYG: 0,
+  RWF: 0,
+  UGX: 0,
+  VND: 0,
+  VUV: 0,
+  XAF: 0,
+  XOF: 0,
+  XPF: 0,
+  BHD: 3,
+  IQD: 3,
+  JOD: 3,
+  KWD: 3,
+  LYD: 3,
+  OMR: 3,
+  TND: 3,
 };
 
 export function minorUnitExponent(currency: string): number {
@@ -61,7 +81,13 @@ export function convertMinorUnits(input: {
     throw new Error('amountMinor must be an integer — money never travels as floats');
   }
   if (from === to) {
-    return { amountMinor: input.amountMinor, currency: to, rate: '1', rateDate: input.rateDate, source };
+    return {
+      amountMinor: input.amountMinor,
+      currency: to,
+      rate: '1',
+      rateDate: input.rateDate,
+      source,
+    };
   }
   const eurTo = (code: string): number => {
     if (code === 'EUR') return 1;

@@ -86,7 +86,9 @@ export async function runBulkQuery(
           ? ' — the app token lacks the needed scopes; see the connection scope warning' +
             ' (Dev Dashboard: select scopes on the app version, release, approve on the store)'
           : '';
-      throw new Error(`shopify bulk operation ${op.status}: ${op.errorCode ?? 'unknown error'}${hint}`);
+      throw new Error(
+        `shopify bulk operation ${op.status}: ${op.errorCode ?? 'unknown error'}${hint}`,
+      );
     }
     if (Date.now() > deadline) throw new Error('shopify bulk operation timed out');
     await sleep(pollIntervalMs);

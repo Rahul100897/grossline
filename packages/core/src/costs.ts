@@ -136,7 +136,13 @@ export function computeCostCoverage(
   };
   const missing = new Map<
     string,
-    { sku: string | null; variantId: string | null; lines: number; units: number; revenueAtStakeMinor: number }
+    {
+      sku: string | null;
+      variantId: string | null;
+      lines: number;
+      units: number;
+      revenueAtStakeMinor: number;
+    }
   >();
 
   for (const line of lines) {
@@ -145,7 +151,8 @@ export function computeCostCoverage(
     if (resolved) {
       costedLines++;
       if (resolved.source === 'upload') provenance.uploadLines++;
-      else if (resolved.effectiveFrom === EPOCH_EFFECTIVE_FROM) provenance.shopifyEpochAssumedLines++;
+      else if (resolved.effectiveFrom === EPOCH_EFFECTIVE_FROM)
+        provenance.shopifyEpochAssumedLines++;
       else provenance.shopifyDatedLines++;
       continue;
     }

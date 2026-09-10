@@ -62,7 +62,11 @@ export default async function MerchantOverviewPage({
     },
     {
       label: 'partner rate until',
-      value: tenant.partnerRateUntil ? formatDate(tenant.partnerRateUntil) : <Absent reason="none" />,
+      value: tenant.partnerRateUntil ? (
+        formatDate(tenant.partnerRateUntil)
+      ) : (
+        <Absent reason="none" />
+      ),
     },
     { label: 'reporting currency', value: tenant.reportingCurrency },
     { label: 'reporting timezone', value: tenant.reportingTimezone },
@@ -100,8 +104,8 @@ export default async function MerchantOverviewPage({
           <Panel>
             <div className="flex flex-col gap-3 p-1">
               <p className="text-[12px] text-slate">
-                This merchant is on the free first report. Record a decision: convert them to a paying
-                plan, or offboard them.
+                This merchant is on the free first report. Record a decision: convert them to a
+                paying plan, or offboard them.
               </p>
               <form action={convertTrial}>
                 <input type="hidden" name="tenantId" value={tenant.id} />
@@ -116,13 +120,16 @@ export default async function MerchantOverviewPage({
 
       {tenant.status !== 'churned' ? (
         <>
-          <SectionHeader title="Offboard" right={<span className="text-[12px] text-slate">irreversible</span>} />
+          <SectionHeader
+            title="Offboard"
+            right={<span className="text-[12px] text-slate">irreversible</span>}
+          />
           <Panel>
             <form action={offboard} className="flex flex-col gap-2 p-1">
               <input type="hidden" name="tenantId" value={tenant.id} />
               <p className="text-[12px] text-slate">
-                Revokes every connection and permanently deletes this merchant&rsquo;s data. Type the
-                slug <code>{tenant.slug}</code> to confirm.
+                Revokes every connection and permanently deletes this merchant&rsquo;s data. Type
+                the slug <code>{tenant.slug}</code> to confirm.
               </p>
               <div className="flex items-center gap-2">
                 <input
@@ -130,7 +137,10 @@ export default async function MerchantOverviewPage({
                   placeholder={tenant.slug}
                   className="rounded border border-hairline bg-panel px-2 py-1 text-[13px] outline-none focus:border-slate"
                 />
-                <button type="submit" className="rounded border border-attn-line bg-attn-soft px-2.5 py-1 text-[13px] text-attn hover:opacity-80">
+                <button
+                  type="submit"
+                  className="rounded border border-attn-line bg-attn-soft px-2.5 py-1 text-[13px] text-attn hover:opacity-80"
+                >
                   Offboard
                 </button>
               </div>
@@ -164,7 +174,9 @@ export default async function MerchantOverviewPage({
                 <Tr key={c.id}>
                   <Td quiet>{c.provider}</Td>
                   <Td>{c.externalAccountId}</Td>
-                  <Td>{isDemoConnection(c) ? <Badge>demo</Badge> : <HealthDot health={c.health} />}</Td>
+                  <Td>
+                    {isDemoConnection(c) ? <Badge>demo</Badge> : <HealthDot health={c.health} />}
+                  </Td>
                 </Tr>
               ))}
             </tbody>

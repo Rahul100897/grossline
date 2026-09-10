@@ -28,9 +28,16 @@ export async function offboard(formData: FormData): Promise<void> {
   const tenant = await getTenant(tenantId);
   if (!tenant) redirect('/merchants');
   if (confirm !== tenant!.slug) {
-    redirect(`/merchants/${tenantId}?error=${encodeURIComponent('Type the merchant slug to confirm offboarding.')}`);
+    redirect(
+      `/merchants/${tenantId}?error=${encodeURIComponent('Type the merchant slug to confirm offboarding.')}`,
+    );
   }
   await offboardTenant(tenantId);
-  await writeAuditLog({ actor: session.sub, action: 'tenant.offboard', tenantId, subject: tenant!.slug });
+  await writeAuditLog({
+    actor: session.sub,
+    action: 'tenant.offboard',
+    tenantId,
+    subject: tenant!.slug,
+  });
   redirect(`/merchants/${tenantId}?saved=offboarded`);
 }

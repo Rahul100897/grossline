@@ -111,7 +111,10 @@ export async function computeRecentMonths(
 ): Promise<{ months: number; metricsWritten: number }> {
   const tenant = await getTenant(tenantId);
   if (!tenant) throw new Error(`tenant ${tenantId} not found`);
-  const [y, m] = dateInZone(now, tenant.reportingTimezone).split('-').map(Number) as [number, number];
+  const [y, m] = dateInZone(now, tenant.reportingTimezone).split('-').map(Number) as [
+    number,
+    number,
+  ];
   const current = { year: y, month: m };
   const previous = m === 1 ? { year: y - 1, month: 12 } : { year: y, month: m - 1 };
   let metricsWritten = 0;

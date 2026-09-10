@@ -51,16 +51,16 @@ export async function listTickets(filter: TicketFilter = {}): Promise<Ticket[]> 
     filter.type ? eq(tickets.type, filter.type as Ticket['type']) : undefined,
     filter.priority ? eq(tickets.priority, filter.priority as Ticket['priority']) : undefined,
   ].filter(Boolean);
-  const where = clauses.length > 0 ? and(...(clauses as NonNullable<(typeof clauses)[number]>[])) : undefined;
-  return adminDb()
-    .select()
-    .from(tickets)
-    .where(where)
-    .orderBy(desc(tickets.createdAt));
+  const where =
+    clauses.length > 0 ? and(...(clauses as NonNullable<(typeof clauses)[number]>[])) : undefined;
+  return adminDb().select().from(tickets).where(where).orderBy(desc(tickets.createdAt));
 }
 
 export async function countOpenTickets(): Promise<number> {
-  const rows = await adminDb().select({ id: tickets.id }).from(tickets).where(eq(tickets.status, 'open'));
+  const rows = await adminDb()
+    .select({ id: tickets.id })
+    .from(tickets)
+    .where(eq(tickets.status, 'open'));
   return rows.length;
 }
 
@@ -86,14 +86,21 @@ export async function addTicketReply(input: {
     .insert(ticketMessages)
     .values({ ticketId: input.ticketId, author: input.author, body, emailed: input.emailed })
     .returning();
-  await adminDb().update(tickets).set({ updatedAt: new Date() }).where(eq(tickets.id, input.ticketId));
+  await adminDb()
+    .update(tickets)
+    .set({ updatedAt: new Date() })
+    .where(eq(tickets.id, input.ticketId));
   if (!row) throw new Error('ticket message insert returned no row');
   return row;
 }
 
 export async function updateTicket(
   ticketId: string,
-  patch: { status?: 'open' | 'in_progress' | 'closed'; priority?: 'low' | 'normal' | 'high'; notes?: string | null },
+  patch: {
+    status?: 'open' | 'in_progress' | 'closed';
+    priority?: 'low' | 'normal' | 'high';
+    notes?: string | null;
+  },
 ): Promise<void> {
   await adminDb()
     .update(tickets)

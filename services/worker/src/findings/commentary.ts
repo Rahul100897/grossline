@@ -5,12 +5,7 @@
 // never introduce a number that is not already in the finding record. Any
 // failure (no API key, API error, a foreign figure) falls back to the
 // deterministic template, which is always safe. No SDK dependency — plain fetch.
-import {
-  foreignFigures,
-  renderTemplate,
-  logger,
-  type CommentaryFinding,
-} from '@grossline/core';
+import { foreignFigures, renderTemplate, logger, type CommentaryFinding } from '@grossline/core';
 import { getTenant, listFindings, saveFindingDraft, type Finding } from '@grossline/db';
 
 const ANTHROPIC_ENDPOINT = 'https://api.anthropic.com/v1/messages';
@@ -65,7 +60,9 @@ async function callModel(commentary: CommentaryFinding, template: string): Promi
     const text = data.content?.find((b) => b.type === 'text')?.text?.trim();
     return text && text.length > 0 ? text : null;
   } catch (error) {
-    logger.warn('commentary model call errored', { error: error instanceof Error ? error.message : 'unknown' });
+    logger.warn('commentary model call errored', {
+      error: error instanceof Error ? error.message : 'unknown',
+    });
     return null;
   }
 }
@@ -79,7 +76,11 @@ export async function draftFor(finding: Finding): Promise<DraftResult> {
   const foreign = foreignFigures(modelText, commentary);
   if (foreign.length > 0) {
     logger.warn('model draft rejected — foreign figures', { findingId: finding.id, foreign });
-    return { text: template, source: 'template', note: `model draft rejected: ${foreign.join(', ')}` };
+    return {
+      text: template,
+      source: 'template',
+      note: `model draft rejected: ${foreign.join(', ')}`,
+    };
   }
   return { text: modelText, source: 'model' };
 }

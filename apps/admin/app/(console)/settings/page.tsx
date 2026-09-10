@@ -5,11 +5,27 @@ import { PageHeader, Panel } from '../../../components/ui';
 export const dynamic = 'force-dynamic';
 
 const SECTIONS: { href: string; title: string; blurb: string }[] = [
-  { href: '/settings/definitions', title: 'Metric definitions', blurb: 'Rendered from docs/metrics.md — the single source of truth.' },
-  { href: '/settings/plans', title: 'Plan prices', blurb: 'The plans you sell and their monthly fees.' },
-  { href: '/settings/thresholds', title: 'Thresholds', blurb: 'When cost gaps and stalled onboarding become issues.' },
+  {
+    href: '/settings/definitions',
+    title: 'Metric definitions',
+    blurb: 'Rendered from docs/metrics.md — the single source of truth.',
+  },
+  {
+    href: '/settings/plans',
+    title: 'Plan prices',
+    blurb: 'The plans you sell and their monthly fees.',
+  },
+  {
+    href: '/settings/thresholds',
+    title: 'Thresholds',
+    blurb: 'When cost gaps and stalled onboarding become issues.',
+  },
   { href: '/settings/alerts', title: 'Alerts', blurb: 'What you get emailed about.' },
-  { href: '/settings/business', title: 'Business & invoicing', blurb: 'Your details on every invoice PDF.' },
+  {
+    href: '/settings/business',
+    title: 'Business & invoicing',
+    blurb: 'Your details on every invoice PDF.',
+  },
   { href: '/settings/account', title: 'Admin account', blurb: 'Your login.' },
 ];
 

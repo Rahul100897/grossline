@@ -39,8 +39,16 @@ const emptyTotals = (): Totals => ({
   campaignName: null,
 });
 
-function metricSet(scope: string, totals: Totals, period: string, currency: string | null): MetricPoint[] {
-  const meta = { platformReported: true, ...(totals.campaignName ? { campaignName: totals.campaignName } : {}) };
+function metricSet(
+  scope: string,
+  totals: Totals,
+  period: string,
+  currency: string | null,
+): MetricPoint[] {
+  const meta = {
+    platformReported: true,
+    ...(totals.campaignName ? { campaignName: totals.campaignName } : {}),
+  };
   return [
     { metric: 'ad_spend', grain: 'month', period, scope, value: totals.spend, currency },
     { metric: 'ad_impressions', grain: 'month', period, scope, value: totals.impressions },
@@ -61,9 +69,30 @@ function metricSet(scope: string, totals: Totals, period: string, currency: stri
       value: totals.clicks === 0 ? 0 : Math.round(totals.spend / totals.clicks),
       currency,
     },
-    { metric: 'ad_ctr', grain: 'month', period, scope, value: rate(totals.clicks, totals.impressions) },
-    { metric: 'platform_conversions', grain: 'month', period, scope, value: totals.conversions.toFixed(2), meta },
-    { metric: 'platform_conversion_value', grain: 'month', period, scope, value: totals.conversionValue, currency, meta },
+    {
+      metric: 'ad_ctr',
+      grain: 'month',
+      period,
+      scope,
+      value: rate(totals.clicks, totals.impressions),
+    },
+    {
+      metric: 'platform_conversions',
+      grain: 'month',
+      period,
+      scope,
+      value: totals.conversions.toFixed(2),
+      meta,
+    },
+    {
+      metric: 'platform_conversion_value',
+      grain: 'month',
+      period,
+      scope,
+      value: totals.conversionValue,
+      currency,
+      meta,
+    },
     {
       metric: 'platform_roas',
       grain: 'month',
@@ -147,7 +176,8 @@ export function computeAdPlatformMetrics(input: {
   // ---- budget pacing (tenant level, spend only — no platform-reported figures) ----
   const totalSpend = [...platformTotals.values()].reduce((sum, t) => sum + t.spend, 0);
   const daysInMonth = window.dateStrings.length;
-  const msElapsed = Math.min(input.now.getTime(), window.endUtc.getTime()) - window.startUtc.getTime();
+  const msElapsed =
+    Math.min(input.now.getTime(), window.endUtc.getTime()) - window.startUtc.getTime();
   const daysElapsed = Math.max(1, Math.min(daysInMonth, Math.ceil(msElapsed / 86_400_000)));
   const monthClosed = input.now >= window.endUtc;
   const projected = monthClosed ? totalSpend : Math.round((totalSpend / daysElapsed) * daysInMonth);
@@ -155,11 +185,27 @@ export function computeAdPlatformMetrics(input: {
     daysElapsed,
     daysInMonth,
     monthClosed,
-    ...(input.monthlySpendTargetMinor !== null ? { targetMinor: input.monthlySpendTargetMinor } : {}),
+    ...(input.monthlySpendTargetMinor !== null
+      ? { targetMinor: input.monthlySpendTargetMinor }
+      : {}),
   };
   points.push(
-    { metric: 'spend_month_to_date', grain: 'month', period: monthPeriod, value: totalSpend, currency: input.currency, meta: pacingMeta },
-    { metric: 'spend_projected_month_end', grain: 'month', period: monthPeriod, value: projected, currency: input.currency, meta: pacingMeta },
+    {
+      metric: 'spend_month_to_date',
+      grain: 'month',
+      period: monthPeriod,
+      value: totalSpend,
+      currency: input.currency,
+      meta: pacingMeta,
+    },
+    {
+      metric: 'spend_projected_month_end',
+      grain: 'month',
+      period: monthPeriod,
+      value: projected,
+      currency: input.currency,
+      meta: pacingMeta,
+    },
   );
 
   return points;

@@ -40,6 +40,7 @@ findings {
 ```
 
 State transitions, computed not hand-set:
+
 - A finding matching one from last period by `rule_id` + `entity` becomes **recurring**, with `occurrence_count` incremented and `first_seen_period` carried forward.
 - One that no longer triggers becomes **resolved**, and generates its own output — "last month we flagged X, you changed it, here is what happened."
 - **Dismissed** is manual and sticky. When a client says "we bid on brand terms defensively, that's deliberate", it stops surfacing for that entity until the rule's underlying numbers change materially.
@@ -56,17 +57,17 @@ Break-even MER comes from the actual contribution margin rate. CAC ceiling from 
 
 ### 4.3 — Rules library
 
-| Rule | Trigger | Money impact |
-|---|---|---|
-| Below break-even MER | actual MER < break-even | (break-even − actual) × spend |
-| Dead campaign | spend above threshold, zero attributed orders in 30d | full spend |
-| Branded search share | branded keywords above threshold share of Google spend | branded spend |
-| Search term waste | terms with cost, zero conversions | sum of that cost |
-| Discount leakage | discount % of gross sales rising vs prior period | delta in absolute terms |
-| Refund outlier | product refund rate above 2× store average and receiving spend | refunded value + spend |
-| Payback broken | new-customer CAC > first-order contribution | CAC gap × new customers |
-| Claim gap | platform-claimed vs UTM-attributed divergence beyond tolerance | flagged as measurement risk, no spend action |
-| Spend pacing | projected month-end above budget threshold | overspend amount |
+| Rule                 | Trigger                                                        | Money impact                                 |
+| -------------------- | -------------------------------------------------------------- | -------------------------------------------- |
+| Below break-even MER | actual MER < break-even                                        | (break-even − actual) × spend                |
+| Dead campaign        | spend above threshold, zero attributed orders in 30d           | full spend                                   |
+| Branded search share | branded keywords above threshold share of Google spend         | branded spend                                |
+| Search term waste    | terms with cost, zero conversions                              | sum of that cost                             |
+| Discount leakage     | discount % of gross sales rising vs prior period               | delta in absolute terms                      |
+| Refund outlier       | product refund rate above 2× store average and receiving spend | refunded value + spend                       |
+| Payback broken       | new-customer CAC > first-order contribution                    | CAC gap × new customers                      |
+| Claim gap            | platform-claimed vs UTM-attributed divergence beyond tolerance | flagged as measurement risk, no spend action |
+| Spend pacing         | projected month-end above budget threshold                     | overspend amount                             |
 
 Every rule is a pure function: metrics and thresholds in, finding record or null out. Golden-file tested, values hand-calculated.
 
@@ -101,6 +102,7 @@ Two tiers.
 **Model-drafted narrative** on top, using the Anthropic API from the worker. It receives the computed findings and nothing else — no raw tables, no ability to compute. Its output populates `draft_text`. You edit into `final_text`.
 
 Every finding follows the same four-part shape:
+
 - What happened, with the numbers
 - What is at stake, as a figure
 - What to do, specifically
@@ -114,7 +116,7 @@ That last part is what makes 4.7 possible.
 
 Every approved finding carries its check-metric forward. Next period, the engine evaluates whether the recommendation was actioned and what happened.
 
-This produces the closing-the-loop output: *"Last month we flagged $4,100 in PMax spend with 3 attributable orders. You cut it 70%. Orders held, cost per order fell from $121 to $84."*
+This produces the closing-the-loop output: _"Last month we flagged $4,100 in PMax spend with 3 attributable orders. You cut it 70%. Orders held, cost per order fell from $121 to $84."_
 
 A table in the console: recommendation, month, actioned yes/no, result, status.
 

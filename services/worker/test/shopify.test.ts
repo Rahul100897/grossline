@@ -51,7 +51,9 @@ const emptyPage = (key: string) => ({
   data: { [key]: { pageInfo: { hasNextPage: false, endCursor: null }, edges: [] } },
 });
 
-function makeRouter(opts: { grantReadAllOrders?: boolean; grantNothing?: boolean } = {}): typeof fetch {
+function makeRouter(
+  opts: { grantReadAllOrders?: boolean; grantNothing?: boolean } = {},
+): typeof fetch {
   const grantReadAllOrders = opts.grantReadAllOrders ?? true;
   let lastBulkStream = 'orders';
   return (async (input: unknown, init?: RequestInit) => {
@@ -284,18 +286,24 @@ describe('shopify backfill', () => {
     // Tax + mixed quantities (#1055); shipping charged vs free (#1053 vs #1060).
     const taxed = await orderPayload('/Order/510000000003');
     expect((taxed.totalTaxSet as { shopMoney: { amount: string } }).shopMoney.amount).toBe('24.06');
-    expect(
-      (taxed.lineItems as { quantity: number }[]).map((li) => li.quantity).sort(),
-    ).toEqual([1, 2, 3]);
+    expect((taxed.lineItems as { quantity: number }[]).map((li) => li.quantity).sort()).toEqual([
+      1, 2, 3,
+    ]);
     const shipped = await orderPayload('/Order/510000000001');
-    expect((shipped.totalShippingPriceSet as { shopMoney: { amount: string } }).shopMoney.amount).toBe('7.0');
+    expect(
+      (shipped.totalShippingPriceSet as { shopMoney: { amount: string } }).shopMoney.amount,
+    ).toBe('7.0');
 
     // Repeat customer: same customer, order index 1 then 2.
     const first = await orderPayload('/Order/510000000001');
     const second = await orderPayload('/Order/510000000007');
     expect((first.customer as { id: string }).id).toBe((second.customer as { id: string }).id);
-    expect((first.customerJourneySummary as { customerOrderIndex: number }).customerOrderIndex).toBe(1);
-    expect((second.customerJourneySummary as { customerOrderIndex: number }).customerOrderIndex).toBe(2);
+    expect(
+      (first.customerJourneySummary as { customerOrderIndex: number }).customerOrderIndex,
+    ).toBe(1);
+    expect(
+      (second.customerJourneySummary as { customerOrderIndex: number }).customerOrderIndex,
+    ).toBe(2);
 
     // (Shipping-only refunds and multi-currency orders are covered by the
     // synthetic reassembly test below — the recording store has no such orders.)
@@ -394,7 +402,11 @@ describe('shopify throttling', () => {
           extensions: {
             cost: {
               requestedQueryCost: 100,
-              throttleStatus: { maximumAvailable: 1000, currentlyAvailable: 50, restoreRate: 100000 },
+              throttleStatus: {
+                maximumAvailable: 1000,
+                currentlyAvailable: 50,
+                restoreRate: 100000,
+              },
             },
           },
         });

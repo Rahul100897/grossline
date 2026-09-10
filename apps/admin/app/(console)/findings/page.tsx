@@ -3,7 +3,13 @@
 // approve, dismiss or mark it deliberate. Nothing reaches a client without
 // passing through here. State is shown clearly — a recurring finding on its
 // third month reads differently from a new one.
-import { getTenant, listFindingPeriods, listFindings, listTenants, type Finding } from '@grossline/db';
+import {
+  getTenant,
+  listFindingPeriods,
+  listFindings,
+  listTenants,
+  type Finding,
+} from '@grossline/db';
 import { requireSession } from '../../../lib/auth';
 import { groupFindings } from '../../../lib/findings';
 import { buildRecommendationHistory, type Recommendation } from '../../../lib/recommendations';
@@ -31,7 +37,13 @@ function recStatusTone(status: Recommendation['status']): 'good' | 'attn' | 'neu
   return 'neutral';
 }
 
-async function RecommendationHistory({ tenantId, currency }: { tenantId: string; currency: string }) {
+async function RecommendationHistory({
+  tenantId,
+  currency,
+}: {
+  tenantId: string;
+  currency: string;
+}) {
   let history: Recommendation[] = [];
   try {
     history = await buildRecommendationHistory(tenantId, currency);
@@ -90,7 +102,13 @@ export const dynamic = 'force-dynamic';
 const pickerInput =
   'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
 
-function Section({ title, findings, tenantId, period, right }: {
+function Section({
+  title,
+  findings,
+  tenantId,
+  period,
+  right,
+}: {
   title: string;
   findings: Finding[];
   tenantId: string;
@@ -142,11 +160,13 @@ export default async function FindingsPage({
     );
   }
 
-  const tenantId = query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
+  const tenantId =
+    query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
   const tenantRow = await getTenant(tenantId);
   const currency = tenantRow?.reportingCurrency ?? 'USD';
   const periods = await listFindingPeriods(tenantId);
-  const period = query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
+  const period =
+    query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
 
   const findings = period ? await listFindings(tenantId, { period, includeSuppressed: true }) : [];
   const groups = groupFindings(findings);
@@ -177,7 +197,10 @@ export default async function FindingsPage({
             ))
           )}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Show
         </button>
       </form>
@@ -187,9 +210,16 @@ export default async function FindingsPage({
           No findings computed for this merchant yet.
           <form action={recompute} className="mt-3 flex items-center gap-2">
             <input type="hidden" name="tenantId" value={tenantId} />
-            <input type="hidden" name="period" value={new Date().toISOString().slice(0, 8) + '01'} />
+            <input
+              type="hidden"
+              name="period"
+              value={new Date().toISOString().slice(0, 8) + '01'}
+            />
             <span className="text-[12px] text-slate">
-              Compute after metrics exist: <code>pnpm --filter @grossline/worker findings:compute {tenantId} &lt;YYYY-MM&gt;</code>
+              Compute after metrics exist:{' '}
+              <code>
+                pnpm --filter @grossline/worker findings:compute {tenantId} &lt;YYYY-MM&gt;
+              </code>
             </span>
           </form>
         </EmptyState>
@@ -197,12 +227,21 @@ export default async function FindingsPage({
         <>
           <NumberStrip
             items={[
-              { label: 'needs review', value: groups.needsReview.length, tone: groups.needsReview.length > 0 ? 'attn' : 'good' },
+              {
+                label: 'needs review',
+                value: groups.needsReview.length,
+                tone: groups.needsReview.length > 0 ? 'attn' : 'good',
+              },
               { label: 'approved', value: groups.approved.length },
               { label: 'resolved this month', value: groups.resolved.length },
               {
                 label: 'below the line',
-                value: groups.suppressed.length > 0 ? groups.suppressed.length : <Absent reason="none" />,
+                value:
+                  groups.suppressed.length > 0 ? (
+                    groups.suppressed.length
+                  ) : (
+                    <Absent reason="none" />
+                  ),
               },
             ]}
           />
@@ -211,25 +250,45 @@ export default async function FindingsPage({
             <form action={recompute}>
               <input type="hidden" name="tenantId" value={tenantId} />
               <input type="hidden" name="period" value={period} />
-              <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+              <button
+                type="submit"
+                className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+              >
                 Recompute this month
               </button>
             </form>
-            {query.error ? <span className="text-[12px] text-attn">{decodeURIComponent(query.error)}</span> : null}
+            {query.error ? (
+              <span className="text-[12px] text-attn">{decodeURIComponent(query.error)}</span>
+            ) : null}
           </div>
 
           {findings.length === 0 ? (
             <EmptyState>Nothing computed for this period.</EmptyState>
           ) : groups.needsReview.length === 0 && groups.approved.length === 0 ? (
             <div className="rounded border border-good-line bg-good-soft px-4 py-6 text-good">
-              Nothing needs changing this month — spend is efficient and margins held. Any resolved or
-              measurement-risk items are below.
+              Nothing needs changing this month — spend is efficient and margins held. Any resolved
+              or measurement-risk items are below.
             </div>
           ) : null}
 
-          <Section title="Needs review" findings={groups.needsReview} tenantId={tenantId} period={period} />
-          <Section title="Approved" findings={groups.approved} tenantId={tenantId} period={period} />
-          <Section title="Resolved this month" findings={groups.resolved} tenantId={tenantId} period={period} />
+          <Section
+            title="Needs review"
+            findings={groups.needsReview}
+            tenantId={tenantId}
+            period={period}
+          />
+          <Section
+            title="Approved"
+            findings={groups.approved}
+            tenantId={tenantId}
+            period={period}
+          />
+          <Section
+            title="Resolved this month"
+            findings={groups.resolved}
+            tenantId={tenantId}
+            period={period}
+          />
           <Section
             title="Below the line"
             findings={groups.suppressed}
@@ -237,9 +296,15 @@ export default async function FindingsPage({
             period={period}
             right={<span className="text-[12px] text-slate">recorded, not sent</span>}
           />
-          <Section title="Dismissed" findings={groups.dismissed} tenantId={tenantId} period={period} />
+          <Section
+            title="Dismissed"
+            findings={groups.dismissed}
+            tenantId={tenantId}
+            period={period}
+          />
 
-          {groups.needsReview.length === 0 && (groups.approved.length > 0 || groups.resolved.length > 0) ? (
+          {groups.needsReview.length === 0 &&
+          (groups.approved.length > 0 || groups.resolved.length > 0) ? (
             <p className="mt-4 text-[12px] text-good">
               Every finding this month has been reviewed. The approved set is ready to send.
             </p>

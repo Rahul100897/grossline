@@ -34,14 +34,21 @@ export async function runBackfill(
   connector: Connector,
   window: DateWindow,
 ): Promise<BackfillSummary> {
-  const meta = await getCursor<BackfillMetaCursor>(ctx.tenantId, ctx.connectionId, BACKFILL_META_STREAM);
+  const meta = await getCursor<BackfillMetaCursor>(
+    ctx.tenantId,
+    ctx.connectionId,
+    BACKFILL_META_STREAM,
+  );
   if (!meta) {
     await setCursor(ctx.tenantId, ctx.connectionId, BACKFILL_META_STREAM, {
       windowStart: window.start.toISOString(),
       windowEnd: window.end.toISOString(),
       startedAt: new Date().toISOString(),
     } satisfies BackfillMetaCursor);
-  } else if (meta.windowStart !== window.start.toISOString() || meta.windowEnd !== window.end.toISOString()) {
+  } else if (
+    meta.windowStart !== window.start.toISOString() ||
+    meta.windowEnd !== window.end.toISOString()
+  ) {
     throw new Error(
       'backfill window differs from the in-progress one; clear cursors to restart with a new window',
     );
@@ -50,7 +57,11 @@ export async function runBackfill(
   const summary: BackfillSummary = { rowsWritten: 0, chunksRun: 0, chunksSkipped: 0 };
   for (const stream of connector.streams) {
     const cursorKey = `backfill:${stream}`;
-    const existing = await getCursor<BackfillStreamCursor>(ctx.tenantId, ctx.connectionId, cursorKey);
+    const existing = await getCursor<BackfillStreamCursor>(
+      ctx.tenantId,
+      ctx.connectionId,
+      cursorKey,
+    );
     const completedThrough = existing ? new Date(existing.completedThrough) : null;
 
     for (const chunk of chunkWindow(window, connector.chunkDays)) {

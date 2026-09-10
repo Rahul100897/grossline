@@ -20,11 +20,7 @@ export async function upsertReportSnapshot(
   snapshot: unknown,
 ): Promise<Report> {
   return withTenant(tenantId, async (tx) => {
-    const [existing] = await tx
-      .select()
-      .from(reports)
-      .where(eq(reports.period, period))
-      .limit(1);
+    const [existing] = await tx.select().from(reports).where(eq(reports.period, period)).limit(1);
     if (existing && existing.status === 'sent') {
       // Frozen: never overwrite what was sent.
       return existing;
@@ -60,9 +56,7 @@ export async function getReportById(tenantId: string, id: string): Promise<Repor
 }
 
 export async function listReports(tenantId: string): Promise<Report[]> {
-  return withTenant(tenantId, (tx) =>
-    tx.select().from(reports).orderBy(desc(reports.period)),
-  );
+  return withTenant(tenantId, (tx) => tx.select().from(reports).orderBy(desc(reports.period)));
 }
 
 /** Mark a report ready to send (reviewed). No-op once sent. */

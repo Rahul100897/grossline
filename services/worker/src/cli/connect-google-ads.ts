@@ -31,7 +31,9 @@ if (!loginCustomerId) {
 
 connectGoogleAdsAccount({ tenantId, customerId, loginCustomerId, refreshToken })
   .then(async ({ connectionId, linked }) => {
-    console.log(`connected: connection ${connectionId}${linked ? '' : ' (NOT LINKED — see below)'}`);
+    console.log(
+      `connected: connection ${connectionId}${linked ? '' : ' (NOT LINKED — see below)'}`,
+    );
     if (!linked) {
       console.log(
         'The client account is not linked to the MCC. Send a link request from the MCC',

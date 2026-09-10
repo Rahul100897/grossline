@@ -38,7 +38,10 @@ export function reconcileFindings(input: ReconcileInput): ReconcileOutput {
     const key = keyOf(draft);
     const dismissed = dismissedByKey.get(key);
 
-    if (dismissed && !materiallyChanged(draft.moneyImpactMinor, dismissed.dismissedImpactMinor, fraction)) {
+    if (
+      dismissed &&
+      !materiallyChanged(draft.moneyImpactMinor, dismissed.dismissedImpactMinor, fraction)
+    ) {
       // Sticky dismissal still in force — persist as dismissed, suppressed.
       active.push({
         ...draft,

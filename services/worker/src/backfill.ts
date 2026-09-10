@@ -12,9 +12,7 @@ export const BACKFILL_MONTHS: Record<string, number> = {
 export function backfillWindowFor(provider: string, now: Date = new Date()): DateWindow {
   const months = BACKFILL_MONTHS[provider] ?? 13;
   // End tomorrow (UTC midnight) so today's partial day is included.
-  const end = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
-  );
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
   const start = new Date(
     Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - months, end.getUTCDate()),
   );

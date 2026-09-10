@@ -45,7 +45,9 @@ async function main(): Promise<void> {
     const clientId = process.env.SHOPIFY_CLIENT_ID ?? process.env.SHOPIFY_API_KEY;
     const sessionSecret = process.env.SESSION_SECRET;
     if (!clientId || !sessionSecret) {
-      throw new Error('authorization_code needs SHOPIFY_CLIENT_ID (or SHOPIFY_API_KEY) and SESSION_SECRET');
+      throw new Error(
+        'authorization_code needs SHOPIFY_CLIENT_ID (or SHOPIFY_API_KEY) and SESSION_SECRET',
+      );
     }
     const redirectUri =
       process.env.SHOPIFY_REDIRECT_URI ?? 'http://localhost:3000/api/shopify/callback';

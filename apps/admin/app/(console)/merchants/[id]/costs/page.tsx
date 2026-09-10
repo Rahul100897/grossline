@@ -49,7 +49,13 @@ export default async function MerchantCostsPage({
 
       <form action={saveCostInputs} className="grid max-w-xl grid-cols-1 gap-4 sm:grid-cols-2">
         <input type="hidden" name="tenantId" value={tenant.id} />
-        <Field label="Effective from" name="effectiveFrom" type="date" defaultValue={today} required />
+        <Field
+          label="Effective from"
+          name="effectiveFrom"
+          type="date"
+          defaultValue={today}
+          required
+        />
         <Field
           label="Currency"
           name="currency"
@@ -57,14 +63,24 @@ export default async function MerchantCostsPage({
           maxLength={3}
           required
         />
-        <Field label="Payment fee %" name="paymentFeePercent" inputMode="decimal" placeholder="2.9" />
+        <Field
+          label="Payment fee %"
+          name="paymentFeePercent"
+          inputMode="decimal"
+          placeholder="2.9"
+        />
         <Field
           label="Payment fee fixed (per order)"
           name="paymentFeeFixed"
           inputMode="decimal"
           placeholder="0.30"
         />
-        <Field label="Shipping cost (per order)" name="shippingCost" inputMode="decimal" placeholder="6.50" />
+        <Field
+          label="Shipping cost (per order)"
+          name="shippingCost"
+          inputMode="decimal"
+          placeholder="6.50"
+        />
         <Field
           label="Fulfilment cost (per order)"
           name="fulfilmentCost"

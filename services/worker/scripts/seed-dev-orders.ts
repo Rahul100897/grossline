@@ -11,7 +11,10 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { loadRootEnv, logger, minorUnitExponent } from '@grossline/core';
 import { closeDbPools, getCredential, getTenantBySlug, listConnections } from '@grossline/db';
-import { resolveShopifyAccess, strategyFromConnectionSettings } from '../src/connectors/shopify/auth';
+import {
+  resolveShopifyAccess,
+  strategyFromConnectionSettings,
+} from '../src/connectors/shopify/auth';
 import { shopifyGraphQL } from '../src/connectors/shopify/client';
 import type { SyncContext } from '../src/connectors/types';
 
@@ -39,7 +42,12 @@ async function main(): Promise<void> {
   if (!tenant) throw new Error('tenant rahul-developer-store not found');
   const [conn] = await listConnections(tenant.id);
   if (!conn?.credentialRef) throw new Error('no shopify connection');
-  const ctx: SyncContext = { tenantId: tenant.id, connectionId: conn.id, fetchImpl: fetch, log: logger };
+  const ctx: SyncContext = {
+    tenantId: tenant.id,
+    connectionId: conn.id,
+    fetchImpl: fetch,
+    log: logger,
+  };
   const credential = (await getCredential(tenant.id, conn.credentialRef))!;
   const creds = await resolveShopifyAccess(
     ctx,
@@ -60,7 +68,9 @@ async function main(): Promise<void> {
               id: z.string(),
               title: z.string(),
               variants: z.object({
-                edges: z.array(z.object({ node: z.object({ id: z.string(), sku: z.string().nullish() }) })),
+                edges: z.array(
+                  z.object({ node: z.object({ id: z.string(), sku: z.string().nullish() }) }),
+                ),
               }),
             }),
           }),
@@ -88,7 +98,9 @@ async function main(): Promise<void> {
   }));
   const customers = catalogue.customers.edges.map((e) => e.node.id);
   if (variants.length < 3 || customers.length < 3) {
-    throw new Error(`need at least 3 products and 3 customers (have ${variants.length}/${customers.length})`);
+    throw new Error(
+      `need at least 3 products and 3 customers (have ${variants.length}/${customers.length})`,
+    );
   }
 
   type Line = { variant: number; quantity: number; priceMinor: number; taxRate?: number };
@@ -98,21 +110,96 @@ async function main(): Promise<void> {
     customer: number;
     lines: Line[];
     shippingMinor?: number;
-    discount?: { kind: 'percent'; code: string; percentage: number } | { kind: 'fixed'; code: string; amountMinor: number };
+    discount?:
+      | { kind: 'percent'; code: string; percentage: number }
+      | { kind: 'fixed'; code: string; amountMinor: number };
     then?: 'partial-refund' | 'full-refund' | 'cancel';
   };
 
   const plans: Plan[] = [
-    { label: 'plain, shipping charged, first order of repeat customer', daysAgo: 44, customer: 0, lines: [{ variant: 0, quantity: 1, priceMinor: 2400 }], shippingMinor: 700 },
-    { label: 'discount code (10%), free shipping', daysAgo: 40, customer: 1, lines: [{ variant: 1, quantity: 2, priceMinor: 3500 }, { variant: 2, quantity: 1, priceMinor: 1800 }], discount: { kind: 'percent', code: 'WELCOME10', percentage: 10 } },
-    { label: 'multi-line mixed quantities with tax, shipping charged', daysAgo: 35, customer: 2, lines: [{ variant: 0, quantity: 3, priceMinor: 2400, taxRate: 0.0875 }, { variant: 3, quantity: 2, priceMinor: 5200, taxRate: 0.0875 }, { variant: 4, quantity: 1, priceMinor: 9900, taxRate: 0.0875 }], shippingMinor: 1250 },
-    { label: 'partial refund (one line item, partial quantity)', daysAgo: 30, customer: 1, lines: [{ variant: 2, quantity: 2, priceMinor: 1800 }, { variant: 3, quantity: 1, priceMinor: 5200 }], shippingMinor: 500, then: 'partial-refund' },
-    { label: 'fully refunded order', daysAgo: 25, customer: 2, lines: [{ variant: 4, quantity: 2, priceMinor: 9900 }], then: 'full-refund' },
-    { label: 'cancelled order', daysAgo: 20, customer: 3 % customers.length, lines: [{ variant: 1, quantity: 1, priceMinor: 3500 }], then: 'cancel' },
-    { label: 'repeat customer second order', daysAgo: 15, customer: 0, lines: [{ variant: 2, quantity: 1, priceMinor: 1800 }, { variant: 0, quantity: 1, priceMinor: 2400 }], shippingMinor: 700 },
-    { label: 'free shipping with tax line', daysAgo: 10, customer: 3 % customers.length, lines: [{ variant: 3, quantity: 1, priceMinor: 5200, taxRate: 0.0875 }] },
-    { label: 'fixed discount code, shipping charged', daysAgo: 5, customer: 1, lines: [{ variant: 0, quantity: 2, priceMinor: 2400 }], shippingMinor: 500, discount: { kind: 'fixed', code: 'FIVER', amountMinor: 500 } },
-    { label: 'small recent order', daysAgo: 2, customer: 2, lines: [{ variant: 2, quantity: 1, priceMinor: 1800 }] },
+    {
+      label: 'plain, shipping charged, first order of repeat customer',
+      daysAgo: 44,
+      customer: 0,
+      lines: [{ variant: 0, quantity: 1, priceMinor: 2400 }],
+      shippingMinor: 700,
+    },
+    {
+      label: 'discount code (10%), free shipping',
+      daysAgo: 40,
+      customer: 1,
+      lines: [
+        { variant: 1, quantity: 2, priceMinor: 3500 },
+        { variant: 2, quantity: 1, priceMinor: 1800 },
+      ],
+      discount: { kind: 'percent', code: 'WELCOME10', percentage: 10 },
+    },
+    {
+      label: 'multi-line mixed quantities with tax, shipping charged',
+      daysAgo: 35,
+      customer: 2,
+      lines: [
+        { variant: 0, quantity: 3, priceMinor: 2400, taxRate: 0.0875 },
+        { variant: 3, quantity: 2, priceMinor: 5200, taxRate: 0.0875 },
+        { variant: 4, quantity: 1, priceMinor: 9900, taxRate: 0.0875 },
+      ],
+      shippingMinor: 1250,
+    },
+    {
+      label: 'partial refund (one line item, partial quantity)',
+      daysAgo: 30,
+      customer: 1,
+      lines: [
+        { variant: 2, quantity: 2, priceMinor: 1800 },
+        { variant: 3, quantity: 1, priceMinor: 5200 },
+      ],
+      shippingMinor: 500,
+      then: 'partial-refund',
+    },
+    {
+      label: 'fully refunded order',
+      daysAgo: 25,
+      customer: 2,
+      lines: [{ variant: 4, quantity: 2, priceMinor: 9900 }],
+      then: 'full-refund',
+    },
+    {
+      label: 'cancelled order',
+      daysAgo: 20,
+      customer: 3 % customers.length,
+      lines: [{ variant: 1, quantity: 1, priceMinor: 3500 }],
+      then: 'cancel',
+    },
+    {
+      label: 'repeat customer second order',
+      daysAgo: 15,
+      customer: 0,
+      lines: [
+        { variant: 2, quantity: 1, priceMinor: 1800 },
+        { variant: 0, quantity: 1, priceMinor: 2400 },
+      ],
+      shippingMinor: 700,
+    },
+    {
+      label: 'free shipping with tax line',
+      daysAgo: 10,
+      customer: 3 % customers.length,
+      lines: [{ variant: 3, quantity: 1, priceMinor: 5200, taxRate: 0.0875 }],
+    },
+    {
+      label: 'fixed discount code, shipping charged',
+      daysAgo: 5,
+      customer: 1,
+      lines: [{ variant: 0, quantity: 2, priceMinor: 2400 }],
+      shippingMinor: 500,
+      discount: { kind: 'fixed', code: 'FIVER', amountMinor: 500 },
+    },
+    {
+      label: 'small recent order',
+      daysAgo: 2,
+      customer: 2,
+      lines: [{ variant: 2, quantity: 1, priceMinor: 1800 }],
+    },
   ];
 
   const created: { label: string; id: string; name: string }[] = [];
@@ -143,14 +230,28 @@ async function main(): Promise<void> {
           : {}),
       })),
       ...(plan.shippingMinor
-        ? { shippingLines: [{ title: 'Standard Shipping', priceSet: moneyBag(fmt(plan.shippingMinor)) }] }
+        ? {
+            shippingLines: [
+              { title: 'Standard Shipping', priceSet: moneyBag(fmt(plan.shippingMinor)) },
+            ],
+          }
         : {}),
       ...(plan.discount
         ? {
             discountCode:
               plan.discount.kind === 'percent'
-                ? { itemPercentageDiscountCode: { code: plan.discount.code, percentage: plan.discount.percentage } }
-                : { itemFixedDiscountCode: { code: plan.discount.code, amountSet: moneyBag(fmt(plan.discount.amountMinor)) } },
+                ? {
+                    itemPercentageDiscountCode: {
+                      code: plan.discount.code,
+                      percentage: plan.discount.percentage,
+                    },
+                  }
+                : {
+                    itemFixedDiscountCode: {
+                      code: plan.discount.code,
+                      amountSet: moneyBag(fmt(plan.discount.amountMinor)),
+                    },
+                  },
           }
         : {}),
     };
@@ -163,7 +264,9 @@ async function main(): Promise<void> {
               id: z.string(),
               name: z.string(),
               lineItems: z.object({
-                edges: z.array(z.object({ node: z.object({ id: z.string(), quantity: z.number() }) })),
+                edges: z.array(
+                  z.object({ node: z.object({ id: z.string(), quantity: z.number() }) }),
+                ),
               }),
             })
             .nullable(),
@@ -184,7 +287,10 @@ async function main(): Promise<void> {
         ),
       );
     if (!result.orderCreate.order) {
-      console.error(`FAILED [${plan.label}]:`, result.orderCreate.userErrors.map((e) => e.message).join('; '));
+      console.error(
+        `FAILED [${plan.label}]:`,
+        result.orderCreate.userErrors.map((e) => e.message).join('; '),
+      );
       continue;
     }
     const createdOrder = result.orderCreate.order;
@@ -195,7 +301,10 @@ async function main(): Promise<void> {
       const refundLines =
         plan.then === 'partial-refund'
           ? [{ lineItemId: createdOrder.lineItems.edges[0]!.node.id, quantity: 1 }]
-          : createdOrder.lineItems.edges.map((e) => ({ lineItemId: e.node.id, quantity: e.node.quantity }));
+          : createdOrder.lineItems.edges.map((e) => ({
+              lineItemId: e.node.id,
+              quantity: e.node.quantity,
+            }));
       const refund = z
         .object({
           refundCreate: z.object({
@@ -215,7 +324,8 @@ async function main(): Promise<void> {
               key: randomUUID(),
               input: {
                 orderId: createdOrder.id,
-                note: plan.then === 'partial-refund' ? 'one item came back' : 'entire order returned',
+                note:
+                  plan.then === 'partial-refund' ? 'one item came back' : 'entire order returned',
                 refundLineItems: refundLines,
               },
             },

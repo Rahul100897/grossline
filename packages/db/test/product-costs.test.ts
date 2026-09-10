@@ -67,11 +67,23 @@ afterAll(async () => {
 describe('product costs with effective-from dates (task 2.1 done-when)', () => {
   it('a March order still resolves the March cost after a June upload', async () => {
     await upsertProductCosts(tenantId, [
-      { sku: 'MUG-01', unitCostMinor: 1000, currency: 'USD', effectiveFrom: '2026-03-01', source: 'upload' },
+      {
+        sku: 'MUG-01',
+        unitCostMinor: 1000,
+        currency: 'USD',
+        effectiveFrom: '2026-03-01',
+        source: 'upload',
+      },
     ]);
     // …months later, a new price list arrives:
     await upsertProductCosts(tenantId, [
-      { sku: 'MUG-01', unitCostMinor: 1200, currency: 'USD', effectiveFrom: '2026-06-01', source: 'upload' },
+      {
+        sku: 'MUG-01',
+        unitCostMinor: 1200,
+        currency: 'USD',
+        effectiveFrom: '2026-06-01',
+        source: 'upload',
+      },
     ]);
 
     const rows = await listProductCosts(tenantId);
@@ -83,7 +95,13 @@ describe('product costs with effective-from dates (task 2.1 done-when)', () => {
 
   it('re-uploading the same effective date replaces, never duplicates', async () => {
     await upsertProductCosts(tenantId, [
-      { sku: 'MUG-01', unitCostMinor: 1050, currency: 'USD', effectiveFrom: '2026-03-01', source: 'upload' },
+      {
+        sku: 'MUG-01',
+        unitCostMinor: 1050,
+        currency: 'USD',
+        effectiveFrom: '2026-03-01',
+        source: 'upload',
+      },
     ]);
     const rows = (await listProductCosts(tenantId)).filter(
       (r) => r.sku === 'MUG-01' && r.effectiveFrom === '2026-03-01',
@@ -109,7 +127,14 @@ describe('costable order lines', () => {
         payload: orderPayload({
           id: 'gid://shopify/Order/9101',
           createdAt: '2026-02-10T10:00:00Z',
-          lines: [{ sku: 'MUG-01', variantId: 'gid://shopify/ProductVariant/1', quantity: 2, unitPrice: '24.00' }],
+          lines: [
+            {
+              sku: 'MUG-01',
+              variantId: 'gid://shopify/ProductVariant/1',
+              quantity: 2,
+              unitPrice: '24.00',
+            },
+          ],
         }),
         orderCreatedAt: new Date('2026-02-10T10:00:00Z'),
         orderUpdatedAt: new Date('2026-02-10T10:00:00Z'),
@@ -120,7 +145,14 @@ describe('costable order lines', () => {
           id: 'gid://shopify/Order/9102',
           createdAt: '2026-02-11T10:00:00Z',
           cancelledAt: '2026-02-12T10:00:00Z',
-          lines: [{ sku: 'MUG-01', variantId: 'gid://shopify/ProductVariant/1', quantity: 1, unitPrice: '24.00' }],
+          lines: [
+            {
+              sku: 'MUG-01',
+              variantId: 'gid://shopify/ProductVariant/1',
+              quantity: 1,
+              unitPrice: '24.00',
+            },
+          ],
         }),
         orderCreatedAt: new Date('2026-02-11T10:00:00Z'),
         orderUpdatedAt: new Date('2026-02-12T10:00:00Z'),
@@ -130,7 +162,14 @@ describe('costable order lines', () => {
         payload: orderPayload({
           id: 'gid://shopify/Order/9103',
           createdAt: '2026-03-05T10:00:00Z', // outside window
-          lines: [{ sku: 'MUG-01', variantId: 'gid://shopify/ProductVariant/1', quantity: 1, unitPrice: '24.00' }],
+          lines: [
+            {
+              sku: 'MUG-01',
+              variantId: 'gid://shopify/ProductVariant/1',
+              quantity: 1,
+              unitPrice: '24.00',
+            },
+          ],
         }),
         orderCreatedAt: new Date('2026-03-05T10:00:00Z'),
         orderUpdatedAt: new Date('2026-03-05T10:00:00Z'),
@@ -180,7 +219,11 @@ describe('shopify unitCost import', () => {
     expect(first).toEqual({ inserted: 1, unchanged: 0 });
     let rows = (await listProductCosts(tenantId)).filter((r) => r.sku === 'FLASK-01');
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ effectiveFrom: '1970-01-01', unitCostMinor: 1100, source: 'shopify' });
+    expect(rows[0]).toMatchObject({
+      effectiveFrom: '1970-01-01',
+      unitCostMinor: 1100,
+      source: 'shopify',
+    });
 
     // Same cost again: nothing changes.
     expect(await importShopifyCosts(tenantId, '2026-09-06')).toEqual({ inserted: 0, unchanged: 1 });
@@ -206,9 +249,17 @@ describe('shopify unitCost import', () => {
 
     rows = (await listProductCosts(tenantId)).filter((r) => r.sku === 'FLASK-01');
     expect(rows).toHaveLength(2);
-    const resolvedOld = resolveUnitCost(rows, { variantId: 'gid://shopify/ProductVariant/3011' }, '2026-06-01');
+    const resolvedOld = resolveUnitCost(
+      rows,
+      { variantId: 'gid://shopify/ProductVariant/3011' },
+      '2026-06-01',
+    );
     expect(resolvedOld!.unitCostMinor).toBe(1100); // history frozen
-    const resolvedNew = resolveUnitCost(rows, { variantId: 'gid://shopify/ProductVariant/3011' }, '2026-09-08');
+    const resolvedNew = resolveUnitCost(
+      rows,
+      { variantId: 'gid://shopify/ProductVariant/3011' },
+      '2026-09-08',
+    );
     expect(resolvedNew!.unitCostMinor).toBe(1250);
   });
 });

@@ -30,13 +30,7 @@ import {
   type MetricPoint,
   type OrderFacts,
 } from '@grossline/core';
-import {
-  closeDbPools,
-  getMetricValues,
-  schema,
-  seedDemoTenant,
-  withTenant,
-} from '@grossline/db';
+import { closeDbPools, getMetricValues, schema, seedDemoTenant, withTenant } from '@grossline/db';
 import { computeMetricsForMonth } from '../src/metrics/pipeline';
 
 const fact = (over: Partial<OrderFacts>): OrderFacts => ({
@@ -105,7 +99,14 @@ const FACTS: OrderFacts[] = [
 ];
 
 const COST_ROWS = [
-  { sku: 'S1', variantId: '', unitCostMinor: 2000, currency: 'USD', effectiveFrom: '2026-01-01', source: 'upload' as const },
+  {
+    sku: 'S1',
+    variantId: '',
+    unitCostMinor: 2000,
+    currency: 'USD',
+    effectiveFrom: '2026-01-01',
+    source: 'upload' as const,
+  },
 ];
 const COST_INPUTS = [
   {
@@ -185,7 +186,11 @@ describe('platform ROAS is never used in any blended calculation', () => {
     const summary = await seedDemoTenant(new Date('2026-09-06T12:00:00Z'));
     await computeMetricsForMonth(summary.tenantId, 2026, 7);
     const merBefore = (
-      await getMetricValues(summary.tenantId, { metric: 'mer', grain: 'month', periods: ['2026-07-01'] })
+      await getMetricValues(summary.tenantId, {
+        metric: 'mer',
+        grain: 'month',
+        periods: ['2026-07-01'],
+      })
     )[0]!.value;
 
     // Sabotage: absurd platform ROAS everywhere.
@@ -197,7 +202,11 @@ describe('platform ROAS is never used in any blended calculation', () => {
     );
     await computeMetricsForMonth(summary.tenantId, 2026, 7);
     const merAfter = (
-      await getMetricValues(summary.tenantId, { metric: 'mer', grain: 'month', periods: ['2026-07-01'] })
+      await getMetricValues(summary.tenantId, {
+        metric: 'mer',
+        grain: 'month',
+        periods: ['2026-07-01'],
+      })
     )[0]!.value;
     expect(merAfter).toBe(merBefore);
 
@@ -233,7 +242,8 @@ describe('platform ROAS is never used in any blended calculation', () => {
           returns += decimalToMinorUnits(rli.subtotalSet.shopMoney.amount, 'USD');
         }
       }
-      naiveNet += gross - decimalToMinorUnits(o.totalDiscountsSet.shopMoney.amount, 'USD') - returns;
+      naiveNet +=
+        gross - decimalToMinorUnits(o.totalDiscountsSet.shopMoney.amount, 'USD') - returns;
     }
     const adRows = await withTenant(summary.tenantId, (tx) =>
       tx

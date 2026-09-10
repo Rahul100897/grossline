@@ -44,7 +44,13 @@ async function loadRows(): Promise<Row[]> {
 const isDemoConnection = (connection: Connection): boolean =>
   ((connection.settings ?? {}) as Record<string, unknown>).demo === true;
 
-function BackfillCell({ connection, progress }: { connection: Connection; progress: BackfillProgress }) {
+function BackfillCell({
+  connection,
+  progress,
+}: {
+  connection: Connection;
+  progress: BackfillProgress;
+}) {
   if (isDemoConnection(connection)) {
     // Seeded data bypasses sync cursors — a progress figure would be fiction.
     return <span className="text-[12px] text-slate">seeded</span>;

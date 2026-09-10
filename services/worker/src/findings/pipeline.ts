@@ -53,7 +53,8 @@ export async function runFindings(tenantId: string, period: string): Promise<Pip
   for (const rule of RULES) {
     for (const outcome of rule.run(input)) {
       if (outcome.status === 'fired') fired.push(outcome.finding);
-      else if (outcome.status === 'skipped') skipped.push({ ruleId: rule.id, reason: outcome.reason });
+      else if (outcome.status === 'skipped')
+        skipped.push({ ruleId: rule.id, reason: outcome.reason });
     }
   }
 
@@ -71,13 +72,18 @@ export async function runFindings(tenantId: string, period: string): Promise<Pip
   // Carry the suppression flags from ranking onto the reconciled findings.
   const activeWithSuppression: ReconciledFinding[] = active.map((f) => {
     const ranking = suppressionByKey.get(`${f.ruleId} ${f.entityKey}`);
-    return { ...f, suppressed: ranking?.suppressed ?? false, suppressedReason: ranking?.suppressedReason ?? null };
+    return {
+      ...f,
+      suppressed: ranking?.suppressed ?? false,
+      suppressedReason: ranking?.suppressedReason ?? null,
+    };
   });
 
   await writeReconciledFindings(tenantId, period, activeWithSuppression, resolved);
 
   const actionable = activeWithSuppression.filter(
-    (f) => !f.suppressed && f.severity !== 'info' && (f.status === 'new' || f.status === 'recurring'),
+    (f) =>
+      !f.suppressed && f.severity !== 'info' && (f.status === 'new' || f.status === 'recurring'),
   ).length;
 
   const result: PipelineResult = {

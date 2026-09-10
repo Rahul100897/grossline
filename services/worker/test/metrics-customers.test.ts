@@ -31,7 +31,13 @@ import {
   type MetricPoint,
   type OrderFacts,
 } from '@grossline/core';
-import { closeDbPools, createStore, createTenant, getMetricValues, seedDemoTenant } from '@grossline/db';
+import {
+  closeDbPools,
+  createStore,
+  createTenant,
+  getMetricValues,
+  seedDemoTenant,
+} from '@grossline/db';
 import { reassembleJsonl } from '../src/connectors/shopify/bulk';
 import { flattenConnections } from '../src/connectors/shopify/client';
 import { computeMetricsForMonth } from '../src/metrics/pipeline';

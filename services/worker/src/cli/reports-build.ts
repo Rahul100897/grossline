@@ -18,7 +18,9 @@ buildAndSaveReport(tenantId, period)
   .then(async ({ report, model }) => {
     console.log(`\nReport — ${period} (${report.status})`);
     console.log(`  ${model.headline.sentence}`);
-    console.log(`  findings: ${model.findings.map((f) => `${f.title}/${f.family}`).join(', ') || 'none'}`);
+    console.log(
+      `  findings: ${model.findings.map((f) => `${f.title}/${f.family}`).join(', ') || 'none'}`,
+    );
     await closeDbPools();
   })
   .catch(async (err) => {

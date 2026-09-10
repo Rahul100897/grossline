@@ -9,10 +9,7 @@ const timeseriesSchema = z.object({
   base: z.literal('EUR'),
   start_date: z.string(),
   end_date: z.string(),
-  rates: z.record(
-    z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    z.record(z.string(), z.number()),
-  ),
+  rates: z.record(z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.record(z.string(), z.number())),
 });
 
 export function frankfurterBaseUrl(): string {

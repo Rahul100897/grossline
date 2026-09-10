@@ -21,7 +21,12 @@ import {
   type OrderFacts,
   type PlatformDay,
 } from '@grossline/core';
-import { closeDbPools, getMetricValues, listMetricValuesForPeriod, seedDemoTenant } from '@grossline/db';
+import {
+  closeDbPools,
+  getMetricValues,
+  listMetricValuesForPeriod,
+  seedDemoTenant,
+} from '@grossline/db';
 import { computeMetricsForMonth } from '../src/metrics/pipeline';
 
 const fact = (over: Partial<OrderFacts>): OrderFacts => ({
@@ -57,9 +62,21 @@ const touch = (source: string, medium: string, campaign: string, landingPage: st
 });
 
 const FACTS: OrderFacts[] = [
-  fact({ grossMinor: 5000, daysToConversion: 2, firstTouch: touch('facebook', 'paid', 'prospecting', 'https://s.example/products/a') }),
-  fact({ grossMinor: 7000, daysToConversion: 5, firstTouch: touch('facebook', 'paid', 'prospecting', 'https://s.example/') }),
-  fact({ grossMinor: 3000, daysToConversion: 9, firstTouch: touch('google', 'cpc', 'brand', 'https://s.example/products/a') }),
+  fact({
+    grossMinor: 5000,
+    daysToConversion: 2,
+    firstTouch: touch('facebook', 'paid', 'prospecting', 'https://s.example/products/a'),
+  }),
+  fact({
+    grossMinor: 7000,
+    daysToConversion: 5,
+    firstTouch: touch('facebook', 'paid', 'prospecting', 'https://s.example/'),
+  }),
+  fact({
+    grossMinor: 3000,
+    daysToConversion: 9,
+    firstTouch: touch('google', 'cpc', 'brand', 'https://s.example/products/a'),
+  }),
   fact({ grossMinor: 2000 }), // untagged → direct
   fact({
     grossMinor: 4000,
@@ -166,7 +183,9 @@ describe('demo tenant (spec done-when)', () => {
 
     // Store-recorded first-touch revenue sums exactly to net sales.
     const monthRows = await listMetricValuesForPeriod(summary.tenantId, 'month', '2026-07-01');
-    const netSales = Number(monthRows.find((r) => r.metric === 'net_sales' && r.scope === '')!.value);
+    const netSales = Number(
+      monthRows.find((r) => r.metric === 'net_sales' && r.scope === '')!.value,
+    );
     const channelSum = monthRows
       .filter((r) => r.metric === 'channel_revenue_first_touch' && r.scope.startsWith('source:'))
       .reduce((sum, r) => sum + Number(r.value), 0);

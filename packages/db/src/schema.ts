@@ -17,7 +17,13 @@ import {
 
 // 'trial' (task 5.B7): served the free first report; excluded from MRR/billing,
 // included in everything else (a trial's broken sync still appears on Issues).
-export const tenantStatus = pgEnum('tenant_status', ['onboarding', 'trial', 'active', 'paused', 'churned']);
+export const tenantStatus = pgEnum('tenant_status', [
+  'onboarding',
+  'trial',
+  'active',
+  'paused',
+  'churned',
+]);
 export const storePlatform = pgEnum('store_platform', ['shopify']);
 export const connectionProvider = pgEnum('connection_provider', ['shopify', 'google_ads', 'meta']);
 // 'unknown' = never synced. Health only becomes 'healthy' on real evidence
@@ -32,7 +38,13 @@ export const syncKind = pgEnum('sync_kind', ['backfill', 'incremental']);
 export const invoiceStatus = pgEnum('invoice_status', ['draft', 'sent', 'paid', 'void']);
 // 'free_report' (task 5.C3): a prospect requesting the free first report from
 // the marketing site — lands in the same inbox with its own type.
-export const ticketType = pgEnum('ticket_type', ['bug', 'question', 'feedback', 'feature', 'free_report']);
+export const ticketType = pgEnum('ticket_type', [
+  'bug',
+  'question',
+  'feedback',
+  'feature',
+  'free_report',
+]);
 export const ticketStatus = pgEnum('ticket_status', ['open', 'in_progress', 'closed']);
 export const ticketPriority = pgEnum('ticket_priority', ['low', 'normal', 'high']);
 export const ticketSource = pgEnum('ticket_source', ['marketing', 'in_app']);
@@ -308,9 +320,7 @@ export const productCosts = pgTable(
     source: productCostSource('source').notNull(),
     uploadedAt: timestamp('uploaded_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [
-    uniqueIndex('product_costs_uniq').on(t.tenantId, t.sku, t.variantId, t.effectiveFrom),
-  ],
+  (t) => [uniqueIndex('product_costs_uniq').on(t.tenantId, t.sku, t.variantId, t.effectiveFrom)],
 );
 
 // Merchant-supplied cost inputs as whole-row snapshots with effective-from
@@ -383,9 +393,7 @@ export const metricValues = pgTable(
     computedAt: timestamp('computed_at', { withTimezone: true }).notNull().defaultNow(),
     runId: uuid('run_id').references(() => metricRuns.id),
   },
-  (t) => [
-    uniqueIndex('metric_values_uniq').on(t.tenantId, t.metric, t.grain, t.period, t.scope),
-  ],
+  (t) => [uniqueIndex('metric_values_uniq').on(t.tenantId, t.metric, t.grain, t.period, t.scope)],
 );
 
 // Global reference data (no tenant_id, like admin_users): daily ECB FX rates,

@@ -55,14 +55,26 @@ export function computeBlendedMetrics(input: {
   const newCustomerCount = cohortIds.size;
 
   const points: MetricPoint[] = [
-    { metric: 'total_ad_spend', grain: 'month', period: monthPeriod, value: spend, currency, meta: fxMeta },
+    {
+      metric: 'total_ad_spend',
+      grain: 'month',
+      period: monthPeriod,
+      value: spend,
+      currency,
+      meta: fxMeta,
+    },
   ];
 
   // Ratios: absent when the denominator is zero — never a fake zero.
   if (spend > 0) {
     points.push(
       { metric: 'mer', grain: 'month', period: monthPeriod, value: rate(netSales, spend) },
-      { metric: 'amer', grain: 'month', period: monthPeriod, value: rate(newCustomerRevenue, spend) },
+      {
+        metric: 'amer',
+        grain: 'month',
+        period: monthPeriod,
+        value: rate(newCustomerRevenue, spend),
+      },
       {
         metric: 'ad_spend_net_sales_ratio',
         grain: 'month',
@@ -117,7 +129,9 @@ export function computeBlendedMetrics(input: {
         snapshot.packagingCostPerOrderMinor;
     }
     if (feesComplete) {
-      const firstOrderContribution = Math.round((newCustomerRevenue - cogs - fees) / newCustomerCount);
+      const firstOrderContribution = Math.round(
+        (newCustomerRevenue - cogs - fees) / newCustomerCount,
+      );
       const blendedCac = spend > 0 ? Math.round(spend / newCustomerCount) : null;
       points.push({
         metric: 'first_order_contribution',
@@ -128,7 +142,10 @@ export function computeBlendedMetrics(input: {
         meta: {
           completeness: Number(rate(costedLines, Math.max(totalLines, 1))),
           ...(blendedCac !== null
-            ? { blendedCacMinor: blendedCac, paysBackOnFirstOrder: firstOrderContribution >= blendedCac }
+            ? {
+                blendedCacMinor: blendedCac,
+                paysBackOnFirstOrder: firstOrderContribution >= blendedCac,
+              }
             : {}),
         },
       });

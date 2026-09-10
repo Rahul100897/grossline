@@ -27,11 +27,7 @@ export {
   upsertRawShopifyProducts,
   countRawShopify,
 } from './raw-shopify';
-export {
-  upsertRawMetaInsights,
-  countRawMetaInsights,
-  type MetaInsightRow,
-} from './raw-meta';
+export { upsertRawMetaInsights, countRawMetaInsights, type MetaInsightRow } from './raw-meta';
 export {
   upsertRawGoogleAdsInsights,
   countRawGoogleAdsInsights,

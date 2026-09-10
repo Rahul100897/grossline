@@ -50,7 +50,8 @@ function toOrderRows(roots: Record<string, unknown>[]) {
     .filter((r) => typeof r.id === 'string' && (r.id as string).includes('/Order/'))
     .map((r) => {
       const node = nodeWithDates.parse(r);
-      if (!node.createdAt || !node.updatedAt) throw new Error(`order ${node.id} missing timestamps`);
+      if (!node.createdAt || !node.updatedAt)
+        throw new Error(`order ${node.id} missing timestamps`);
       return {
         orderId: node.id,
         payload: r,

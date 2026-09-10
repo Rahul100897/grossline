@@ -107,13 +107,9 @@ function tenantLevel(rows: MetricValueRow[]): Map<string, MetricValueRow> {
   return map;
 }
 
-const num = (row: MetricValueRow | undefined): number | null =>
-  row ? Number(row.value) : null;
+const num = (row: MetricValueRow | undefined): number | null => (row ? Number(row.value) : null);
 
-export async function loadExplorer(
-  tenantId: string,
-  period: string,
-): Promise<ExplorerData | null> {
+export async function loadExplorer(tenantId: string, period: string): Promise<ExplorerData | null> {
   const tenant = await getTenant(tenantId);
   if (!tenant) return null;
 

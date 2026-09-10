@@ -3,7 +3,11 @@
 // snapshot is the immutable record; the preview uses the same HTML.
 import { NextResponse, type NextRequest } from 'next/server';
 import { getReport } from '@grossline/db';
-import { renderReportHtml, REPORT_PDF_OPTIONS, type ReportModel } from '@grossline/worker/report-html';
+import {
+  renderReportHtml,
+  REPORT_PDF_OPTIONS,
+  type ReportModel,
+} from '@grossline/worker/report-html';
 import { buildReportModel } from '@grossline/worker/report-model';
 import { getSession } from '../../../../lib/auth';
 import { htmlToPdf } from '../../../../lib/pdf';

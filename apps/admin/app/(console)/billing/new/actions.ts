@@ -73,7 +73,8 @@ export async function createInvoiceAction(formData: FormData): Promise<void> {
       subject: invoice.number,
     });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not create';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not create';
   }
   if (failure !== null || invoiceId === null) {
     redirect(`${back}&error=${encodeURIComponent(failure ?? 'could not create')}`);
