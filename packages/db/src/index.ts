@@ -141,6 +141,12 @@ export {
   type Report,
 } from './reports';
 export {
+  recordReconciliationRun,
+  getReconciliationRun,
+  listReconciliationRuns,
+  type ReconciliationRun,
+} from './reconciliation-runs';
+export {
   getCalibration,
   saveComputedCalibration,
   saveEditedCalibration,

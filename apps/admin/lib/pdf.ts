@@ -16,15 +16,22 @@ async function getBrowser(): Promise<Browser> {
   return browserPromise;
 }
 
-export async function htmlToPdf(html: string): Promise<Buffer> {
+export type PdfMargin = { top: string; bottom: string; left: string; right: string };
+export type PdfOptions = { margin?: PdfMargin; footerHtml?: string; headerHtml?: string };
+
+export async function htmlToPdf(html: string, opts: PdfOptions = {}): Promise<Buffer> {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
     await page.setContent(html, { waitUntil: 'networkidle' });
+    const displayHeaderFooter = Boolean(opts.footerHtml || opts.headerHtml);
     return await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '0', bottom: '0', left: '0', right: '0' },
+      margin: opts.margin ?? { top: '0', bottom: '0', left: '0', right: '0' },
+      displayHeaderFooter,
+      headerTemplate: opts.headerHtml ?? '<span></span>',
+      footerTemplate: opts.footerHtml ?? '<span></span>',
     });
   } finally {
     await page.close();

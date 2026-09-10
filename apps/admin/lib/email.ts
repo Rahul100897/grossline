@@ -17,10 +17,12 @@ export function adminNotifyAddress(): string | null {
 }
 
 export async function sendEmail(args: {
-  to: string;
+  to: string | string[];
   subject: string;
   text: string;
   replyTo?: string;
+  /** Optional file attachments (e.g. the report PDF), base64-encoded content. */
+  attachments?: { filename: string; content: string }[];
 }): Promise<SendResult> {
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false, reason: 'RESEND_API_KEY not set' };
@@ -33,10 +35,11 @@ export async function sendEmail(args: {
       },
       body: JSON.stringify({
         from: supportFromAddress(),
-        to: [args.to],
+        to: Array.isArray(args.to) ? args.to : [args.to],
         subject: args.subject,
         text: args.text,
         ...(args.replyTo ? { reply_to: args.replyTo } : {}),
+        ...(args.attachments ? { attachments: args.attachments } : {}),
       }),
     });
     if (!response.ok) {

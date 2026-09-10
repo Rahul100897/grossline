@@ -678,6 +678,27 @@ export const reports = pgTable(
   (t) => [uniqueIndex('reports_tenant_period_uniq').on(t.tenantId, t.period)],
 );
 
+// A record that reconciliation was run for a tenant + period (task 5.B4). The
+// report send gate reads this: a variance you never looked for is how trust
+// dies. Written whenever the reconciliation harness runs (panel or CLI).
+export const reconciliationRuns = pgTable(
+  'reconciliation_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    /** Reporting month, first day (YYYY-MM-01). */
+    period: date('period', { mode: 'string' }).notNull(),
+    ranAt: timestamp('ran_at', { withTimezone: true }).notNull().defaultNow(),
+    /** 'ok' when every metric was within tolerance or explained, else 'variance'. */
+    status: text('status').notNull(),
+    /** A short human summary of the run. */
+    summary: text('summary'),
+  },
+  (t) => [uniqueIndex('reconciliation_runs_tenant_period_uniq').on(t.tenantId, t.period)],
+);
+
 export const auditLog = pgTable('audit_log', {
   id: uuid('id').primaryKey().defaultRandom(),
   actor: text('actor').notNull(),

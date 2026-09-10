@@ -3,8 +3,13 @@
 // against the platform UI figures in the committed expected-values file, and
 // read variance, tolerance and the structural explanation where one applies —
 // without the terminal.
-import { listTenants } from '@grossline/db';
-import { expectedFileSchema, reconcile, type ReconciliationReport } from '@grossline/worker/reconcile';
+import { listTenants, recordReconciliationRun } from '@grossline/db';
+import {
+  expectedFileSchema,
+  reconcile,
+  summariseReconciliation,
+  type ReconciliationReport,
+} from '@grossline/worker/reconcile';
 import { requireSession } from '../../../lib/auth';
 import { readDoc } from '../../../lib/doc-render';
 import { formatDate } from '../../../lib/format';
@@ -101,6 +106,10 @@ export default async function ReconciliationPage({
     const expected = raw ? expectedFileSchema.parse(JSON.parse(raw)) : null;
     hadExpectedFile = expected !== null;
     report = await reconcile({ tenantIdOrSlug: tenant.id, month, expected });
+    // Record that reconciliation ran for this period — the report send gate
+    // (task B4) requires it before a report can be sent.
+    const { status, summary } = summariseReconciliation(report);
+    await recordReconciliationRun(tenant.id, `${month}-01`, status, summary);
   } catch (error) {
     runError = error instanceof Error ? error.message : 'reconciliation failed';
   }

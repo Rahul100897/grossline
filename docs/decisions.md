@@ -1038,6 +1038,36 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.B4: Reports console + send gate
+
+- **`reconciliation_runs` table** (RLS-isolated) records that reconciliation ran
+  for a (tenant, period). It is upserted wherever the harness runs — the console
+  Reconciliation panel (on load) and the `reconcile` CLI — so viewing/running
+  reconciliation for a month is what satisfies the gate. `summariseReconciliation`
+  turns a report into {status, summary}.
+- **The send gate blocks on both conditions.** `computeSendGate` = no unreviewed
+  findings (`countUnreviewedFindings === 0`, Phase 4.8's blocking condition
+  enforced at the send step) AND a reconciliation run exists for the period. Each
+  reason is surfaced; the Send button is disabled until both clear. The send
+  action re-checks the gate server-side (never trusts the disabled button).
+- **Reports surface** (`/reports`, new nav item): per tenant+period — Build/
+  Rebuild, Preview (HTML route), Download PDF (route, `REPORT_PDF_OPTIONS`), Mark
+  ready, Send (recipients input), and an Archive table (status, built, sent,
+  recipients). Preview and PDF render the stored snapshot (fresh unsaved build as
+  a fallback), so they never drift from what was built.
+- **Send emails the PDF as an attachment** via Resend (admin `sendEmail` extended
+  with attachments + multiple recipients), best-effort: it marks the report sent
+  and records recipients regardless of email success (the analyst may also deliver
+  by hand / WhatsApp), and the flash message says whether email actually went —
+  never silently claiming delivery. A sent report is frozen (B3).
+- **Admin `htmlToPdf` gained the same options arg** as the worker's, so the report
+  PDF route renders with report margins + page-number footer.
+- Verified: the send-gate test proves each condition blocks independently and only
+  their conjunction clears. The browser full-cycle walkthrough was not driven end
+  to end because admin login needs a password entered into a form (prohibited);
+  the routes mirror the working invoice PDF route and the pipeline is covered by
+  the B3 immutability test and the demo render.
+
 ## 2026-09-10 — Task 5.B3: Report build pipeline + snapshot
 
 - **`reports` table**: one row per (tenant, period), status draft|approved|sent,

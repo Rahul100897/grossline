@@ -6,8 +6,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
-import { closeDbPools } from '@grossline/db';
-import { expectedFileSchema, reconcile, type ExpectedFile } from '../reconcile';
+import { closeDbPools, getTenant, getTenantBySlug, recordReconciliationRun } from '@grossline/db';
+import { expectedFileSchema, reconcile, summariseReconciliation, type ExpectedFile } from '../reconcile';
 
 const args = z
   .tuple([z.string().min(1), z.string().regex(/^\d{4}-\d{2}$/)])
@@ -56,6 +56,15 @@ async function main(): Promise<void> {
     );
   }
   console.log(report.ok ? '\nOK — every variance within tolerance or explained.' : '\nFAIL — unexplained variance outside tolerance.');
+
+  // Record that reconciliation ran for this period — the report send gate reads
+  // this (task 5.B4). Resolve the tenant id (the CLI accepts a slug too).
+  const tenant = (await getTenantBySlug(tenantIdOrSlug)) ?? (await getTenant(tenantIdOrSlug));
+  if (tenant) {
+    const { status, summary } = summariseReconciliation(report);
+    await recordReconciliationRun(tenant.id, `${month}-01`, status, summary);
+  }
+
   if (!report.ok) process.exitCode = 1;
 }
 
