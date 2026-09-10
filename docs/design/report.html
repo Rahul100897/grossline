@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grossline — Monthly Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0F6F5C;--green-deep:#0A4A3E;--green-dark:#0B3A31;--green-soft:#E7F0EC;--green-mid:#CFE2DA;
+  --cream:#F8F5ED;--cream-2:#F1EDE1;--line:#E2DCCC;--line-soft:#EDE8DA;
+  --ink:#131A18;--slate:#5E6B66;--slate-2:#8A948F;
+  --rust:#B4472B;--rust-soft:#FAF0EC;--gold:#C08A2E;--gold-soft:#FBF3E3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,sans-serif;background:#E8E3D6;color:var(--ink);
+     font-feature-settings:"tnum" 1;line-height:1.5;padding:34px 20px}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400;letter-spacing:-.01em}
+
+.page{max-width:860px;margin:0 auto 30px;background:#FDFCF8;border-radius:3px;
+      box-shadow:0 20px 50px -26px rgba(11,58,49,.4);overflow:hidden}
+.pad{padding:44px 56px}
+
+/* ---- cover band ---- */
+.band{background:var(--green-deep);color:#fff;padding:34px 56px 30px;display:flex;
+      justify-content:space-between;align-items:flex-end;gap:30px}
+.band .t{font-family:"Instrument Serif",Georgia,serif;font-size:38px;line-height:1.05}
+.band .s{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#9DC4B8;margin-top:8px}
+.band .r{text-align:right;font-size:13px;color:#9DC4B8;line-height:1.7;white-space:nowrap}
+.band .r b{display:block;color:#fff;font-weight:500;font-size:16px}
+
+/* ---- verdict ---- */
+.verdict{font-family:"Instrument Serif",Georgia,serif;font-size:31px;line-height:1.3;letter-spacing:-.01em}
+.verdict .up{color:var(--green)}
+.verdict .down{color:var(--rust)}
+.vsub{margin-top:15px;font-size:15.5px;line-height:1.68;color:var(--slate);max-width:640px}
+
+/* ---- section ---- */
+.sec{border-top:1px solid var(--line);padding-top:26px;margin-top:34px}
+.sec:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.sec h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);font-weight:600}
+.sec .note{font-size:13px;color:var(--slate-2);margin-top:5px}
+
+/* ---- big pair ---- */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+.stat{border:1px solid var(--line);border-radius:11px;padding:22px 24px;background:#fff}
+.stat .k{font-size:13px;color:var(--slate)}
+.stat .v{font-family:"Instrument Serif",Georgia,serif;font-size:44px;line-height:1;margin-top:9px;
+         display:flex;align-items:baseline;gap:11px}
+.stat .v small{font-family:Inter,sans-serif;font-size:14px;font-weight:500}
+.up{color:var(--green)}.down{color:var(--rust)}
+.track{position:relative;height:8px;background:var(--cream-2);border-radius:4px;margin-top:16px}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--green)}
+.fill.bad{background:var(--rust)}
+.be{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.6}
+.tl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--slate);margin-top:8px}
+
+/* ---- waterfall ---- */
+table{width:100%;border-collapse:collapse;margin-top:16px}
+th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+   color:var(--slate);padding:9px 0;border-bottom:1px solid var(--line)}
+td{padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:14.5px}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.total td{border-top:1.5px solid var(--ink);border-bottom:0;padding-top:14px;font-weight:600;font-size:16px}
+.total td.num{font-family:"Instrument Serif",Georgia,serif;font-size:26px;font-weight:400}
+.sub td{color:var(--slate)}
+.tag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:5px;font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--green-soft);color:var(--green)}
+.tag.bad{background:var(--rust-soft);color:var(--rust)}
+.tag.warn{background:var(--gold-soft);color:var(--gold)}
+.tag.n{background:var(--cream-2);color:var(--slate)}
+
+/* ---- claim gap ---- */
+.gapbox{margin-top:18px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.gaprow{display:grid;grid-template-columns:1.1fr 1fr 1fr 90px;gap:16px;padding:15px 22px;
+        border-bottom:1px solid var(--line-soft);align-items:center;font-size:14.5px}
+.gaprow:last-child{border-bottom:0}
+.gaphead{background:#FCFBF6;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);font-weight:600}
+.gaprow b{font-weight:600}
+.gapnote{padding:14px 22px;background:var(--cream-2);font-size:13px;color:var(--slate);line-height:1.6;
+         border-top:1px solid var(--line)}
+
+/* ---- changed ---- */
+.changed{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+         border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-top:18px}
+.ch{background:#fff;padding:18px 20px}
+.ch .k{font-size:12.5px;color:var(--slate)}
+.ch .v{font-family:"Instrument Serif",Georgia,serif;font-size:27px;margin-top:6px;line-height:1}
+.ch .d{font-size:12.5px;margin-top:7px;font-weight:500}
+
+/* ---- findings ---- */
+.finding{border:1px solid var(--line);border-left:3px solid var(--rust);border-radius:0 12px 12px 0;
+         padding:24px 26px;margin-top:18px;background:#fff}
+.finding.warn{border-left-color:var(--gold)}
+.finding.good{border-left-color:var(--green)}
+.finding.growth{border-left-color:var(--green);background:#FCFDFC}
+.fhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.finding h3{font-family:"Instrument Serif",Georgia,serif;font-size:23px;line-height:1.25;letter-spacing:-.01em}
+.finding p{margin-top:11px;font-size:14.5px;line-height:1.7;color:var(--slate)}
+.fline{margin-top:12px;font-size:14.5px;line-height:1.7;display:grid;grid-template-columns:118px 1fr;gap:12px}
+.fline .l{font-weight:600;color:var(--ink)}
+.fline .t{color:var(--slate)}
+.stake{font-family:"Instrument Serif",Georgia,serif;font-size:26px;white-space:nowrap;line-height:1}
+.stake small{display:block;font-family:Inter,sans-serif;font-size:11px;color:var(--slate);
+             letter-spacing:.05em;text-transform:uppercase;margin-top:5px;font-weight:600;text-align:right}
+.fmeta{display:flex;gap:8px;margin-top:16px}
+
+/* ---- check next ---- */
+.checks{margin-top:18px;border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}
+.crow{display:grid;grid-template-columns:1fr 190px 150px;gap:16px;padding:14px 22px;
+      border-bottom:1px solid var(--line-soft);font-size:14.5px;align-items:center}
+.crow:last-child{border-bottom:0}
+.crow .m{color:var(--slate);font-size:13.5px}
+
+/* ---- footer ---- */
+.foot{background:var(--green-dark);color:#9DC4B8;padding:26px 56px;font-size:12.5px;line-height:1.9}
+.foot .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 40px}
+.foot b{color:#fff;font-weight:500}
+.foot .end{margin-top:16px;padding-top:14px;border-top:1px solid #1B4A3F;display:flex;
+           justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  body{padding:16px 10px}
+  .pad{padding:28px 24px}
+  .band{padding:26px 24px 22px;flex-direction:column;align-items:flex-start;gap:14px}
+  .band .t{font-size:29px}
+  .band .r{text-align:left}
+  .verdict{font-size:24px}
+  .pair,.changed{grid-template-columns:1fr}
+  .gaprow{grid-template-columns:1fr 1fr;gap:8px}
+  .gaphead{display:none}
+  .fhead{flex-direction:column;gap:12px}
+  .stake small{text-align:left}
+  .fline,.crow{grid-template-columns:1fr;gap:3px}
+  .foot{padding:22px 24px}
+  .foot .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="band">
+    <div>
+      <div class="t">Homespice Decor</div>
+      <div class="s">Monthly performance report</div>
+    </div>
+    <div class="r"><b>August 2026</b>1–31 August · IST<br>Reported in USD</div>
+  </div>
+
+  <div class="pad">
+
+    <!-- 1. VERDICT -->
+    <div class="sec">
+      <p class="verdict">You kept <span class="up">$41,280</span> last month, on <span class="down">19% more</span> ad spend than July.</p>
+      <p class="vsub">Revenue grew 8.2%, but spend grew faster, so efficiency slipped. You're still comfortably above break-even and the business is healthy. Two things below are worth changing this month, and one thing you changed last month worked.</p>
+    </div>
+
+    <!-- 2. EFFICIENCY -->
+    <div class="sec">
+      <h2>Did the ads pay for themselves</h2>
+      <div class="pair">
+        <div class="stat">
+          <div class="k">For every $1 spent on ads, this came back</div>
+          <div class="v">3.24&times; <small class="down">−0.31 vs July</small></div>
+          <div class="track"><span class="fill" style="width:74%"></span><span class="be" style="left:48%"></span></div>
+          <div class="tl"><span>You break even at 2.10&times;</span><span>Your target 3.50&times;</span></div>
+        </div>
+        <div class="stat">
+          <div class="k">What each new customer cost you</div>
+          <div class="v">$38.40 <small class="down">+$5.10</small></div>
+          <div class="track"><span class="fill" style="width:83%"></span><span class="be" style="left:83%"></span></div>
+          <div class="tl"><span>Their first order brings back $46.20</span><span class="up">Pays back on order one</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. MONEY -->
+    <div class="sec">
+      <h2>Where the money went</h2>
+      <p class="note">Cost of goods covers 100% of items sold, last updated 12 June 2026.</p>
+      <table>
+        <tr><td>Gross sales</td><td class="num">$298,410</td></tr>
+        <tr class="sub"><td>Discounts</td><td class="num">−$21,190</td></tr>
+        <tr class="sub"><td>Returns</td><td class="num">−$9,280</td></tr>
+        <tr><td><b>Net sales</b></td><td class="num"><b>$267,940</b></td></tr>
+        <tr class="sub"><td>What the products cost you</td><td class="num">−$118,900</td></tr>
+        <tr class="sub"><td>Payment fees, shipping and packing</td><td class="num">−$25,060</td></tr>
+        <tr class="sub"><td>Ad spend</td><td class="num">−$82,700</td></tr>
+        <tr class="total"><td>What you kept</td><td class="num up">$41,280</td></tr>
+      </table>
+    </div>
+
+    <!-- 4. CHANNELS -->
+    <div class="sec">
+      <h2>What each platform claims, and what your store recorded</h2>
+      <div class="gapbox">
+        <div class="gaprow gaphead"><span>Channel</span><span class="num">Spend</span><span class="num">Platform claims / store recorded</span><span class="num">Gap</span></div>
+        <div class="gaprow"><span><b>Meta</b></span><span class="num">$51,400</span><span class="num">412 &rarr; 247 orders</span><span class="num"><span class="tag bad">40%</span></span></div>
+        <div class="gaprow"><span><b>Google</b></span><span class="num">$31,300</span><span class="num">288 &rarr; 261 orders</span><span class="num"><span class="tag ok">9%</span></span></div>
+        <div class="gaprow"><span><b>Email &amp; SMS</b></span><span class="num">—</span><span class="num">414 orders recorded</span><span class="num">—</span></div>
+        <div class="gaprow"><span><b>Direct &amp; organic</b></span><span class="num">—</span><span class="num">502 orders recorded</span><span class="num">—</span></div>
+        <div class="gapnote">Meta and Google each count the same orders in their own way, so their numbers can't be added together. Your store's own record is the independent check. A small gap is normal. A large one means budgets are being set on numbers that are too generous.</div>
+      </div>
+    </div>
+
+    <!-- 5. CHANGED -->
+    <div class="sec">
+      <h2>What changed since July</h2>
+      <div class="changed">
+        <div class="ch"><div class="k">Net sales</div><div class="v">$267,940</div><div class="d up">+8.2%</div></div>
+        <div class="ch"><div class="k">Ad spend</div><div class="v">$82,700</div><div class="d down">+19.4%</div></div>
+        <div class="ch"><div class="k">What you kept</div><div class="v">$41,280</div><div class="d down">−6.1%</div></div>
+        <div class="ch"><div class="k">New customers</div><div class="v">2,153</div><div class="d up">+4.0%</div></div>
+      </div>
+    </div>
+
+    <!-- 6. FINDINGS -->
+    <div class="sec">
+      <h2>What's worth changing this month</h2>
+      <p class="note">Ordered by how much money is involved. Nothing else met the threshold.</p>
+
+      <div class="finding">
+        <div class="fhead">
+          <h3>Meta is taking credit for orders your store never saw</h3>
+          <div class="stake down">40%<small>gap, 3rd month</small></div>
+        </div>
+        <p>Meta reported 412 purchases in August. Your store recorded 247 orders arriving from Meta traffic. That gap has now held for three months running, so it isn't a one-off.</p>
+        <div class="fline"><span class="l">What's at stake</span><span class="t">You may be judging $51,400 of spend on numbers that are 40% more generous than reality.</span></div>
+        <div class="fline"><span class="l">What to do</span><span class="t">Set your Meta budget against the store-recorded figure rather than Meta's, for one month.</span></div>
+        <div class="fline"><span class="l">We'll check</span><span class="t">Whether total order volume holds when the budget is set from the lower number.</span></div>
+        <div class="fmeta"><span class="tag warn">Third month running</span><span class="tag n">Meta</span></div>
+      </div>
+
+      <div class="finding warn">
+        <div class="fhead">
+          <h3>Discounting is eating four points more margin than July</h3>
+          <div class="stake" style="color:var(--gold)">$11,240<small>at stake</small></div>
+        </div>
+        <p>Discounts reached 18.7% of gross sales, up from 14.5%. One code, WELCOME20, appeared on 61% of new-customer orders. Customers who first bought on that code come back at 11.2% within 90 days. Customers who paid full price come back at 26.4%.</p>
+        <div class="fline"><span class="l">What's at stake</span><span class="t">$11,240 of margin in August alone, plus weaker customers coming in the door.</span></div>
+        <div class="fline"><span class="l">What to do</span><span class="t">Drop WELCOME20 to 10% for four weeks. Watch new-customer count, not conversion rate.</span></div>
+        <div class="fline"><span class="l">We'll check</span><span class="t">New customers and what you keep, next month.</span></div>
+        <div class="fmeta"><span class="tag n">New</span><span class="tag n">Shopify</span></div>
+      </div>
+
+      <div class="finding growth">
+        <div class="fhead">
+          <h3>There's room to spend more, if you want to test it</h3>
+          <div class="stake up">$18,000<small>headroom / month</small></div>
+        </div>
+        <p>At your current margins you break even at 2.10&times; and you're running at 3.24&times;. On paper that leaves about $18,000 a month of spend before you'd stop making money on the extra. This is arithmetic at today's efficiency, and efficiency almost always falls as spend rises — so treat it as a test, not a target.</p>
+        <div class="fline"><span class="l">What's at stake</span><span class="t">Roughly $18,000 of monthly headroom, if efficiency holds. It usually doesn't hold fully.</span></div>
+        <div class="fline"><span class="l">What to do</span><span class="t">Raise spend 20% on your best-performing campaign for two weeks, nothing else changed.</span></div>
+        <div class="fline"><span class="l">We'll check</span><span class="t">Blended efficiency and total orders. If efficiency drops below 2.8&times;, we'd revert.</span></div>
+        <div class="fmeta"><span class="tag ok">Opportunity</span><span class="tag n">Test, not an instruction</span></div>
+      </div>
+
+      <div class="finding good">
+        <div class="fhead">
+          <h3>Last month's Google change worked</h3>
+          <div class="stake up">$2,870<small>redirected</small></div>
+        </div>
+        <p>In July we flagged $4,100 of Performance Max spend producing three attributable orders. You cut it by 70% on 8 August. Total orders held steady, and Google's cost per order fell from $121 to $84.</p>
+        <div class="fline"><span class="l">Result</span><span class="t">About $2,870 a month redirected without losing any volume.</span></div>
+        <div class="fmeta"><span class="tag ok">Resolved</span></div>
+      </div>
+    </div>
+
+    <!-- 7. NEXT -->
+    <div class="sec">
+      <h2>What we'll check next month</h2>
+      <div class="checks">
+        <div class="crow"><span>Meta budget set from store-recorded orders</span><span class="m">Total order volume</span><span><span class="tag n">Carried forward</span></span></div>
+        <div class="crow"><span>WELCOME20 reduced to 10%</span><span class="m">New customers, margin</span><span><span class="tag n">New</span></span></div>
+        <div class="crow"><span>20% spend test on best campaign</span><span class="m">Blended efficiency</span><span><span class="tag n">Test</span></span></div>
+        <div class="crow"><span>PMax reduction holding</span><span class="m">Google cost per order</span><span><span class="tag ok">Working</span></span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <div class="grid">
+      <span>Data last synced <b>4 September, 04:12 IST</b></span>
+      <span>Reported in <b>USD</b> · store timezone <b>IST</b></span>
+      <span>Checked against Shopify, Google and Meta on <b>3 September</b></span>
+      <span>Cost of goods covers <b>100%</b> of items sold</span>
+    </div>
+    <div class="end">
+      <span>Meta's figures for the last 7 days are provisional — they revise recent days.</span>
+      <span>Every calculation on this page is defined at <b>getgrossline.com/definitions</b></span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

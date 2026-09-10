@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grossline — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0F6F5C;--green-deep:#0A4A3E;--green-dark:#0B3A31;--green-darker:#072922;
+  --green-soft:#E7F0EC;--green-line:#1B4A3F;
+  --cream:#F8F5ED;--cream-2:#F1EDE1;--line:#E2DCCC;--line-soft:#EDE8DA;
+  --ink:#131A18;--slate:#5E6B66;--slate-2:#8A948F;
+  --rust:#B4472B;--rust-soft:#FAF0EC;--gold:#9A6B12;--gold-soft:#FBF3E3;--white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,sans-serif;background:var(--cream);color:var(--ink);
+     font-feature-settings:"tnum" 1;line-height:1.5;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400;letter-spacing:-.01em}
+
+/* ---- sidebar ---- */
+aside{width:224px;flex:none;background:var(--green-darker);color:#A8C4BB;display:flex;flex-direction:column;
+      position:sticky;top:0;height:100vh}
+.logo{padding:19px 20px 17px;border-bottom:1px solid var(--green-line);display:flex;align-items:center;gap:10px;
+      font-size:17px;font-weight:600;color:#fff;letter-spacing:-.02em}
+.mark{width:26px;height:26px;border-radius:7px;flex:none}
+.navgrp{padding:16px 10px 2px}
+.navgrp .lbl{font-size:10.5px;color:#5C7D74;padding:0 10px 8px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.navitem{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-radius:8px;
+         font-size:14px;color:#A8C4BB;margin-bottom:1px}
+.navitem:hover{background:var(--green-dark);color:#D5E5DF}
+.navitem.on{background:var(--green);color:#fff;font-weight:500}
+.pill{background:var(--green-line);font-size:11px;padding:2px 8px;border-radius:20px;color:#A8C4BB}
+.navitem.on .pill{background:rgba(255,255,255,.18);color:#fff}
+.pill.alert{background:#5A2418;color:#F3B3A0}
+.sidefoot{margin-top:auto;padding:15px 20px;border-top:1px solid var(--green-line);font-size:13px;color:#5C7D74}
+.sidefoot b{display:block;color:#D5E5DF;font-weight:500;margin-bottom:2px}
+
+main{flex:1;min-width:0}
+header{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
+       padding:0 26px;height:64px;position:sticky;top:0;background:var(--cream);z-index:5;gap:14px}
+header h1{font-family:"Instrument Serif",Georgia,serif;font-size:24px;letter-spacing:-.01em;line-height:1}
+header .sub{font-size:13px;color:var(--slate);margin-left:12px}
+.hactions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.sel,input.f{border:1px solid var(--line);background:var(--white);border-radius:8px;padding:8px 12px;
+             font-size:13.5px;font-family:inherit;color:var(--ink)}
+input.f{min-width:210px}
+.btn{background:var(--green);color:#fff;border:1px solid var(--green);border-radius:8px;padding:8px 15px;
+     font-size:13.5px;font-weight:500}
+.btn.ghost{background:var(--white);color:var(--ink);border-color:var(--line)}
+.btn.sm{padding:6px 11px;font-size:12.5px}
+.pad{padding:22px 26px 42px}
+.page{display:none}.page.on{display:block}
+
+/* ---- strip ---- */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:22px}
+.stat{background:var(--white);padding:18px 20px}
+.stat .k{font-size:12.5px;color:var(--slate)}
+.stat .v{font-family:"Instrument Serif",Georgia,serif;font-size:32px;line-height:1;margin-top:8px}
+.stat .v.warn{color:var(--rust)}
+.stat .d{font-size:12px;color:var(--slate-2);margin-top:7px}
+
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--white);overflow:hidden;margin-bottom:20px}
+.phead{display:flex;align-items:center;justify-content:space-between;padding:14px 19px;
+       border-bottom:1px solid var(--line);gap:12px}
+.phead h2{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.phead .meta{font-size:12.5px;color:var(--slate)}
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cols{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+.cols50{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+   color:var(--slate);padding:11px 19px;border-bottom:1px solid var(--line);background:#FCFBF6}
+td{padding:13px 19px;border-bottom:1px solid var(--line-soft);font-size:14px}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#FCFBF6}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.strong{font-weight:600;font-size:14.5px}
+.strong small{display:block;font-weight:400;color:var(--slate);font-size:12px;margin-top:2px}
+.tag{display:inline-block;font-size:11.5px;padding:3px 9px;border-radius:6px;font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--green-soft);color:var(--green)}
+.tag.warn{background:var(--gold-soft);color:var(--gold)}
+.tag.bad{background:var(--rust-soft);color:var(--rust)}
+.tag.n{background:var(--cream-2);color:var(--slate)}
+.sdot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:8px;flex:none}
+.sdot.ok{background:var(--green)}.sdot.warn{background:var(--gold)}.sdot.bad{background:var(--rust)}
+.foot{padding:12px 19px;border-top:1px solid var(--line);font-size:12.5px;color:var(--slate);background:#FCFBF6;line-height:1.6}
+.li{display:flex;align-items:center;justify-content:space-between;padding:12px 19px;
+    border-bottom:1px solid var(--line-soft);font-size:14px}
+.li:last-child{border-bottom:0}
+.li .r{font-size:12.5px;color:var(--slate)}
+.li b{font-weight:500}
+.mini{display:flex;justify-content:space-between;padding:12px 19px;border-bottom:1px solid var(--line-soft);font-size:14px}
+.mini:last-child{border-bottom:0}
+.mini .v{font-weight:600;font-variant-numeric:tabular-nums}
+.mini.big .v{font-family:"Instrument Serif",Georgia,serif;font-size:20px;font-weight:400}
+
+/* ---- issues ---- */
+.issue{padding:16px 19px;border-bottom:1px solid var(--line-soft);display:flex;gap:13px;align-items:flex-start}
+.issue:last-child{border-bottom:0}
+.issue .body{flex:1}
+.issue h3{font-size:14.5px;font-weight:600}
+.issue p{font-size:13px;color:var(--slate);line-height:1.6;margin-top:5px}
+.issue .m{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;align-items:center}
+.issue .act{display:flex;gap:7px;flex-wrap:wrap}
+.hide{display:none}
+
+/* ---- tickets ---- */
+.ticket{padding:17px 19px;border-bottom:1px solid var(--line-soft)}
+.ticket:last-child{border-bottom:0}
+.ticket .tt{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.ticket h3{font-size:14.5px;font-weight:600}
+.ticket p{font-size:13px;color:var(--slate);line-height:1.6;margin-top:6px}
+.ticket .m{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+
+/* ---- portfolio bar ---- */
+.merwrap{display:flex;align-items:center;gap:11px;justify-content:flex-end}
+.mernum{font-family:"Instrument Serif",Georgia,serif;font-size:19px;min-width:52px;text-align:right}
+.mernum.ok{color:var(--green)}.mernum.bad{color:var(--rust)}
+.track{position:relative;width:110px;height:7px;background:var(--cream-2);border-radius:4px;flex:none}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--green)}
+.fill.bad{background:var(--rust)}
+.be{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.55}
+
+/* ---- invoice ---- */
+.inv{border:1px solid var(--line);border-radius:12px;background:var(--white);padding:26px 28px}
+.invtop{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:17px;gap:20px}
+.invtop .b{font-family:"Instrument Serif",Georgia,serif;font-size:24px}
+.invtop .r{text-align:right;font-size:12.5px;color:var(--slate);line-height:1.7}
+.invtop .r b{color:var(--ink);font-weight:500;font-size:14px;display:block}
+.invmeta{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:17px 0;border-bottom:1px solid var(--line);
+         font-size:13px;line-height:1.7;color:var(--slate)}
+.invmeta b{display:block;color:var(--ink);font-weight:500;margin-bottom:3px}
+.invtot{display:flex;justify-content:space-between;padding:13px 0;font-size:14px;color:var(--slate)}
+.invtot span:last-child{color:var(--ink)}
+.invtot.big{border-top:1px solid var(--line);font-size:16px;font-weight:600;color:var(--ink)}
+.invtot.big span:last-child{font-family:"Instrument Serif",Georgia,serif;font-size:26px;font-weight:400}
+.note{font-size:12px;color:var(--slate);line-height:1.6;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+
+/* ---- settings ---- */
+.srow{display:grid;grid-template-columns:240px 1fr;gap:30px;padding:19px;border-bottom:1px solid var(--line-soft);align-items:start}
+.srow:last-child{border-bottom:0}
+.srow h3{font-size:14.5px;font-weight:600}
+.srow .d{font-size:12.5px;color:var(--slate);margin-top:4px;line-height:1.55}
+.srow .c{font-size:14px;line-height:1.8;color:var(--slate)}
+.srow .c b{color:var(--ink);font-weight:500}
+.link{text-decoration:underline;text-decoration-color:var(--line);cursor:pointer}
+
+/* ---- mobile ---- */
+.mobnav{display:none;position:fixed;top:12px;left:12px;z-index:40;width:38px;height:38px;border-radius:9px;
+        border:1px solid var(--green-line);background:var(--green-darker);color:#fff;font-size:17px;
+        align-items:center;justify-content:center}
+.scrim{display:none;position:fixed;inset:0;background:rgba(7,41,34,.5);z-index:29}
+.scrim.on{display:block}
+
+@media (max-width:1180px){
+  .cols,.cols50{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr 1fr}
+}
+@media (max-width:900px){
+  aside{position:fixed;left:0;top:0;height:100vh;z-index:30;transform:translateX(-100%);transition:transform .18s ease}
+  aside.open{transform:none;box-shadow:0 8px 44px rgba(0,0,0,.3)}
+  .mobnav{display:flex}
+  header{position:static;height:auto;padding:12px 16px 14px 62px;flex-wrap:wrap;align-items:flex-start}
+  .pad{padding:16px 14px 40px}
+  .phead{flex-wrap:wrap}.filters{width:100%}
+  input.f{min-width:0;flex:1 1 150px}
+  .panel{overflow-x:auto}table{min-width:700px}
+  .issue{flex-wrap:wrap}.issue .act{width:100%;padding-left:20px}
+  .ticket .tt{flex-direction:column}
+  .srow{grid-template-columns:1fr;gap:8px}
+  .invtop,.invmeta{flex-direction:column;grid-template-columns:1fr}
+  .invtop .r{text-align:left}
+}
+@media (max-width:560px){.strip{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<button class="mobnav" id="mobnav">&#9776;</button>
+<div class="scrim" id="scrim"></div>
+
+<aside id="side">
+  <div class="logo">
+    <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect width="64" height="64" rx="14" fill="#0F6F5C"/>
+      <path d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z" fill="#fff"/>
+    </svg>
+    Grossline
+  </div>
+  <div class="navgrp">
+    <div class="lbl">Run the business</div>
+    <div class="navitem on" data-go="overview"><span>Overview</span></div>
+    <div class="navitem" data-go="merchants"><span>Merchants</span><span class="pill">9</span></div>
+    <div class="navitem" data-go="findings"><span>Findings</span><span class="pill alert">4</span></div>
+    <div class="navitem" data-go="reports"><span>Reports</span><span class="pill">3 due</span></div>
+    <div class="navitem" data-go="billing"><span>Billing</span><span class="pill alert">2</span></div>
+  </div>
+  <div class="navgrp">
+    <div class="lbl">Keep it healthy</div>
+    <div class="navitem" data-go="issues"><span>Issues</span><span class="pill alert">5</span></div>
+    <div class="navitem" data-go="support"><span>Support</span><span class="pill">3</span></div>
+  </div>
+  <div class="navgrp">
+    <div class="lbl">Setup</div>
+    <div class="navitem" data-go="settings"><span>Settings</span></div>
+  </div>
+  <div class="sidefoot"><b>Rahul</b>Admin · only user</div>
+</aside>
+
+<main>
+
+<!-- ============ OVERVIEW ============ -->
+<div class="page on" id="overview">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Overview</h1><span class="sub">4 Sep 2026 · last sync 04:12 IST</span></div>
+    <div class="hactions"><button class="btn ghost">Run all syncs</button><button class="btn">Generate August reports</button></div>
+  </header>
+  <div class="pad">
+    <div class="strip">
+      <div class="stat"><div class="k">Monthly recurring</div><div class="v">$5,845</div><div class="d">9 merchants · 12 stores</div></div>
+      <div class="stat"><div class="k">Collected this quarter</div><div class="v">$14,240</div><div class="d">2 invoices outstanding</div></div>
+      <div class="stat"><div class="k">Open issues</div><div class="v warn">5</div><div class="d">1 blocking a report</div></div>
+      <div class="stat"><div class="k">Reports due</div><div class="v">3</div><div class="d">next deadline 5 Sep</div></div>
+    </div>
+
+    <div class="cols">
+      <div>
+        <div class="panel">
+          <div class="phead"><h2>Portfolio health — return on ads against break-even</h2><span class="meta">Marker is each merchant's own break-even</span></div>
+          <table>
+            <thead><tr><th style="width:24%">Merchant</th><th class="num">Net sales</th><th class="num">Ad spend</th><th class="num" style="width:22%">Return vs break-even</th><th class="num">Kept</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="strong">Homespice Decor<small>2 stores · Growth</small></td><td class="num">$267,940</td><td class="num">$82,700</td>
+                <td><div class="merwrap"><span class="mernum ok">3.24&times;</span><span class="track"><span class="fill" style="width:74%"></span><span class="be" style="left:48%"></span></span></div></td>
+                <td class="num">$41,280</td><td><span class="tag ok">Healthy</span></td></tr>
+              <tr><td class="strong">Vro Grooming<small>1 store · Advisory</small></td><td class="num">$96,410</td><td class="num">$31,200</td>
+                <td><div class="merwrap"><span class="mernum ok">3.09&times;</span><span class="track"><span class="fill" style="width:70%"></span><span class="be" style="left:52%"></span></span></div></td>
+                <td class="num">$12,840</td><td><span class="tag ok">Healthy</span></td></tr>
+              <tr><td class="strong">Kesar Home<small>1 store · Advisory</small></td><td class="num">$74,220</td><td class="num">$39,900</td>
+                <td><div class="merwrap"><span class="mernum bad">1.86&times;</span><span class="track"><span class="fill bad" style="width:41%"></span><span class="be" style="left:56%"></span></span></div></td>
+                <td class="num">−$3,110</td><td><span class="tag bad">Below</span></td></tr>
+              <tr><td class="strong">Nordwell Supply<small>3 stores · Growth</small></td><td class="num">$188,300</td><td class="num">$96,400</td>
+                <td><div class="merwrap"><span class="mernum bad">1.95&times;</span><span class="track"><span class="fill bad" style="width:44%"></span><span class="be" style="left:50%"></span></span></div></td>
+                <td class="num">$2,470</td><td><span class="tag bad">Below</span></td></tr>
+              <tr><td class="strong">Aster &amp; Co<small>1 store · Advisory</small></td><td class="num">$142,760</td><td class="num">$38,100</td>
+                <td><div class="merwrap"><span class="mernum ok">3.75&times;</span><span class="track"><span class="fill" style="width:82%"></span><span class="be" style="left:46%"></span></span></div></td>
+                <td class="num">$28,940</td><td><span class="tag ok">Healthy</span></td></tr>
+              <tr><td class="strong">Bellweather Labs<small>1 store · Advisory</small></td><td class="num">$58,900</td><td class="num">$21,400</td>
+                <td><div class="merwrap"><span class="mernum ok">2.75&times;</span><span class="track"><span class="fill" style="width:60%"></span><span class="be" style="left:54%"></span></span></div></td>
+                <td class="num">$6,120</td><td><span class="tag warn">Tight</span></td></tr>
+              <tr><td class="strong">Demo Brand<small>1 store · sample data</small></td><td class="num">$121,000</td><td class="num">$34,500</td>
+                <td><div class="merwrap"><span class="mernum ok">3.51&times;</span><span class="track"><span class="fill" style="width:78%"></span><span class="be" style="left:47%"></span></span></div></td>
+                <td class="num">$22,700</td><td><span class="tag n">Demo</span></td></tr>
+            </tbody>
+          </table>
+          <div class="foot">Showing 7 of 9. Two merchants are still backfilling and have no complete month yet.</div>
+        </div>
+
+        <div class="panel">
+          <div class="phead"><h2>Needs your attention</h2><span class="meta">Ranked by what it blocks</span></div>
+          <div class="issue"><span class="sdot bad" style="margin-top:6px"></span>
+            <div class="body"><h3>Nordwell Supply — Meta connection broken</h3>
+              <p>Token expired 2 Sep. No Meta data since 1 Sep. The August report can't be generated until it's reconnected.</p>
+              <div class="m"><span class="tag bad">Blocking</span><span class="tag n">Connection</span><span class="tag n">2 days</span></div></div>
+            <div class="act"><button class="btn sm ghost">Email client</button><button class="btn sm">Reconnect</button></div></div>
+          <div class="issue"><span class="sdot warn" style="margin-top:6px"></span>
+            <div class="body"><h3>Kesar Home — cost data 6 months stale</h3>
+              <p>Last updated 12 Mar. Margin figures on the August report will use old costs.</p>
+              <div class="m"><span class="tag warn">Accuracy</span><span class="tag n">Cost data</span></div></div>
+            <div class="act"><button class="btn sm ghost">Request update</button></div></div>
+          <div class="issue"><span class="sdot warn" style="margin-top:6px"></span>
+            <div class="body"><h3>Bellweather Labs — invoice 14 days overdue</h3>
+              <p>Q3 invoice for $1,647 sent 21 Aug, unpaid. No reply to the reminder on 28 Aug.</p>
+              <div class="m"><span class="tag warn">Billing</span><span class="tag n">$1,647</span></div></div>
+            <div class="act"><button class="btn sm ghost">Send reminder</button></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="phead"><h2>Connections</h2><span class="meta">33 across 12 stores</span></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Healthy</b></span><span class="r">30</span></div>
+          <div class="li"><span><span class="sdot warn"></span><b>Degraded</b></span><span class="r">2</span></div>
+          <div class="li"><span><span class="sdot bad"></span><b>Broken</b></span><span class="r">1</span></div>
+          <div class="foot">Nightly sync at 04:00 IST. You're alerted if any merchant misses 36 hours.</div>
+        </div>
+        <div class="panel">
+          <div class="phead"><h2>Money</h2></div>
+          <div class="mini big"><span>Monthly recurring</span><span class="v">$5,845</span></div>
+          <div class="mini"><span>Q3 invoiced</span><span class="v">$17,535</span></div>
+          <div class="mini"><span>Q3 collected</span><span class="v">$14,241</span></div>
+          <div class="mini"><span>Outstanding</span><span class="v" style="color:var(--rust)">$3,294</span></div>
+          <div class="foot">Collected through Xflow, marked manually on receipt.</div>
+        </div>
+        <div class="panel">
+          <div class="phead"><h2>Support</h2><span class="meta">3 open</span></div>
+          <div class="li"><span><span class="sdot bad"></span><b>Bug — PDF page break</b></span><span class="r">2d</span></div>
+          <div class="li"><span><span class="sdot warn"></span><b>Question — how MER works</b></span><span class="r">3d</span></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Feature — costs by date</b></span><span class="r">5d</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MERCHANTS ============ -->
+<div class="page" id="merchants">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Merchants</h1><span class="sub">9 merchants · 12 stores</span></div>
+    <div class="hactions"><button class="btn ghost">Export</button><button class="btn">Add merchant</button></div>
+  </header>
+  <div class="pad">
+    <div class="panel">
+      <div class="phead"><h2>All merchants</h2>
+        <div class="filters">
+          <input class="f" id="msearch" placeholder="Search merchant or store…">
+          <select class="sel" id="mplan"><option>All plans</option><option>Advisory</option><option>Growth</option><option>Partner</option><option>Design partner</option></select>
+          <select class="sel" id="mstatus"><option>All statuses</option><option>Active</option><option>Onboarding</option><option>At risk</option></select>
+        </div>
+      </div>
+      <table id="mtable">
+        <thead><tr><th style="width:20%">Merchant</th><th>Joined</th><th>Plan</th><th class="num">Fee</th><th class="num">Their ad spend</th><th class="num">Billed to date</th><th>Health</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr data-plan="Growth" data-status="Active"><td class="strong">Homespice Decor<small>2 stores · homespice.com</small></td><td>12 Feb 2026</td><td><span class="tag n">Growth</span></td><td class="num">$949</td><td class="num">$82,700</td><td class="num">$6,643</td><td><span class="sdot ok"></span>Healthy</td><td><span class="tag ok">Active</span></td></tr>
+          <tr data-plan="Advisory" data-status="Active"><td class="strong">Vro Grooming<small>1 store · yourvro.com</small></td><td>3 Apr 2026</td><td><span class="tag n">Advisory</span></td><td class="num">$549</td><td class="num">$31,200</td><td class="num">$2,745</td><td><span class="sdot ok"></span>Healthy</td><td><span class="tag ok">Active</span></td></tr>
+          <tr data-plan="Advisory" data-status="At risk"><td class="strong">Kesar Home<small>1 store · kesarhome.in</small></td><td>19 May 2026</td><td><span class="tag n">Advisory</span></td><td class="num">$549</td><td class="num">$39,900</td><td class="num">$2,196</td><td><span class="sdot warn"></span>Stale costs</td><td><span class="tag warn">At risk</span></td></tr>
+          <tr data-plan="Growth" data-status="At risk"><td class="strong">Nordwell Supply<small>3 stores · nordwell.co</small></td><td>28 Feb 2026</td><td><span class="tag n">Growth</span></td><td class="num">$1,207</td><td class="num">$96,400</td><td class="num">$8,449</td><td><span class="sdot bad"></span>Meta broken</td><td><span class="tag bad">At risk</span></td></tr>
+          <tr data-plan="Advisory" data-status="Active"><td class="strong">Aster &amp; Co<small>1 store · asterandco.com</small></td><td>7 Mar 2026</td><td><span class="tag n">Advisory</span></td><td class="num">$549</td><td class="num">$38,100</td><td class="num">$3,294</td><td><span class="sdot ok"></span>Healthy</td><td><span class="tag ok">Active</span></td></tr>
+          <tr data-plan="Advisory" data-status="Active"><td class="strong">Bellweather Labs<small>1 store · bellweatherlabs.com</small></td><td>14 Jun 2026</td><td><span class="tag n">Advisory</span></td><td class="num">$549</td><td class="num">$21,400</td><td class="num">$1,647</td><td><span class="sdot ok"></span>Healthy</td><td><span class="tag warn">Invoice late</span></td></tr>
+          <tr data-plan="Design partner" data-status="Active"><td class="strong">Marigold Tea Co<small>1 store · marigoldtea.com</small></td><td>2 Jul 2026</td><td><span class="tag n">Design partner</span></td><td class="num">$300</td><td class="num">$14,800</td><td class="num">$600</td><td><span class="sdot ok"></span>Healthy</td><td><span class="tag ok">Active</span></td></tr>
+          <tr data-plan="Advisory" data-status="Onboarding"><td class="strong">Fernhill Goods<small>1 store · fernhillgoods.com</small></td><td>26 Aug 2026</td><td><span class="tag n">Advisory</span></td><td class="num">$549</td><td class="num">$18,900</td><td class="num">$600</td><td><span class="sdot warn"></span>Backfill 60%</td><td><span class="tag warn">Onboarding</span></td></tr>
+          <tr data-plan="Advisory" data-status="Onboarding"><td class="strong">Saltwater Studio<small>1 store · saltwaterstudio.co</small></td><td>1 Sep 2026</td><td><span class="tag n">Advisory</span></td><td class="num">$549</td><td class="num">—</td><td class="num">$600</td><td><span class="sdot warn"></span>Google pending</td><td><span class="tag warn">Onboarding</span></td></tr>
+        </tbody>
+      </table>
+      <div class="foot">Ad spend is what they spent last month, not what they pay you. Click any merchant to open their detail page.</div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Homespice Decor</h2><span class="meta">Merchant detail — this is what opens on click</span></div>
+      <div class="cols50" style="padding:18px;gap:18px">
+        <div class="panel" style="margin:0">
+          <div class="phead"><h2>Account</h2></div>
+          <div class="mini"><span>Joined</span><span class="v">12 Feb 2026</span></div>
+          <div class="mini"><span>Contact</span><span class="v">priya@homespice.com</span></div>
+          <div class="mini"><span>Stores</span><span class="v">2</span></div>
+          <div class="mini"><span>Currency</span><span class="v">USD</span></div>
+          <div class="mini"><span>Store timezone</span><span class="v">IST</span></div>
+          <div class="mini"><span>Reports delivered</span><span class="v">6</span></div>
+        </div>
+        <div class="panel" style="margin:0">
+          <div class="phead"><h2>Plan &amp; billing</h2></div>
+          <div class="mini"><span>Plan</span><span class="v">Growth</span></div>
+          <div class="mini"><span>Fee</span><span class="v">$949/mo</span></div>
+          <div class="mini"><span>Cycle</span><span class="v">Quarterly</span></div>
+          <div class="mini"><span>Next invoice</span><span class="v">1 Oct 2026</span></div>
+          <div class="mini"><span>Billed to date</span><span class="v">$6,643</span></div>
+          <div class="mini"><span>Last payment</span><span class="v">2 Jul · Xflow</span></div>
+        </div>
+      </div>
+      <div style="padding:0 18px 18px">
+        <div class="panel" style="margin:0">
+          <div class="phead"><h2>Connections</h2><button class="btn sm ghost">Re-sync all</button></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Shopify — main</b></span><span class="r">04:12 · 1,284 orders</span></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Shopify — EU</b></span><span class="r">04:13 · 316 orders</span></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Google Ads</b></span><span class="r">04:14</span></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Meta</b></span><span class="r">04:15</span></div>
+          <div class="li"><span><span class="sdot ok"></span><b>Cost data</b></span><span class="r">12 Jun · 214 SKUs</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FINDINGS ============ -->
+<div class="page" id="findings">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Findings</h1><span class="sub">August 2026 · awaiting your review</span></div>
+    <div class="hactions"><span class="sel">Homespice Decor</span><span class="sel">August 2026</span><button class="btn">Approve all</button></div>
+  </header>
+  <div class="pad">
+    <div class="panel">
+      <div class="phead"><h2>Awaiting review</h2><span class="meta">Ranked by money involved · nothing sends until approved</span></div>
+
+      <div class="issue"><span class="sdot bad" style="margin-top:6px"></span>
+        <div class="body">
+          <h3>Meta claims 412 purchases, the store recorded 247 — Homespice</h3>
+          <p>40% divergence between platform-reported conversions and store-attributed orders. Third consecutive month above 30%.</p>
+          <div class="m"><span class="tag bad">$51,400 judged on it</span><span class="tag warn">Recurring ×3</span><span class="tag n">Measurement</span><span class="tag n">Meta</span></div>
+        </div>
+        <div class="act"><button class="btn sm ghost">Edit text</button><button class="btn sm ghost">Dismiss</button><button class="btn sm">Approve</button></div></div>
+
+      <div class="issue"><span class="sdot warn" style="margin-top:6px"></span>
+        <div class="body">
+          <h3>Discount leakage up 4.2 points — Homespice</h3>
+          <p>Discounts reached 18.7% of gross sales from 14.5% in July. Driven by WELCOME20 on 61% of new-customer orders, who repeat at 11.2% against 26.4%.</p>
+          <div class="m"><span class="tag warn">$11,240 at stake</span><span class="tag n">New</span><span class="tag n">Waste</span><span class="tag n">Shopify</span></div>
+        </div>
+        <div class="act"><button class="btn sm ghost">Edit text</button><button class="btn sm ghost">Dismiss</button><button class="btn sm">Approve</button></div></div>
+
+      <div class="issue"><span class="sdot ok" style="margin-top:6px"></span>
+        <div class="body">
+          <h3>Spend headroom — about $18,000/month at current margins</h3>
+          <p>Break-even 2.10×, running 3.24×. Framed as a bounded test with efficiency decay stated. Check metric is blended efficiency and total orders.</p>
+          <div class="m"><span class="tag ok">$18,000 opportunity</span><span class="tag n">Growth</span><span class="tag n">Test, not instruction</span></div>
+        </div>
+        <div class="act"><button class="btn sm ghost">Edit text</button><button class="btn sm ghost">Dismiss</button><button class="btn sm">Approve</button></div></div>
+
+      <div class="issue"><span class="sdot ok" style="margin-top:6px"></span>
+        <div class="body">
+          <h3>Resolved — PMax cut worked, Homespice</h3>
+          <p>July flagged $4,100 of PMax spend with 3 attributed orders. Cut 70% on 8 Aug. Orders held, cost per order $121 → $84.</p>
+          <div class="m"><span class="tag ok">$2,870 saved</span><span class="tag ok">Resolved</span></div>
+        </div>
+        <div class="act"><button class="btn sm">Approve</button></div></div>
+
+      <div class="foot">Two findings fell below this merchant's money threshold and were suppressed. They're still recorded and queryable.</div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>What we recommended, and what happened</h2><span class="meta">Carried forward each month</span></div>
+      <table>
+        <thead><tr><th style="width:32%">Recommendation</th><th>Month</th><th>Actioned</th><th class="num">Result</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Cut PMax budget 70%</td><td>July</td><td>Yes, 8 Aug</td><td class="num" style="color:var(--green)">$121 → $84 per order</td><td><span class="tag ok">Worked</span></td></tr>
+          <tr><td class="strong">Set Meta budget from store orders</td><td>June</td><td>No</td><td class="num">—</td><td><span class="tag warn">Repeated ×3</span></td></tr>
+          <tr><td class="strong">Raise free shipping to $95</td><td>June</td><td>Yes, 20 Jun</td><td class="num" style="color:var(--green)">AOV $171 → $188</td><td><span class="tag ok">Worked</span></td></tr>
+          <tr><td class="strong">Pause Demand Gen</td><td>May</td><td>Yes, 12 Jun</td><td class="num">No change in orders</td><td><span class="tag ok">Worked</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REPORTS ============ -->
+<div class="page" id="reports">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Reports</h1><span class="sub">August 2026 cycle</span></div>
+    <div class="hactions"><span class="sel">August 2026</span><button class="btn">Generate all drafts</button></div>
+  </header>
+  <div class="pad">
+    <div class="panel">
+      <div class="phead"><h2>This cycle</h2><span class="meta">3 due, 1 blocked</span></div>
+      <table>
+        <thead><tr><th style="width:22%">Merchant</th><th>Status</th><th class="num">Findings</th><th class="num">Data through</th><th class="num">Sent</th><th class="num">Actions</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Homespice Decor</td><td><span class="tag warn">Draft — needs review</span></td><td class="num">4</td><td class="num">31 Aug</td><td class="num">—</td><td class="num"><button class="btn sm ghost">Preview</button> <button class="btn sm">Review &amp; send</button></td></tr>
+          <tr><td class="strong">Vro Grooming</td><td><span class="tag warn">Draft — needs review</span></td><td class="num">2</td><td class="num">31 Aug</td><td class="num">—</td><td class="num"><button class="btn sm ghost">Preview</button> <button class="btn sm">Review &amp; send</button></td></tr>
+          <tr><td class="strong">Kesar Home</td><td><span class="tag n">Not generated</span></td><td class="num">—</td><td class="num">31 Aug</td><td class="num">—</td><td class="num"><button class="btn sm ghost">Generate</button></td></tr>
+          <tr><td class="strong">Nordwell Supply</td><td><span class="tag bad">Blocked — Meta disconnected</span></td><td class="num">—</td><td class="num">1 Sep</td><td class="num">—</td><td class="num"><button class="btn sm ghost">Fix issue</button></td></tr>
+          <tr><td class="strong">Aster &amp; Co</td><td><span class="tag ok">Sent</span></td><td class="num">2</td><td class="num">31 Aug</td><td class="num">3 Sep</td><td class="num"><button class="btn sm ghost">Download</button></td></tr>
+          <tr><td class="strong">Bellweather Labs</td><td><span class="tag ok">Sent</span></td><td class="num">1</td><td class="num">31 Aug</td><td class="num">2 Sep</td><td class="num"><button class="btn sm ghost">Download</button></td></tr>
+        </tbody>
+      </table>
+      <div class="foot">A report can only be sent once its findings are approved and reconciliation has run for the period. Both gates, both with reasons.</div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Archive</h2><div class="filters"><input class="f" placeholder="Search merchant or month…"><span class="sel">All merchants</span></div></div>
+      <table>
+        <thead><tr><th style="width:24%">Merchant</th><th>Period</th><th class="num">Findings</th><th class="num">Sent</th><th class="num">Opened by client</th><th class="num"></th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Homespice Decor</td><td>July 2026</td><td class="num">3</td><td class="num">3 Aug</td><td class="num">4 Aug</td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+          <tr><td class="strong">Vro Grooming</td><td>July 2026</td><td class="num">2</td><td class="num">3 Aug</td><td class="num">3 Aug</td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+          <tr><td class="strong">Nordwell Supply</td><td>July 2026</td><td class="num">4</td><td class="num">4 Aug</td><td class="num">7 Aug</td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+          <tr><td class="strong">Aster &amp; Co</td><td>July 2026</td><td class="num">1</td><td class="num">3 Aug</td><td class="num">3 Aug</td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BILLING ============ -->
+<div class="page" id="billing">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Billing</h1><span class="sub">Quarterly · collected via Xflow</span></div>
+    <div class="hactions"><button class="btn ghost">Export for CA</button><button class="btn">Create invoice</button></div>
+  </header>
+  <div class="pad">
+    <div class="strip">
+      <div class="stat"><div class="k">Monthly recurring</div><div class="v">$5,845</div><div class="d">9 merchants</div></div>
+      <div class="stat"><div class="k">Q3 invoiced</div><div class="v">$17,535</div><div class="d">7 invoices</div></div>
+      <div class="stat"><div class="k">Q3 collected</div><div class="v">$14,241</div><div class="d">81%</div></div>
+      <div class="stat"><div class="k">Outstanding</div><div class="v warn">$3,294</div><div class="d">2 invoices, 1 overdue</div></div>
+    </div>
+
+    <div class="cols">
+      <div>
+        <div class="panel">
+          <div class="phead"><h2>Invoices</h2>
+            <div class="filters"><input class="f" placeholder="Search…"><select class="sel"><option>All statuses</option><option>Draft</option><option>Sent</option><option>Paid</option><option>Overdue</option></select><select class="sel"><option>Q3 2026</option><option>Q2 2026</option><option>All time</option></select></div>
+          </div>
+          <table>
+            <thead><tr><th>Invoice</th><th style="width:20%">Merchant</th><th>Period</th><th class="num">Amount</th><th class="num">Due</th><th>Status</th><th class="num"></th></tr></thead>
+            <tbody>
+              <tr><td class="strong">GL-2026-018</td><td>Homespice Decor</td><td>Q3 · Jul–Sep</td><td class="num">$2,847</td><td class="num">8 Jul</td><td><span class="tag ok">Paid</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+              <tr><td class="strong">GL-2026-017</td><td>Nordwell Supply</td><td>Q3 · Jul–Sep</td><td class="num">$3,621</td><td class="num">8 Jul</td><td><span class="tag ok">Paid</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+              <tr><td class="strong">GL-2026-016</td><td>Vro Grooming</td><td>Q3 · Jul–Sep</td><td class="num">$1,647</td><td class="num">8 Jul</td><td><span class="tag ok">Paid</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+              <tr><td class="strong">GL-2026-015</td><td>Kesar Home</td><td>Q3 · Jul–Sep</td><td class="num">$1,647</td><td class="num">8 Jul</td><td><span class="tag ok">Paid</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+              <tr><td class="strong">GL-2026-014</td><td>Bellweather Labs</td><td>Q3 · Aug–Oct</td><td class="num">$1,647</td><td class="num">28 Aug</td><td><span class="tag bad">Overdue 14d</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+              <tr><td class="strong">GL-2026-019</td><td>Aster &amp; Co</td><td>Q3 · Sep–Nov</td><td class="num">$1,647</td><td class="num">8 Sep</td><td><span class="tag warn">Sent</span></td><td class="num"><button class="btn sm ghost">PDF</button></td></tr>
+              <tr><td class="strong">GL-2026-020</td><td>Fernhill Goods</td><td>Onboarding + Q4</td><td class="num">$2,247</td><td class="num">—</td><td><span class="tag n">Draft</span></td><td class="num"><button class="btn sm">Send</button></td></tr>
+            </tbody>
+          </table>
+          <div class="foot">Payments arrive by bank transfer through Xflow and are marked here on receipt. eFIRA is issued per payment.</div>
+        </div>
+
+        <div class="panel">
+          <div class="phead"><h2>Payments received</h2><span class="meta">Q3 2026</span></div>
+          <table>
+            <thead><tr><th>Date</th><th style="width:22%">Merchant</th><th>Invoice</th><th class="num">Gross</th><th class="num">Fee</th><th class="num">Net INR</th><th>eFIRA</th></tr></thead>
+            <tbody>
+              <tr><td>2 Jul</td><td>Homespice Decor</td><td>GL-2026-018</td><td class="num">$2,847</td><td class="num">$17</td><td class="num">₹2,41,995</td><td><span class="tag ok">Issued</span></td></tr>
+              <tr><td>4 Jul</td><td>Nordwell Supply</td><td>GL-2026-017</td><td class="num">$3,621</td><td class="num">$22</td><td class="num">₹3,07,785</td><td><span class="tag ok">Issued</span></td></tr>
+              <tr><td>7 Jul</td><td>Vro Grooming</td><td>GL-2026-016</td><td class="num">$1,647</td><td class="num">$12</td><td class="num">₹1,39,838</td><td><span class="tag ok">Issued</span></td></tr>
+              <tr><td>9 Jul</td><td>Kesar Home</td><td>GL-2026-015</td><td class="num">$1,647</td><td class="num">$12</td><td class="num">₹1,39,838</td><td><span class="tag ok">Issued</span></td></tr>
+            </tbody>
+          </table>
+          <div class="foot">Quarterly billing keeps Xflow's flat fee near 0.6% of the invoice.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="phead"><h2>Invoice preview</h2><button class="btn sm">Download PDF</button></div>
+          <div style="padding:16px">
+            <div class="inv">
+              <div class="invtop">
+                <div><div class="b">Grossline</div><div style="font-size:12.5px;color:var(--slate);margin-top:5px">Ahmedabad, Gujarat, India<br>GSTIN 24XXXXX1234X1ZX</div></div>
+                <div class="r"><b>GL-2026-019</b>Issued 1 Sep 2026<br>Due 8 Sep 2026</div>
+              </div>
+              <div class="invmeta">
+                <div><b>Billed to</b>Aster &amp; Co Ltd<br>hello@asterandco.com<br>London, United Kingdom</div>
+                <div><b>Period</b>Sep – Nov 2026<br>Quarterly, in advance</div>
+              </div>
+              <div style="padding:13px 0;border-bottom:1px solid var(--line)">
+                <div class="invtot"><span>Advisory plan — 3 months at $549</span><span>$1,647.00</span></div>
+              </div>
+              <div class="invtot"><span>Subtotal</span><span>$1,647.00</span></div>
+              <div class="invtot"><span>GST — export of services, zero-rated under LUT</span><span>$0.00</span></div>
+              <div class="invtot big"><span>Total due</span><span>$1,647.00</span></div>
+              <div class="note">Supply of services exported under Letter of Undertaking without payment of IGST. Payable by bank transfer to the receiving details below; local ACH and SEPA accepted.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="phead"><h2>Revenue by plan</h2></div>
+          <div class="mini"><span>Growth ×2</span><span class="v">$2,156</span></div>
+          <div class="mini"><span>Advisory ×5</span><span class="v">$2,745</span></div>
+          <div class="mini"><span>Design partner ×1</span><span class="v">$300</span></div>
+          <div class="mini"><span>Extra stores ×4</span><span class="v">$516</span></div>
+          <div class="mini big" style="background:#FCFBF6"><span><b>Total</b></span><span class="v">$5,845</span></div>
+        </div>
+
+        <div class="panel">
+          <div class="phead"><h2>Upcoming</h2></div>
+          <div class="li"><span><b>1 Oct</b> — Homespice Q4</span><span class="r">$2,847</span></div>
+          <div class="li"><span><b>1 Oct</b> — Nordwell Q4</span><span class="r">$3,621</span></div>
+          <div class="li"><span><b>1 Oct</b> — Vro Q4</span><span class="r">$1,647</span></div>
+          <div class="li"><span><b>1 Oct</b> — Marigold, full rate</span><span class="r">$1,647</span></div>
+          <div class="foot">Marigold's design-partner rate ends 1 Oct. Price conversation due before 20 Sep.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ISSUES ============ -->
+<div class="page" id="issues">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Issues</h1><span class="sub">Everything wrong across every merchant, in one place</span></div>
+    <div class="hactions"><button class="btn ghost">Re-run all checks</button></div>
+  </header>
+  <div class="pad">
+    <div class="strip">
+      <div class="stat"><div class="k">Blocking a report</div><div class="v warn">1</div><div class="d">Nordwell — Meta</div></div>
+      <div class="stat"><div class="k">Affecting accuracy</div><div class="v">2</div><div class="d">stale costs, variance</div></div>
+      <div class="stat"><div class="k">Commercial</div><div class="v">1</div><div class="d">overdue invoice</div></div>
+      <div class="stat"><div class="k">Onboarding stuck</div><div class="v">1</div><div class="d">Saltwater — Google</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Open issues</h2>
+        <div class="filters">
+          <input class="f" id="isearch" placeholder="Search merchant, type, message…">
+          <select class="sel" id="isev"><option>All severities</option><option>Blocking</option><option>Accuracy</option><option>Commercial</option><option>Onboarding</option></select>
+          <select class="sel" id="itype"><option>All types</option><option>Connection</option><option>Sync</option><option>Data</option><option>Billing</option><option>Findings</option></select>
+        </div>
+      </div>
+      <div id="ilist">
+        <div class="issue" data-sev="Blocking" data-type="Connection" data-text="nordwell meta token expired connection">
+          <span class="sdot bad" style="margin-top:6px"></span>
+          <div class="body"><h3>Nordwell Supply — Meta access token expired</h3>
+            <p>Expired 2 Sep 04:02. Four sync attempts failed with OAuthException 190. No Meta spend since 1 Sep. The August report is blocked.</p>
+            <div class="m"><span class="tag bad">Blocking</span><span class="tag n">Connection</span><span class="tag n">Meta</span><span class="tag n">2 days</span></div></div>
+          <div class="act"><button class="btn sm ghost">View log</button><button class="btn sm">Reconnect</button></div></div>
+
+        <div class="issue" data-sev="Accuracy" data-type="Data" data-text="kesar home cogs cost data stale margin">
+          <span class="sdot warn" style="margin-top:6px"></span>
+          <div class="body"><h3>Kesar Home — cost data 176 days old</h3>
+            <p>Last uploaded 12 Mar covering 89 SKUs. 23 SKUs added since have no cost, so their margin reads as 100%.</p>
+            <div class="m"><span class="tag warn">Accuracy</span><span class="tag n">Data</span><span class="tag n">23 SKUs</span></div></div>
+          <div class="act"><button class="btn sm ghost">Email template</button><button class="btn sm ghost">Upload CSV</button></div></div>
+
+        <div class="issue" data-sev="Accuracy" data-type="Sync" data-text="homespice meta variance reconciliation restatement">
+          <span class="sdot warn" style="margin-top:6px"></span>
+          <div class="body"><h3>Homespice Decor — Meta spend variance 1.4%</h3>
+            <p>Our August total is $51,400, Ads Manager shows $52,120. Within the 28-day restatement window and expected. Recorded, no action needed.</p>
+            <div class="m"><span class="tag warn">Accuracy</span><span class="tag n">Sync</span><span class="tag n">Explained</span></div></div>
+          <div class="act"><button class="btn sm ghost">Dismiss</button></div></div>
+
+        <div class="issue" data-sev="Commercial" data-type="Billing" data-text="bellweather labs invoice overdue payment unpaid">
+          <span class="sdot warn" style="margin-top:6px"></span>
+          <div class="body"><h3>Bellweather Labs — Q3 invoice 14 days overdue</h3>
+            <p>GL-2026-014 for $1,647 sent 21 Aug, due 28 Aug. One reminder, no reply. Service continues; next report due 5 Sep.</p>
+            <div class="m"><span class="tag warn">Commercial</span><span class="tag n">Billing</span><span class="tag n">$1,647</span></div></div>
+          <div class="act"><button class="btn sm ghost">Open invoice</button><button class="btn sm">Send reminder</button></div></div>
+
+        <div class="issue" data-sev="Onboarding" data-type="Connection" data-text="saltwater studio google ads not linked mcc onboarding">
+          <span class="sdot warn" style="margin-top:6px"></span>
+          <div class="body"><h3>Saltwater Studio — Google Ads not linked to your MCC</h3>
+            <p>Shopify and Meta connected 1 Sep. The Google link request is still pending acceptance on the client side, so Google backfill can't start.</p>
+            <div class="m"><span class="tag warn">Onboarding</span><span class="tag n">Connection</span><span class="tag n">3 days</span></div></div>
+          <div class="act"><button class="btn sm ghost">Resend request</button></div></div>
+
+        <div class="issue" data-sev="Onboarding" data-type="Sync" data-text="fernhill goods backfill incomplete historical">
+          <span class="sdot warn" style="margin-top:6px"></span>
+          <div class="body"><h3>Fernhill Goods — backfill 60% complete</h3>
+            <p>8 of 13 months imported. Shopify bulk operation running, about 4 hours remaining. First report can't be produced until it finishes.</p>
+            <div class="m"><span class="tag n">Onboarding</span><span class="tag n">Sync</span><span class="tag n">In progress</span></div></div>
+          <div class="act"><button class="btn sm ghost">View progress</button></div></div>
+      </div>
+      <div class="foot" id="icount">Showing 6 open issues. Issues are derived, not written — they clear themselves when the condition goes away. Resolved history kept 90 days.</div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Recently resolved</h2><span class="meta">Last 14 days</span></div>
+      <table>
+        <thead><tr><th style="width:24%">Merchant</th><th>Issue</th><th>Type</th><th class="num">Opened</th><th class="num">Resolved</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Vro Grooming</td><td>Shopify rate limit during backfill</td><td><span class="tag n">Sync</span></td><td class="num">22 Aug</td><td class="num">22 Aug</td></tr>
+          <tr><td class="strong">Aster &amp; Co</td><td>Currency mismatch — GBP store, USD ad account</td><td><span class="tag n">Data</span></td><td class="num">19 Aug</td><td class="num">20 Aug</td></tr>
+          <tr><td class="strong">Marigold Tea Co</td><td>Google developer token quota exceeded</td><td><span class="tag n">Connection</span></td><td class="num">14 Aug</td><td class="num">15 Aug</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SUPPORT ============ -->
+<div class="page" id="support">
+  <header>
+    <div style="display:flex;align-items:baseline"><h1>Support</h1><span class="sub">3 open · from the site form and the in-app widget</span></div>
+    <div class="hactions"><select class="sel"><option>All types</option><option>Bug</option><option>Question</option><option>Feedback</option><option>Feature</option></select><select class="sel"><option>Open</option><option>All</option><option>Closed</option></select></div>
+  </header>
+  <div class="pad">
+    <div class="cols">
+      <div class="panel">
+        <div class="phead"><h2>Tickets</h2><span class="meta">Newest first</span></div>
+        <div class="ticket"><div class="tt">
+          <div><h3>PDF report breaks across pages mid-table</h3>
+            <p>The channel table in the August PDF splits between page 2 and 3 with the header row orphaned. Looks unprofessional when I forward it to my co-founder.</p>
+            <div class="m"><span class="tag bad">Bug</span><span class="tag n">Homespice Decor</span><span class="tag n">In-app widget</span><span class="tag n">2 days</span></div></div>
+          <button class="btn sm ghost">Reply</button></div></div>
+        <div class="ticket"><div class="tt">
+          <div><h3>Why is my return on ads different from my old tool?</h3>
+            <p>Our previous dashboard reported 3.8× for August, yours says 3.24×. Which one is right and what's the difference in how it's worked out?</p>
+            <div class="m"><span class="tag warn">Question</span><span class="tag n">Vro Grooming</span><span class="tag n">Email</span><span class="tag n">3 days</span></div></div>
+          <button class="btn sm ghost">Reply</button></div></div>
+        <div class="ticket"><div class="tt">
+          <div><h3>Cost data should support effective-from dates</h3>
+            <p>Our supplier prices changed in June. When I upload new costs it recalculates old months too, so last quarter's margin no longer matches the report you sent me.</p>
+            <div class="m"><span class="tag ok">Feature</span><span class="tag n">Aster &amp; Co</span><span class="tag n">In-app widget</span><span class="tag n">5 days</span></div></div>
+          <button class="btn sm ghost">Reply</button></div></div>
+        <div class="ticket" style="opacity:.6"><div class="tt">
+          <div><h3>Can the weekly summary come on Mondays instead of Fridays?</h3>
+            <p>Friday means it gets read on Monday anyway, by which point it's stale.</p>
+            <div class="m"><span class="tag n">Closed</span><span class="tag n">Nordwell Supply</span><span class="tag n">Resolved 28 Aug</span></div></div></div></div>
+        <div class="foot">Tickets from the marketing site form and the in-app widget land in the same place.</div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="phead"><h2>By type</h2><span class="meta">Last 90 days</span></div>
+          <div class="mini"><span>Bug</span><span class="v">4</span></div>
+          <div class="mini"><span>Question</span><span class="v">9</span></div>
+          <div class="mini"><span>Feature request</span><span class="v">6</span></div>
+          <div class="mini"><span>Feedback</span><span class="v">3</span></div>
+        </div>
+        <div class="panel">
+          <div class="phead"><h2>Worth noticing</h2></div>
+          <div style="padding:16px 19px;font-size:14px;color:var(--slate);line-height:1.7">
+            Three merchants have now asked why your return-on-ads figure differs from their previous tool. That's a definitions question, not a bug — consider adding a short comparison note to the definitions page and linking it from every report.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SETTINGS ============ -->
+<div class="page" id="settings">
+  <header><h1>Settings</h1><div class="hactions"><button class="btn">Save changes</button></div></header>
+  <div class="pad">
+    <div class="panel">
+      <div class="phead"><h2>Metrics &amp; rules</h2></div>
+      <div class="srow"><div><h3>Metric definitions</h3><div class="d">The single source of truth for every calculation. Rendered live from the committed file, so it can never drift.</div></div>
+        <div class="c">Last edited <b>18 Aug 2026</b> · 50 metrics · <span class="link">Open definitions</span></div></div>
+      <div class="srow"><div><h3>Default thresholds</h3><div class="d">Starting values for new merchants. Each merchant's own thresholds are calculated from their 90 days at onboarding.</div></div>
+        <div class="c">Break-even margin of safety <b>×1.15</b><br>CAC ceiling <b>+20% month on month</b><br>Claim gap alert <b>above 30%</b><br>Discount leakage <b>+3 points</b></div></div>
+      <div class="srow"><div><h3>Findings rules</h3><div class="d">Which checks run each month, and the minimum money involved before a finding surfaces.</div></div>
+        <div class="c">11 rules active · <span class="link">Manage rules</span><br>Minimum impact <b>$500</b> · maximum findings <b>3</b> · growth findings <b>max 1</b></div></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Reports</h2></div>
+      <div class="srow"><div><h3>Schedule</h3><div class="d">When drafts are generated and when reports go out.</div></div>
+        <div class="c">Drafts <b>2nd of the month</b> · send deadline <b>5th</b><br>Weekly summary <b>Monday 08:00 IST</b></div></div>
+      <div class="srow"><div><h3>Template</h3><div class="d">Section order and standing footer. Applies to the PDF and the merchant view.</div></div>
+        <div class="c">7 sections · <span class="link">Edit template</span><br>Footer carries <b>currency, timezone, last reconciliation</b></div></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h2>Business</h2></div>
+      <div class="srow"><div><h3>Invoicing</h3><div class="d">Printed on every invoice PDF.</div></div>
+        <div class="c">Grossline · Ahmedabad, Gujarat<br>GSTIN <b>24XXXXX1234X1ZX</b> · LUT filed for <b>FY 2026–27</b><br>Collected via <b>Xflow</b>, quarterly in advance</div></div>
+      <div class="srow"><div><h3>Plans</h3><div class="d">Prices offered to new merchants. Existing merchants keep the price they signed at.</div></div>
+        <div class="c">Advisory <b>$549</b> · Growth <b>$949</b> · Partner <b>from $1,800</b><br>Extra store <b>$129</b> · onboarding <b>$600</b></div></div>
+      <div class="srow"><div><h3>Alerts to you</h3><div class="d">What reaches your phone, and when.</div></div>
+        <div class="c">Sync failure after <b>36 hours</b> · connection broken <b>immediately</b><br>Invoice overdue <b>7 days</b> · new ticket <b>immediately</b></div></div>
+      <div class="srow"><div><h3>Admin account</h3><div class="d">One admin user. No signup, no roles, no email password reset.</div></div>
+        <div class="c">rahul@getgrossline.com · two-factor <b>enabled</b> · <span class="link">Change password</span></div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+var side=document.getElementById('side'), scrim=document.getElementById('scrim');
+function closeNav(){side.classList.remove('open');scrim.classList.remove('on')}
+document.getElementById('mobnav').addEventListener('click',function(){
+  var o=side.classList.toggle('open');scrim.classList.toggle('on',o);
+});
+scrim.addEventListener('click',closeNav);
+window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNav()});
+
+document.querySelectorAll('.navitem').forEach(function(n){
+  n.addEventListener('click',function(){
+    document.querySelectorAll('.navitem').forEach(function(x){x.classList.remove('on')});
+    n.classList.add('on');
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+    document.getElementById(n.dataset.go).classList.add('on');
+    closeNav();window.scrollTo(0,0);
+  });
+});
+
+function filterIssues(){
+  var q=(document.getElementById('isearch').value||'').toLowerCase();
+  var sev=document.getElementById('isev').value, typ=document.getElementById('itype').value, shown=0;
+  document.querySelectorAll('#ilist .issue').forEach(function(r){
+    var okQ=!q||r.textContent.toLowerCase().indexOf(q)>-1||r.dataset.text.indexOf(q)>-1;
+    var okS=sev.indexOf('All')===0||r.dataset.sev===sev;
+    var okT=typ.indexOf('All')===0||r.dataset.type===typ;
+    var on=okQ&&okS&&okT;r.classList.toggle('hide',!on);if(on)shown++;
+  });
+  document.getElementById('icount').textContent='Showing '+shown+' of 6 open issues. Issues are derived, not written — they clear themselves when the condition goes away.';
+}
+['isearch','isev','itype'].forEach(function(id){
+  var el=document.getElementById(id);
+  el.addEventListener('input',filterIssues);el.addEventListener('change',filterIssues);
+});
+
+function filterMerchants(){
+  var q=(document.getElementById('msearch').value||'').toLowerCase();
+  var pl=document.getElementById('mplan').value, st=document.getElementById('mstatus').value;
+  document.querySelectorAll('#mtable tbody tr').forEach(function(r){
+    var okQ=!q||r.textContent.toLowerCase().indexOf(q)>-1;
+    var okP=pl.indexOf('All')===0||r.dataset.plan===pl;
+    var okS=st.indexOf('All')===0||r.dataset.status===st;
+    r.classList.toggle('hide',!(okQ&&okP&&okS));
+  });
+}
+['msearch','mplan','mstatus'].forEach(function(id){
+  var el=document.getElementById(id);
+  el.addEventListener('input',filterMerchants);el.addEventListener('change',filterMerchants);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grossline — Know what your store actually made</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0F6F5C;
+  --green-deep:#0A4A3E;
+  --green-dark:#072E27;
+  --green-soft:#E7F0EC;
+  --cream:#F8F5ED;
+  --cream-2:#F1EDE1;
+  --ink:#131A18;
+  --slate:#5E6B66;
+  --line:#E2DCCC;
+  --line-dark:#1B3B34;
+  --rust:#B4472B;
+  --rust-soft:#FAF0EC;
+  --gold:#C08A2E;
+  --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--cream);color:var(--ink);
+     font-feature-settings:"tnum" 1;line-height:1.5}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400;letter-spacing:-.01em}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+     padding:13px 24px;border-radius:8px;font-size:15px;font-weight:500;
+     background:var(--green);color:#fff;border:1px solid var(--green);transition:.15s}
+.btn:hover{background:var(--green-deep);border-color:var(--green-deep)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--cream-2);border-color:#D3CBB5}
+.btn.light{background:#fff;color:var(--green-dark);border-color:#fff}
+.btn.outline-light{background:transparent;color:#fff;border-color:rgba(255,255,255,.32)}
+.btn.sm{padding:9px 17px;font-size:14px}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:20;background:rgba(248,245,237,.9);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+.brand{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:600;letter-spacing:-.02em}
+.mark{width:30px;height:30px;border-radius:8px;flex:none}
+.navlinks{display:flex;align-items:center;gap:30px;font-size:14.5px;color:var(--slate)}
+.navlinks a:hover{color:var(--ink)}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 64px}
+.hero .wrap{display:grid;grid-template-columns:1fr 470px;gap:64px;align-items:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--green);
+        background:var(--green-soft);padding:6px 13px;border-radius:100px;font-weight:500;margin-bottom:24px}
+h1{font-size:60px;line-height:1.04;letter-spacing:-.02em;font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+h1 em{font-style:italic;color:var(--green)}
+.sub{margin-top:24px;font-size:18.5px;line-height:1.62;color:var(--slate);max-width:530px}
+.herobtns{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap}
+.microcopy{margin-top:20px;font-size:14px;color:var(--slate)}
+.microcopy b{color:var(--ink);font-weight:500}
+
+/* ---------- claim gap proof ---------- */
+.proof{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+       box-shadow:0 24px 60px -30px rgba(7,46,39,.28)}
+.proof-head{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;
+            align-items:center;font-size:12.5px;color:var(--slate)}
+.proof-head b{color:var(--ink);font-weight:500;font-size:13.5px}
+.proof-body{padding:8px 22px 22px}
+.claim{display:flex;justify-content:space-between;align-items:flex-end;padding:20px 0;border-bottom:1px solid var(--line)}
+.claim:last-of-type{border-bottom:0}
+.claim .who{font-size:13px;color:var(--slate);max-width:190px}
+.claim .who b{display:block;color:var(--ink);font-weight:600;font-size:15px;margin-bottom:4px}
+.claim .num{text-align:right}
+.claim .big{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.claim .small{font-size:12.5px;color:var(--slate);margin-top:5px}
+.verdict{margin:0 -22px -22px;padding:18px 22px;background:var(--rust-soft);border-top:1px solid #F0DCD4;
+         display:flex;gap:12px;align-items:flex-start}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--rust);margin-top:7px;flex:none}
+.verdict p{font-size:14px;line-height:1.55;color:#6B3A2A}
+.verdict b{font-weight:600;color:var(--rust)}
+
+/* ---------- strip ---------- */
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--cream-2)}
+.strip .wrap{display:flex;gap:0;padding:0}
+.strip .cell{flex:1;padding:22px 28px;border-right:1px solid var(--line);font-size:14px;color:var(--slate)}
+.strip .cell:last-child{border-right:0}
+.strip .cell b{display:block;color:var(--ink);font-weight:600;font-size:15px;margin-bottom:3px}
+
+/* ---------- sections ---------- */
+section{padding:96px 0}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:16px}
+h2{font-size:42px;line-height:1.12;letter-spacing:-.02em;max-width:700px;
+   font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+h2 em{font-style:italic;color:var(--green)}
+.lede{margin-top:18px;font-size:17.5px;line-height:1.65;color:var(--slate);max-width:640px}
+
+/* ---------- problem ---------- */
+.problem{background:var(--green-dark);color:#E8EFEC}
+.problem h2{color:#fff}
+.problem h2 em{color:#7FD3BC}
+.problem .lede{color:#9DB3AC}
+.problems{margin-top:52px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-dark);
+          border:1px solid var(--line-dark);border-radius:14px;overflow:hidden}
+.pcard{background:var(--green-dark);padding:32px 30px}
+.pcard .n{font-family:"Instrument Serif",Georgia,serif;font-size:34px;color:#4E8F7F;line-height:1}
+.pcard h3{margin-top:16px;font-size:19px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.pcard p{margin-top:11px;font-size:15px;line-height:1.65;color:#9DB3AC}
+
+/* ---------- what you get ---------- */
+.gets{margin-top:56px;border-top:1px solid var(--line)}
+.get{display:grid;grid-template-columns:56px 1fr 250px;gap:32px;padding:34px 0;border-bottom:1px solid var(--line);align-items:start}
+.get .idx{font-family:"Instrument Serif",Georgia,serif;font-size:30px;color:var(--green);line-height:1}
+.get h3{font-size:21px;font-weight:600;letter-spacing:-.015em}
+.get p{margin-top:9px;font-size:15.5px;line-height:1.65;color:var(--slate);max-width:520px}
+.get .figure{text-align:right}
+.get .figure .v{font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.get .figure .k{font-size:13px;color:var(--slate);margin-top:6px}
+.get .figure .v.good{color:var(--green)}
+.get .figure .v.bad{color:var(--rust)}
+
+/* ---------- report showcase ---------- */
+.showcase{background:var(--cream-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.showcase .wrap{display:grid;grid-template-columns:440px 1fr;gap:64px;align-items:center}
+.checks{margin-top:30px;display:flex;flex-direction:column;gap:14px}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:15.5px;line-height:1.6}
+.tick{width:20px;height:20px;border-radius:50%;background:var(--green-soft);color:var(--green);flex:none;
+      display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:2px}
+
+/* ---------- image placeholder ---------- */
+.ph{border:1.5px dashed #C6BCA2;border-radius:14px;background:
+     repeating-linear-gradient(45deg,#F1EDE1,#F1EDE1 10px,#EDE8D9 10px,#EDE8D9 20px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    padding:34px 26px;color:#8A7F63}
+.ph .lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green)}
+.ph .name{margin-top:9px;font-size:15px;font-weight:600;color:#6E6448}
+.ph .desc{margin-top:7px;font-size:13px;line-height:1.5;max-width:320px}
+
+/* ---------- real image ---------- */
+.shot{border-radius:16px;overflow:hidden;background:var(--cream-2);
+      box-shadow:0 30px 70px -34px rgba(7,46,39,.45)}
+.shot img{display:block;width:100%;height:auto}
+
+/* ---------- steps ---------- */
+.steps{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:30px 28px}
+.step .badge{width:34px;height:34px;border-radius:10px;background:var(--green);color:#fff;
+             display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+.step h3{margin-top:18px;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.step p{margin-top:10px;font-size:15px;line-height:1.65;color:var(--slate)}
+.step .time{margin-top:16px;font-size:13px;color:var(--green);font-weight:500}
+
+/* ---------- different ---------- */
+.diffs{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.diff{background:#fff;padding:30px 28px}
+.diff h3{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.diff p{margin-top:10px;font-size:15px;line-height:1.65;color:var(--slate)}
+
+/* ---------- pricing ---------- */
+.pricing{background:var(--green-dark);color:#E8EFEC}
+.pricing h2{color:#fff}
+.pricing h2 em{color:#7FD3BC}
+.pricing .lede{color:#9DB3AC}
+.tiers{margin-top:54px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.tier{background:#0D3A31;border:1px solid var(--line-dark);border-radius:16px;padding:32px 28px;display:flex;flex-direction:column}
+.tier.feature{background:#fff;color:var(--ink);border-color:#fff;position:relative}
+.tier .tag{position:absolute;top:-12px;left:28px;background:var(--gold);color:#3A2705;font-size:11.5px;
+           font-weight:700;padding:5px 12px;border-radius:100px;letter-spacing:.03em}
+.tier .name{font-size:19px;font-weight:600}
+.tier .for{margin-top:6px;font-size:14px;color:#9DB3AC}
+.tier.feature .for{color:var(--slate)}
+.tier .price{margin-top:26px;font-family:"Instrument Serif",Georgia,serif;font-size:46px;line-height:1;letter-spacing:-.02em}
+.tier .per{font-family:Inter,sans-serif;font-size:15px;color:#9DB3AC;letter-spacing:0}
+.tier.feature .per{color:var(--slate)}
+.tier ul{margin-top:26px;list-style:none;font-size:15px;line-height:1.5;flex:1}
+.tier li{padding:11px 0;border-top:1px solid var(--line-dark);color:#B9CCC6;display:flex;gap:10px}
+.tier.feature li{border-top-color:var(--line);color:var(--slate)}
+.tier li:before{content:"—";color:#4E8F7F;flex:none}
+.tier.feature li:before{color:var(--green)}
+.tier li b{color:#fff;font-weight:500}
+.tier.feature li b{color:var(--ink)}
+.tier .btn{margin-top:26px;width:100%}
+.pricenote{margin-top:28px;font-size:14.5px;color:#9DB3AC;line-height:1.7}
+.pricenote b{color:#fff;font-weight:500}
+
+/* ---------- analyst ---------- */
+.analyst .wrap{display:grid;grid-template-columns:340px 1fr;gap:56px;align-items:center}
+.quote{font-family:"Instrument Serif",Georgia,serif;font-size:30px;line-height:1.35;letter-spacing:-.01em}
+.byline{margin-top:24px;font-size:15px;color:var(--slate)}
+.byline b{display:block;color:var(--ink);font-weight:600;font-size:16px;margin-bottom:3px}
+
+/* ---------- faq ---------- */
+.faqs{margin-top:48px;border-top:1px solid var(--line)}
+.faq{padding:26px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:340px 1fr;gap:40px}
+.faq h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.faq p{font-size:15.5px;line-height:1.68;color:var(--slate)}
+
+/* ---------- close ---------- */
+.close{background:var(--green);color:#fff}
+.close .wrap{padding:88px 28px;text-align:center;max-width:780px}
+.close h2{color:#fff;font-size:46px;margin:0 auto}
+.close .lede{color:#C6E4DB;margin:20px auto 0}
+.close .herobtns{justify-content:center;margin-top:36px}
+.close .microcopy{color:#A9D5C7}
+
+footer{background:var(--green-dark);color:#8FA9A1;padding:56px 0 44px;font-size:14px}
+footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+footer .brand{color:#fff;margin-bottom:14px}
+footer p{line-height:1.7;max-width:280px}
+footer h4{color:#fff;font-size:14px;font-weight:600;margin-bottom:14px}
+footer li{list-style:none;padding:6px 0}
+footer a:hover{color:#fff}
+.legal{border-top:1px solid var(--line-dark);margin-top:44px;padding-top:24px;font-size:13px;
+       display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .hero .wrap{grid-template-columns:1fr;gap:48px}
+  .proof{max-width:520px}
+  h1{font-size:50px}
+  .showcase .wrap,.analyst .wrap{grid-template-columns:1fr;gap:40px}
+  .problems,.steps,.tiers{grid-template-columns:1fr}
+  .strip .wrap{flex-direction:column}
+  .strip .cell{border-right:0;border-bottom:1px solid var(--line)}
+  .strip .cell:last-child{border-bottom:0}
+  .get{grid-template-columns:44px 1fr;gap:22px}
+  .get .figure{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:10px;margin-top:14px}
+  .get .figure .k{margin-top:0}
+  .diffs{grid-template-columns:1fr}
+  .faq{grid-template-columns:1fr;gap:10px}
+  footer .wrap{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  .wrap{padding:0 20px}
+  .navlinks a:not(.btn){display:none}
+  section{padding:64px 0}
+  .hero{padding:48px 0 44px}
+  h1{font-size:38px;line-height:1.1}
+  .sub{font-size:16.5px}
+  h2{font-size:31px}
+  .close h2{font-size:32px}
+  .quote{font-size:23px}
+  .herobtns .btn{flex:1;min-width:100%}
+  .claim .big{font-size:28px}
+  footer .wrap{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="14" fill="#0F6F5C"/>
+        <path d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z" fill="#fff"/>
+      </svg>
+      Grossline
+    </div>
+    <div class="navlinks">
+      <a href="#problem">Why it exists</a>
+      <a href="#report">The report</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a class="btn sm" href="#start">Get a free report</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker">For Shopify brands spending on ads</span>
+      <h1>Meta says you made 412&nbsp;sales.<br>Your store recorded <em>247</em>.</h1>
+      <p class="sub">Grossline reads your Shopify store and your ad accounts together, works out what you actually kept after every cost, and sends you a short monthly report with two or three things worth changing. Written by a person, not a dashboard.</p>
+      <div class="herobtns">
+        <a class="btn" href="#start">Get your first report free</a>
+        <a class="btn ghost" href="#report">See a sample report</a>
+      </div>
+      <p class="microcopy"><b>No commitment.</b> Read-only access. Takes about 15 minutes to set up.</p>
+    </div>
+
+    <div class="proof">
+      <div class="proof-head"><b>One store, one month</b><span>What Meta claimed vs what happened</span></div>
+      <div class="proof-body">
+        <div class="claim">
+          <div class="who"><b>Meta says</b>Sales it takes credit for</div>
+          <div class="num"><div class="big">412</div><div class="small">$128,400 claimed</div></div>
+        </div>
+        <div class="claim">
+          <div class="who"><b>The store says</b>Orders that actually came from Meta</div>
+          <div class="num"><div class="big">247</div><div class="small">$71,900 recorded</div></div>
+        </div>
+        <div class="verdict">
+          <span class="dot"></span>
+          <p><b>A 40% gap.</b> Nobody had noticed. It changed how they set their ad budget the following month — and their profit went up without spending more.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="strip">
+  <div class="wrap">
+    <div class="cell"><b>We only read. Never write.</b>Nothing is ever changed in your store or your ad accounts.</div>
+    <div class="cell"><b>Flat price. Not a cut of your sales.</b>Your bill doesn't grow just because you had a good month.</div>
+    <div class="cell"><b>Every number double-checked.</b>Against Shopify and your ad platforms, before you see it.</div>
+  </div>
+</div>
+
+<!-- ================= PROBLEM ================= -->
+<section class="problem" id="problem">
+  <div class="wrap">
+    <div class="eyebrow" style="color:#7FD3BC">Why this exists</div>
+    <h2>Right now, nobody can tell you whether <em>last month worked</em>.</h2>
+    <p class="lede">You have the tools. You have the numbers. What you don't have is one place where they agree — and one person who has actually read them.</p>
+
+    <div class="problems">
+      <div class="pcard">
+        <div class="n">01</div>
+        <h3>Shopify shows sales, not profit</h3>
+        <p>It knows what you sold. It doesn't know what your products cost you, what you paid in ad spend, or what you gave away in discounts. So it can't tell you what you kept.</p>
+      </div>
+      <div class="pcard">
+        <div class="n">02</div>
+        <h3>Every ad platform marks its own homework</h3>
+        <p>Meta says it made you money. Google says the same. Add up what they each claim and you get more sales than you actually had. Both can't be right.</p>
+      </div>
+      <div class="pcard">
+        <div class="n">03</div>
+        <h3>Dashboards don't tell you what to do</h3>
+        <p>A screen full of charts is not an answer. Somebody still has to look at them, work out what changed, and decide what to do differently this month.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHAT YOU GET ================= -->
+<section id="what">
+  <div class="wrap">
+    <div class="eyebrow">What you get</div>
+    <h2>Four answers you can't get anywhere else today.</h2>
+    <p class="lede">No jargon required. If you can read a bank statement, you can read this report.</p>
+
+    <div class="gets">
+      <div class="get">
+        <div class="idx">01</div>
+        <div>
+          <h3>What you actually kept</h3>
+          <p>Your sales, minus what the products cost you, minus discounts, returns, shipping, payment fees and every rupee of ad spend. The number at the bottom of the page, not the one at the top.</p>
+        </div>
+        <div class="figure"><div class="v good">$41,280</div><div class="k">left after everything</div></div>
+      </div>
+
+      <div class="get">
+        <div class="idx">02</div>
+        <div>
+          <h3>Whether your ads paid for themselves</h3>
+          <p>One honest number: for every $1 you spent on ads, how many dollars came back. Not Meta's version. Not Google's version. The real one, using your total sales and your total ad spend.</p>
+        </div>
+        <div class="figure"><div class="v">3.24&times;</div><div class="k">you break even at 2.10&times;</div></div>
+      </div>
+
+      <div class="get">
+        <div class="idx">03</div>
+        <div>
+          <h3>What a new customer costs you</h3>
+          <p>And whether their first order covers that cost, or whether you're paying to acquire people who never come back. This is the difference between growing and just getting busier.</p>
+        </div>
+        <div class="figure"><div class="v">$38.40</div><div class="k">first order brings back $46.20</div></div>
+      </div>
+
+      <div class="get">
+        <div class="idx">04</div>
+        <div>
+          <h3>Where the numbers disagree</h3>
+          <p>What each ad platform claims it delivered, next to what your store actually recorded. When those two drift apart, that's the finding — and it usually means you're setting budgets on numbers that are too optimistic.</p>
+        </div>
+        <div class="figure"><div class="v bad">40%</div><div class="k">gap on Meta, last month</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REPORT SHOWCASE ================= -->
+<section class="showcase" id="report">
+  <div class="wrap">
+    <div class="shot">
+      <img src="report-cover.png" alt="The Grossline monthly report, printed">
+    </div>
+
+    <div>
+      <div class="eyebrow">The monthly report</div>
+      <h2>Three pages. Two or three things to change. <em>That's it.</em></h2>
+      <p class="lede">Same shape every month, so you always know where to look. It arrives in the first week, and we walk you through it on a call.</p>
+
+      <div class="checks">
+        <div class="check"><span class="tick">&#10003;</span><span><b>One sentence at the top</b> telling you whether the month worked.</span></div>
+        <div class="check"><span class="tick">&#10003;</span><span><b>Your money, laid out plainly</b> — from sales down to what you kept.</span></div>
+        <div class="check"><span class="tick">&#10003;</span><span><b>What changed</b> since last month, and since this time last year.</span></div>
+        <div class="check"><span class="tick">&#10003;</span><span><b>Two or three specific things to do</b> — with the amount of money at stake on each.</span></div>
+        <div class="check"><span class="tick">&#10003;</span><span><b>What we'll check next month</b> to see whether it worked. Then we tell you.</span></div>
+      </div>
+
+      <div class="herobtns" style="margin-top:32px">
+        <a class="btn" href="#start">See a real sample report</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Fifteen minutes to set up. Then it just arrives.</h2>
+    <p class="lede">You don't need a developer, and you don't need to learn anything. If you can install an app on your store, you're done.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="badge">1</div>
+        <h3>You connect your accounts</h3>
+        <p>One click to install on Shopify, then link your Google and Meta ad accounts. We ask for read-only access, which means we can look but never change anything.</p>
+        <div class="time">About 15 minutes, once</div>
+      </div>
+      <div class="step">
+        <div class="badge">2</div>
+        <h3>We check the numbers</h3>
+        <p>We pull the last 13 months and check our totals against what Shopify and your ad platforms show. If anything doesn't match, we find out why before you ever see it.</p>
+        <div class="time">A few days, first time only</div>
+      </div>
+      <div class="step">
+        <div class="badge">3</div>
+        <h3>You get a report and a call</h3>
+        <p>First week of every month. A short PDF, a summary you can paste into WhatsApp, and a call to talk through what to change. Then we check next month whether it worked.</p>
+        <div class="time">Every month</div>
+      </div>
+    </div>
+
+    <div class="ph" style="min-height:340px;margin-top:36px">
+      <div class="lbl">Image placeholder</div>
+      <div class="name">dashboard-screenshot.png</div>
+      <div class="desc">A clean screenshot of the merchant dashboard — the month's headline, the money breakdown and the findings.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIFFERENT ================= -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="eyebrow">What makes this different</div>
+    <h2>Most tools show you numbers. We tell you what to do about them.</h2>
+
+    <div class="diffs">
+      <div class="diff">
+        <h3>A person actually reads your account</h3>
+        <p>Not an alert. Not a chatbot. Someone looks at your store every month, writes the recommendations, and puts their name on them.</p>
+      </div>
+      <div class="diff">
+        <h3>We tell you when nothing needs changing</h3>
+        <p>Some months are fine. We say so instead of inventing three problems. That's why you'll believe us on the months we don't.</p>
+      </div>
+      <div class="diff">
+        <h3>Read-only, and no customer data</h3>
+        <p>We never write to your store or touch your campaigns. We don't collect your customers' names, emails or addresses at all — we don't need them.</p>
+      </div>
+      <div class="diff">
+        <h3>Every calculation is published</h3>
+        <p>What we mean by "net sales", "new customer" or "profit" is written down on one page you can read. It doesn't change quietly.</p>
+      </div>
+      <div class="diff">
+        <h3>Checked against your own tools first</h3>
+        <p>Before a report goes out, our totals are compared to what Shopify and your ad platforms show. Where there's a difference, we explain it in the report.</p>
+      </div>
+      <div class="diff">
+        <h3>Priced on ad spend, not your sales</h3>
+        <p>Most tools charge more as your revenue grows, whether or not you use them more. Ours doesn't. Grow all you like — the price stays put.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ANALYST ================= -->
+<section class="analyst">
+  <div class="wrap">
+    <div class="ph" style="min-height:380px">
+      <div class="lbl">Image placeholder</div>
+      <div class="name">analyst-portrait.jpg</div>
+      <div class="desc">A real photo of you. Natural light, plain background, looking at the camera.</div>
+    </div>
+    <div>
+      <div class="eyebrow">Who's behind it</div>
+      <p class="quote">"I built Shopify stores for years and watched good brands make bad decisions — not because they were careless, but because nobody ever put their numbers in one place and told them the truth."</p>
+      <p class="byline"><b>Rahul Thakor</b>Founder, Grossline. Shopify developer working with direct-to-consumer brands since 2019.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="eyebrow" style="color:#7FD3BC">Pricing</div>
+    <h2>Based on what you spend on ads. <em>Never on what you sell.</em></h2>
+    <p class="lede">Most tools in this category take a slice of your revenue, so your bill climbs as you grow. We charge a flat monthly fee, and it doesn't move because you had a good quarter.</p>
+
+    <div class="tiers">
+      <div class="tier">
+        <div class="name">Advisory</div>
+        <div class="for">Under $25k a month on ads</div>
+        <div class="price">$549<span class="per">/mo</span></div>
+        <ul>
+          <li><b>One store</b></li>
+          <li>Monthly report, <b>written by a person</b></li>
+          <li><b>30-minute call</b> every month</li>
+          <li>Alerts if something goes wrong mid-month</li>
+          <li>We track whether our advice worked</li>
+        </ul>
+        <a class="btn outline-light" href="#start">Start free</a>
+      </div>
+
+      <div class="tier feature">
+        <div class="tag">MOST CHOSEN</div>
+        <div class="name">Growth</div>
+        <div class="for">$25k–60k a month on ads</div>
+        <div class="price">$949<span class="per">/mo</span></div>
+        <ul>
+          <li><b>Up to three stores</b>, in one view</li>
+          <li>Monthly report, <b>written by a person</b></li>
+          <li><b>45 minutes, every two weeks</b></li>
+          <li>Weekly summary email</li>
+          <li>Alerts tuned to your business</li>
+          <li>Two questions a month, any time</li>
+        </ul>
+        <a class="btn" href="#start">Start free</a>
+      </div>
+
+      <div class="tier">
+        <div class="name">Partner</div>
+        <div class="for">$60k+ a month on ads</div>
+        <div class="price">$1,800<span class="per">+ /mo</span></div>
+        <ul>
+          <li><b>Unlimited stores</b></li>
+          <li><b>Weekly call</b></li>
+          <li>Full history, as far back as it goes</li>
+          <li>Ask us anything, any time</li>
+          <li>Quarterly deep dive</li>
+        </ul>
+        <a class="btn outline-light" href="#start">Talk to us</a>
+      </div>
+    </div>
+
+    <p class="pricenote">
+      <b>Your first report is free.</b> One month of data, one report, one call — then you decide.<br>
+      Setup is $600 one time, and covers connecting everything and pulling 13 months of history. Extra stores are $129 a month. Billed every three months, in advance. No lock-in.
+    </p>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">Common questions</div>
+    <h2>Things people ask before starting.</h2>
+
+    <div class="faqs">
+      <div class="faq">
+        <h3>Do I need to be technical to use this?</h3>
+        <p>No. Setup is installing an app and clicking through two permission screens. After that you receive a PDF and get on a call. There's nothing to learn and nothing to log into unless you want to.</p>
+      </div>
+      <div class="faq">
+        <h3>What access do you need, exactly?</h3>
+        <p>Read-only access to your Shopify store and your Google and Meta ad accounts. We can see orders, products and ad spend. We can't change anything, we can't spend your money, and we don't collect your customers' names or email addresses at all.</p>
+      </div>
+      <div class="faq">
+        <h3>I already pay for an analytics tool. Why this too?</h3>
+        <p>Those tools show you numbers. This one reads them and tells you what to change. Most people who switch tell us the old dashboard was open twice a month and never led to a decision.</p>
+      </div>
+      <div class="faq">
+        <h3>What if your numbers don't match what I see in Shopify?</h3>
+        <p>We check that before you do. Every report is compared against Shopify and your ad platforms first, and where there's a difference we explain it in the report itself. Some differences are normal — Meta revises recent days, for example — and we'd rather tell you than have you find it.</p>
+      </div>
+      <div class="faq">
+        <h3>How long until I get something useful?</h3>
+        <p>Your first report lands within about a week of connecting. It's free, and it covers a full month with a call to go through it.</p>
+      </div>
+      <div class="faq">
+        <h3>What if I want to stop?</h3>
+        <p>Tell us and we stop. Billing is quarterly, there's no contract, and we'll delete your data on request.</p>
+      </div>
+      <div class="faq">
+        <h3>Do you work with agencies?</h3>
+        <p>Yes. If you manage ads for several brands, we can report on all of them and you can put your own name on it. Get in touch and we'll work out the pricing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CLOSE ================= -->
+<div class="close" id="start">
+  <div class="wrap">
+    <h2>Give us one month. We'll show you something you didn't know.</h2>
+    <p class="lede">Connect your accounts, and we'll send you a full report on last month at no charge — with a call to walk through it. If it doesn't tell you anything useful, we'll say so and leave it there.</p>
+    <div class="herobtns">
+      <a class="btn light" href="#">Get your first report free</a>
+      <a class="btn outline-light" href="#">Book a 15-minute call</a>
+    </div>
+    <p class="microcopy">No card needed. No commitment. Read-only access, always.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0F6F5C"/>
+          <path d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z" fill="#fff"/>
+        </svg>
+        Grossline
+      </div>
+      <p>Monthly profit and ad-spend reporting for Shopify brands. Read by a person, not a dashboard.</p>
+    </div>
+    <div>
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#what">What you get</a></li>
+        <li><a href="#report">The report</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">How we calculate</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Data processing</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="legal">
+      <span>&copy; 2026 Grossline. Ahmedabad, India.</span>
+      <span>hello@getgrossline.com</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

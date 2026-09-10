@@ -1,0 +1,107 @@
+/* =========================================================
+   Grossline design tokens — SINGLE SOURCE OF TRUTH
+   Extracted verbatim from docs/design/*.html
+   Do not add a colour, size or radius that is not here.
+   If a screen needs a new value, add it here first and
+   record why in docs/decisions.md.
+   ========================================================= */
+
+:root{
+  /* ---- brand green ---- */
+  --gl-green:          #0F6F5C;  /* primary actions, positive numbers, active nav */
+  --gl-green-deep:     #0A4A3E;  /* button hover, report header band */
+  --gl-green-dark:     #0B3A31;  /* dark section backgrounds, merchant top bar */
+  --gl-green-darker:   #072922;  /* admin sidebar */
+  --gl-green-soft:     #E7F0EC;  /* success tag background */
+  --gl-green-line:     #1B4A3F;  /* borders inside dark green areas */
+  --gl-green-accent:   #7FD3BC;  /* emphasis text on dark green */
+  --gl-green-muted:    #9DC4B8;  /* secondary text on dark green */
+  --gl-green-dim:      #5C7D74;  /* tertiary text on dark green */
+
+  /* ---- paper ---- */
+  --gl-cream:          #F8F5ED;  /* page background */
+  --gl-cream-2:        #F1EDE1;  /* recessed panels, neutral tag background */
+  --gl-cream-3:        #FCFBF6;  /* table header, panel footer, row hover */
+  --gl-white:          #FFFFFF;  /* panels and cards */
+  --gl-paper-report:   #FDFCF8;  /* report page only */
+
+  /* ---- lines ---- */
+  --gl-line:           #E2DCCC;  /* panel borders, section dividers */
+  --gl-line-soft:      #EDE8DA;  /* table row separators */
+
+  /* ---- text ---- */
+  --gl-ink:            #131A18;  /* primary */
+  --gl-slate:          #5E6B66;  /* secondary */
+  --gl-slate-2:        #8A948F;  /* tertiary, axis labels */
+
+  /* ---- signal ---- */
+  --gl-rust:           #B4472B;  /* negative, blocking, over-threshold */
+  --gl-rust-soft:      #FAF0EC;
+  --gl-gold:           #9A6B12;  /* caution — text and icons */
+  --gl-gold-display:   #C08A2E;  /* caution — large display figures only */
+  --gl-gold-soft:      #FBF3E3;
+
+  /* ---- chart ---- */
+  --gl-chart-primary:  #0F6F5C;  /* revenue */
+  --gl-chart-neutral:  #CFC7B0;  /* ad spend */
+  --gl-cohort-0:       #FCFBF6;
+  --gl-cohort-1:       #EFF6F3;
+  --gl-cohort-2:       #E1EFE9;
+  --gl-cohort-3:       #CFE5DC;
+  --gl-cohort-4:       #B8D9CC;
+
+  /* ---- type ---- */
+  --gl-font-display: "Instrument Serif", Georgia, serif;
+  --gl-font-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* ---- radius ---- */
+  --gl-radius-sm:  6px;   /* tags */
+  --gl-radius-md:  8px;   /* buttons, inputs, nav items */
+  --gl-radius-lg:  14px;  /* panels, cards */
+  --gl-radius-xl:  16px;  /* marketing cards */
+
+  /* ---- shadow ---- */
+  --gl-shadow-card:  0 24px 60px -30px rgba(7,46,39,.28);
+  --gl-shadow-image: 0 30px 70px -34px rgba(7,46,39,.45);
+  --gl-shadow-page:  0 20px 50px -26px rgba(11,58,49,.40);
+  --gl-shadow-nav:   0 8px 44px rgba(0,0,0,.30);
+}
+
+/* =========================================================
+   Type scale — display face is used ONLY for these
+   ========================================================= */
+/*
+  Marketing h1              60px / 1.04 / -.02em   display
+  Marketing h2              42px / 1.12 / -.02em   display
+  Report verdict            31px / 1.30 / -.01em   display
+  Report page title         38px / 1.05            display
+  Dashboard headline        38px / 1.20 / -.015em  display
+  Page title (tab pages)    31px / 1.10 / -.015em  display
+  Admin header h1           24px / 1.00 / -.01em   display
+  Anchor / stat figure      37px / 1.00            display
+  Report stat figure        44px / 1.00            display
+  Finding title             21-23px / 1.25         display
+  Stake figure              23-26px / 1.00         display
+  Portfolio MER figure      19px                   display
+  Table money, body, labels — ALWAYS body face, tabular numerals
+*/
+
+/* =========================================================
+   Rules that prevent drift
+   ========================================================= */
+/*
+  1. Display face for headings and figures that carry meaning.
+     Never for table cells, labels, buttons or form fields.
+  2. font-feature-settings:"tnum" 1 on body. Money columns must align.
+  3. Grey is the default state. Green, rust and gold appear only
+     where a number carries a verdict.
+  4. Panels: 1px --gl-line border, --gl-radius-lg, --gl-white fill.
+     No shadow on panels inside the app. Shadow only on marketing
+     cards, images and the report page.
+  5. Section labels (.eyebrow) are 11-13px, .07-.14em tracking,
+     uppercase, 600 weight, in --gl-green.
+  6. Table headers are 11px, .07em tracking, uppercase, 600 weight,
+     --gl-slate on --gl-cream-3.
+  7. Row separators use --gl-line-soft. Panel edges use --gl-line.
+  8. Never introduce a hex value outside this file.
+*/

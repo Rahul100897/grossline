@@ -1,34 +1,125 @@
 @import 'tailwindcss';
+@import './fonts.css';
+/* Single source of truth for every colour/radius/shadow — docs/design/design-tokens.css.
+   Imported verbatim; no hex or design value is defined anywhere else. */
+@import '../../../docs/design/design-tokens.css';
 
-/* Design tokens — docs/design/admin-mockup.html is the visual target.
-   Grey is the default; colour appears only where a number needs a verdict. */
+/* Tailwind theme mirrors docs/design/tailwind-theme.js. Every value references a
+   --gl-* token from design-tokens.css (colours, radii, shadows, fonts) or copies
+   a non-colour value verbatim from tailwind-theme.js (the display type scale). */
 @theme {
-  --color-ink: #14181f;
-  --color-paper: #fafaf7;
-  --color-slate: #5c6470;
-  --color-hairline: #e6e5df;
-  --color-good: #1f7a5c;
-  --color-attn: #b4472b;
-  --color-panel: #ffffff;
-  --color-hover: #fbfaf5;
-  --color-navactive: #f1f0ea;
-  --color-attn-soft: #fbf3f0;
-  --color-attn-line: #e4c7bc;
-  --color-good-soft: #f1f7f4;
-  --color-good-line: #c4dcd2;
+  /* brand green */
+  --color-green: var(--gl-green);
+  --color-green-deep: var(--gl-green-deep);
+  --color-green-dark: var(--gl-green-dark);
+  --color-green-darker: var(--gl-green-darker);
+  --color-green-soft: var(--gl-green-soft);
+  --color-green-line: var(--gl-green-line);
+  --color-green-accent: var(--gl-green-accent);
+  --color-green-muted: var(--gl-green-muted);
+  --color-green-dim: var(--gl-green-dim);
+  /* paper */
+  --color-cream: var(--gl-cream);
+  --color-cream-2: var(--gl-cream-2);
+  --color-cream-3: var(--gl-cream-3);
+  --color-cream-report: var(--gl-paper-report);
+  --color-white: var(--gl-white);
+  /* lines */
+  --color-line: var(--gl-line);
+  --color-line-soft: var(--gl-line-soft);
+  /* text */
+  --color-ink: var(--gl-ink);
+  --color-slate: var(--gl-slate);
+  --color-slate-2: var(--gl-slate-2);
+  /* signal */
+  --color-rust: var(--gl-rust);
+  --color-rust-soft: var(--gl-rust-soft);
+  --color-gold: var(--gl-gold);
+  --color-gold-display: var(--gl-gold-display);
+  --color-gold-soft: var(--gl-gold-soft);
+  /* chart */
+  --color-chart-primary: var(--gl-chart-primary);
+  --color-chart-neutral: var(--gl-chart-neutral);
+  --color-cohort-0: var(--gl-cohort-0);
+  --color-cohort-1: var(--gl-cohort-1);
+  --color-cohort-2: var(--gl-cohort-2);
+  --color-cohort-3: var(--gl-cohort-3);
+  --color-cohort-4: var(--gl-cohort-4);
+
+  /* fonts */
+  --font-display: var(--gl-font-display);
+  --font-body: var(--gl-font-body);
+
+  /* display type scale — verbatim from tailwind-theme.js (non-colour values) */
+  --text-d-hero: 60px;
+  --text-d-hero--line-height: 1.04;
+  --text-d-hero--letter-spacing: -0.02em;
+  --text-d-section: 42px;
+  --text-d-section--line-height: 1.12;
+  --text-d-section--letter-spacing: -0.02em;
+  --text-d-headline: 38px;
+  --text-d-headline--line-height: 1.2;
+  --text-d-headline--letter-spacing: -0.015em;
+  --text-d-title: 31px;
+  --text-d-title--line-height: 1.1;
+  --text-d-title--letter-spacing: -0.015em;
+  --text-d-verdict: 31px;
+  --text-d-verdict--line-height: 1.3;
+  --text-d-verdict--letter-spacing: -0.01em;
+  --text-d-figure: 37px;
+  --text-d-figure--line-height: 1;
+  --text-d-figure-l: 44px;
+  --text-d-figure-l--line-height: 1;
+  --text-d-finding: 21px;
+  --text-d-finding--line-height: 1.25;
+  --text-d-finding--letter-spacing: -0.01em;
+  --text-d-stake: 23px;
+  --text-d-stake--line-height: 1;
+  --text-d-admin-h1: 24px;
+  --text-d-admin-h1--line-height: 1;
+  --text-d-admin-h1--letter-spacing: -0.01em;
+  --text-d-mer: 19px;
+  --text-d-mer--line-height: 1;
+
+  /* radii */
+  --radius-tag: var(--gl-radius-sm);
+  --radius-ctrl: var(--gl-radius-md);
+  --radius-panel: var(--gl-radius-lg);
+  --radius-card: var(--gl-radius-xl);
+
+  /* shadows */
+  --shadow-card: var(--gl-shadow-card);
+  --shadow-image: var(--gl-shadow-image);
+  --shadow-page: var(--gl-shadow-page);
+  --shadow-nav: var(--gl-shadow-nav);
 
   /* Sidebar goes off-canvas below this. */
   --breakpoint-desk: 900px;
+
+  /* ---- compatibility aliases: existing components (task 3.x) use these names;
+     each maps to the nearest --gl-* token so pages keep rendering until Step B
+     rebuilds them against the new primitives. No page adds new uses of these. */
+  --color-paper: var(--gl-cream);
+  --color-panel: var(--gl-white);
+  --color-hairline: var(--gl-line);
+  --color-hover: var(--gl-cream-3);
+  --color-navactive: var(--gl-cream-2);
+  --color-good: var(--gl-green);
+  --color-good-soft: var(--gl-green-soft);
+  --color-good-line: var(--gl-line);
+  --color-attn: var(--gl-rust);
+  --color-attn-soft: var(--gl-rust-soft);
+  --color-attn-line: var(--gl-rust);
 }
 
 body {
-  background: var(--color-paper);
+  background: var(--color-cream);
   color: var(--color-ink);
   font-size: 13px;
   line-height: 1.45;
-  /* One family, tabular figures mandatory — money columns must align. */
-  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-body);
+  /* Money columns must align (design rule 6). */
+  font-feature-settings: 'tnum' 1;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -38,22 +129,22 @@ body {
   line-height: 1.6;
 }
 .doc h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 8px; }
-.doc h2 { font-size: 15px; font-weight: 600; margin: 22px 0 6px; padding-top: 14px; border-top: 1px solid var(--color-hairline); }
+.doc h2 { font-size: 15px; font-weight: 600; margin: 22px 0 6px; padding-top: 14px; border-top: 1px solid var(--color-line); }
 .doc h3 { font-size: 13px; font-weight: 600; margin: 16px 0 4px; }
 .doc h4 { font-size: 13px; font-weight: 600; color: var(--color-slate); margin: 12px 0 4px; }
 .doc p { margin: 8px 0; }
 .doc ul { margin: 8px 0; padding-left: 20px; }
 .doc li { margin: 3px 0; }
-.doc hr { border: 0; border-top: 1px solid var(--color-hairline); margin: 18px 0; }
+.doc hr { border: 0; border-top: 1px solid var(--color-line); margin: 18px 0; }
 .doc code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
-  background: var(--color-hover);
-  border: 1px solid var(--color-hairline);
-  border-radius: 3px;
+  background: var(--color-cream-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--gl-radius-sm);
   padding: 0 3px;
 }
 .doc a { color: var(--color-ink); text-decoration: underline; }
 .doc table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; display: block; overflow-x: auto; }
-.doc th, .doc td { border: 1px solid var(--color-hairline); padding: 5px 8px; text-align: left; vertical-align: top; }
-.doc th { background: var(--color-hover); font-weight: 600; }
+.doc th, .doc td { border: 1px solid var(--color-line); padding: 5px 8px; text-align: left; vertical-align: top; }
+.doc th { background: var(--color-cream-3); font-weight: 600; }
