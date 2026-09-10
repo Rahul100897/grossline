@@ -3,7 +3,10 @@
 // <Absent> words, never a zero and never a dash that reads like zero.
 import { minorUnitExponent } from '@grossline/core';
 
-export function formatMinor(minor: number | null | undefined, currency: string | null): string | null {
+export function formatMinor(
+  minor: number | null | undefined,
+  currency: string | null,
+): string | null {
   if (minor === null || minor === undefined || currency === null) return null;
   const exponent = minorUnitExponent(currency);
   return new Intl.NumberFormat('en-US', {

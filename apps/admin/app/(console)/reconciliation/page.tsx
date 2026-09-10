@@ -44,7 +44,9 @@ function recentMonths(now = new Date(), count = 12): string[] {
 }
 
 function num(n: number | null, digits = 2): string {
-  return n === null ? '—' : n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return n === null
+    ? '—'
+    : n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
 
 function statusBadge(status: ReconciliationReport['rows'][number]['status']) {
@@ -136,7 +138,10 @@ export default async function ReconciliationPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Run
         </button>
       </form>
@@ -175,9 +180,17 @@ export default async function ReconciliationPage({
                   <Tr key={row.metric}>
                     <Td>{row.metric}</Td>
                     <Td num>{num(row.ours)}</Td>
-                    <Td num>{row.expected === null ? <Absent reason="not recorded" /> : num(row.expected)}</Td>
+                    <Td num>
+                      {row.expected === null ? <Absent reason="not recorded" /> : num(row.expected)}
+                    </Td>
                     <Td num>{row.variance === null ? <Absent reason="—" /> : num(row.variance)}</Td>
-                    <Td num>{row.variancePct === null ? <Absent reason="—" /> : `${row.variancePct.toFixed(3)}%`}</Td>
+                    <Td num>
+                      {row.variancePct === null ? (
+                        <Absent reason="—" />
+                      ) : (
+                        `${row.variancePct.toFixed(3)}%`
+                      )}
+                    </Td>
                     <Td num quiet>
                       {row.tolerancePct}%
                     </Td>

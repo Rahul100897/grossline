@@ -128,10 +128,7 @@ export async function listMetricDailySeries(
 }
 
 /** Distinct periods with any stored value at this grain, newest first. */
-export async function listMetricPeriods(
-  tenantId: string,
-  grain: MetricGrain,
-): Promise<string[]> {
+export async function listMetricPeriods(tenantId: string, grain: MetricGrain): Promise<string[]> {
   const rows = await withTenant(tenantId, (tx) =>
     tx
       .selectDistinct({ period: metricValues.period })

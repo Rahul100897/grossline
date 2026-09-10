@@ -58,7 +58,8 @@ export async function createMerchant(formData: FormData): Promise<void> {
       subject: data.slug,
     });
   } catch (error) {
-    const message = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not create';
+    const message =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not create';
     redirect(`/merchants/new?error=${encodeURIComponent(message)}`);
   }
   redirect(`/merchants/${tenantId}`);

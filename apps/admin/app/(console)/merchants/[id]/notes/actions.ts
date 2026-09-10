@@ -21,7 +21,11 @@ export async function saveNotes(formData: FormData): Promise<void> {
   let failed = false;
   try {
     await updateTenant(data.tenantId, { notes: data.notes.trim() === '' ? null : data.notes });
-    await writeAuditLog({ actor: session.sub, action: 'tenant.notes.update', tenantId: data.tenantId });
+    await writeAuditLog({
+      actor: session.sub,
+      action: 'tenant.notes.update',
+      tenantId: data.tenantId,
+    });
   } catch {
     failed = true;
   }

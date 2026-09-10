@@ -36,7 +36,9 @@ const pickerInput =
   'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
 
 function isPlatformReported(meta: Record<string, unknown>): boolean {
-  return meta.referenceOnly === true || meta.neverBlended === true || meta.platformReported === true;
+  return (
+    meta.referenceOnly === true || meta.neverBlended === true || meta.platformReported === true
+  );
 }
 
 function Flags({ row }: { row: SummaryRow }) {
@@ -158,9 +160,11 @@ export default async function MetricsExplorerPage({
     );
   }
 
-  const tenantId = query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
+  const tenantId =
+    query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
   const periods = await listMetricPeriods(tenantId, 'month');
-  const period = query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
+  const period =
+    query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
 
   let data: ExplorerData | null = null;
   let daily: MetricValueRow[] = [];
@@ -177,7 +181,10 @@ export default async function MetricsExplorerPage({
 
   return (
     <>
-      <PageHeader title="Metrics" sub="Pick a merchant and a month. Drill a metric to its daily series and campaigns." />
+      <PageHeader
+        title="Metrics"
+        sub="Pick a merchant and a month. Drill a metric to its daily series and campaigns."
+      />
 
       <form method="get" className="mb-4 flex flex-wrap items-center gap-2">
         <select name="tenant" defaultValue={tenantId} className={pickerInput}>
@@ -198,7 +205,10 @@ export default async function MetricsExplorerPage({
             ))
           )}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Show
         </button>
       </form>
@@ -206,8 +216,8 @@ export default async function MetricsExplorerPage({
       {!period || !data ? (
         <EmptyState>
           No metrics computed for this merchant yet. Run{' '}
-          <code>pnpm --filter @grossline/worker metrics:compute {tenantId} &lt;YYYY-MM&gt;</code> after a
-          sync.
+          <code>pnpm --filter @grossline/worker metrics:compute {tenantId} &lt;YYYY-MM&gt;</code>{' '}
+          after a sync.
         </EmptyState>
       ) : (
         <>
@@ -226,10 +236,12 @@ export default async function MetricsExplorerPage({
               />
               {breakdown.length > 0 ? (
                 <div className="mb-3">
-                  {breakdown.some((r) => isPlatformReported((r.meta ?? {}) as Record<string, unknown>)) ? (
+                  {breakdown.some((r) =>
+                    isPlatformReported((r.meta ?? {}) as Record<string, unknown>),
+                  ) ? (
                     <p className="mb-2 text-[12px] text-attn">
-                      Platform-reported figures — each platform&apos;s own claim. Not blended, and not
-                      additive across platforms.
+                      Platform-reported figures — each platform&apos;s own claim. Not blended, and
+                      not additive across platforms.
                     </p>
                   ) : null}
                   <Panel>
@@ -317,8 +329,8 @@ export default async function MetricsExplorerPage({
                       <Td>
                         {data.coverage.provenance.shopifyEpochAssumedLines > 0 ? (
                           <span className="text-attn">
-                            {data.coverage.provenance.shopifyEpochAssumedLines} lines — cost applied to
-                            all history without a real effective date
+                            {data.coverage.provenance.shopifyEpochAssumedLines} lines — cost applied
+                            to all history without a real effective date
                           </span>
                         ) : (
                           '0 lines'

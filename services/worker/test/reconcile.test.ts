@@ -8,8 +8,13 @@ import { expectedFileSchema, reconcile, type ExpectedFile } from '../src/reconci
 const FIXED_NOW = new Date('2026-09-05T12:00:00Z');
 const expectedPath = join(
   dirname(fileURLToPath(import.meta.url)),
-  '..', '..', '..',
-  'docs', 'reconciliation', 'expected', 'demo-brand.json',
+  '..',
+  '..',
+  '..',
+  'docs',
+  'reconciliation',
+  'expected',
+  'demo-brand.json',
 );
 
 let expected: ExpectedFile;
@@ -26,7 +31,12 @@ afterAll(async () => {
 describe('reconciliation harness', () => {
   it('matches the demo tenant golden values exactly across three months', async () => {
     for (const month of ['2026-06', '2026-07', '2025-11']) {
-      const report = await reconcile({ tenantIdOrSlug: 'demo-brand', month, expected, now: FIXED_NOW });
+      const report = await reconcile({
+        tenantIdOrSlug: 'demo-brand',
+        month,
+        expected,
+        now: FIXED_NOW,
+      });
       expect(report.ok, `${month} should reconcile`).toBe(true);
       for (const row of report.rows) {
         expect(row.status, `${month} ${row.metric}`).toBe('within');

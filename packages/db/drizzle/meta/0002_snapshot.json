@@ -48,9 +48,7 @@
         "admin_users_email_unique": {
           "name": "admin_users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -112,12 +110,8 @@
           "name": "audit_log_tenant_id_tenants_id_fk",
           "tableFrom": "audit_log",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -221,12 +215,8 @@
           "name": "connections_tenant_id_tenants_id_fk",
           "tableFrom": "connections",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -234,12 +224,8 @@
           "name": "connections_store_id_stores_id_fk",
           "tableFrom": "connections",
           "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["store_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -247,12 +233,8 @@
           "name": "connections_credential_ref_credentials_id_fk",
           "tableFrom": "connections",
           "tableTo": "credentials",
-          "columnsFrom": [
-            "credential_ref"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["credential_ref"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -325,12 +307,8 @@
           "name": "credentials_tenant_id_tenants_id_fk",
           "tableFrom": "credentials",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -420,12 +398,8 @@
           "name": "stores_tenant_id_tenants_id_fk",
           "tableFrom": "stores",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -513,12 +487,8 @@
           "name": "sync_cursors_tenant_id_tenants_id_fk",
           "tableFrom": "sync_cursors",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -526,12 +496,8 @@
           "name": "sync_cursors_connection_id_connections_id_fk",
           "tableFrom": "sync_cursors",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -631,12 +597,8 @@
           "name": "sync_runs_tenant_id_tenants_id_fk",
           "tableFrom": "sync_runs",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -644,12 +606,8 @@
           "name": "sync_runs_connection_id_connections_id_fk",
           "tableFrom": "sync_runs",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -731,9 +689,7 @@
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -745,54 +701,32 @@
     "public.connection_health": {
       "name": "connection_health",
       "schema": "public",
-      "values": [
-        "healthy",
-        "degraded",
-        "broken"
-      ]
+      "values": ["healthy", "degraded", "broken"]
     },
     "public.connection_provider": {
       "name": "connection_provider",
       "schema": "public",
-      "values": [
-        "shopify",
-        "google_ads",
-        "meta"
-      ]
+      "values": ["shopify", "google_ads", "meta"]
     },
     "public.store_platform": {
       "name": "store_platform",
       "schema": "public",
-      "values": [
-        "shopify"
-      ]
+      "values": ["shopify"]
     },
     "public.sync_kind": {
       "name": "sync_kind",
       "schema": "public",
-      "values": [
-        "backfill",
-        "incremental"
-      ]
+      "values": ["backfill", "incremental"]
     },
     "public.sync_status": {
       "name": "sync_status",
       "schema": "public",
-      "values": [
-        "running",
-        "success",
-        "failed"
-      ]
+      "values": ["running", "success", "failed"]
     },
     "public.tenant_status": {
       "name": "tenant_status",
       "schema": "public",
-      "values": [
-        "onboarding",
-        "active",
-        "paused",
-        "churned"
-      ]
+      "values": ["onboarding", "active", "paused", "churned"]
     }
   },
   "schemas": {},

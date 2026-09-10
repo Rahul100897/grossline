@@ -128,7 +128,8 @@ export async function listAllInvoices(): Promise<InvoiceListRow[]> {
         .groupBy(invoices.id)
         .orderBy(desc(invoices.issuedOn)),
     );
-    for (const r of list) rows.push({ ...r.invoice, totalMinor: r.totalMinor, tenantName: tenant.name });
+    for (const r of list)
+      rows.push({ ...r.invoice, totalMinor: r.totalMinor, tenantName: tenant.name });
   }
   return rows.sort((a, b) => (a.issuedOn < b.issuedOn ? 1 : a.issuedOn > b.issuedOn ? -1 : 0));
 }
@@ -153,7 +154,9 @@ export async function listAllPayments(): Promise<PaymentListRow[]> {
     for (const r of list)
       rows.push({ ...r.payment, tenantName: tenant.name, invoiceNumber: r.number });
   }
-  return rows.sort((a, b) => (a.receivedOn < b.receivedOn ? 1 : a.receivedOn > b.receivedOn ? -1 : 0));
+  return rows.sort((a, b) =>
+    a.receivedOn < b.receivedOn ? 1 : a.receivedOn > b.receivedOn ? -1 : 0,
+  );
 }
 
 export async function listPaymentsForInvoice(
@@ -221,9 +224,7 @@ const businessProfileSchema = z.object({
 
 export type BusinessProfileInput = z.input<typeof businessProfileSchema>;
 
-export async function upsertBusinessProfile(
-  input: BusinessProfileInput,
-): Promise<BusinessProfile> {
+export async function upsertBusinessProfile(input: BusinessProfileInput): Promise<BusinessProfile> {
   const data = businessProfileSchema.parse(input);
   const existing = await getBusinessProfile();
   if (existing) {
@@ -263,13 +264,16 @@ export async function tenantBillingTotals(
 }
 
 /** Collected (net where recorded, else gross) grouped by plan, this period. */
-export type PlanRevenue = { plan: string; invoiceCount: number; billedMinor: number; currency: string };
+export type PlanRevenue = {
+  plan: string;
+  invoiceCount: number;
+  billedMinor: number;
+  currency: string;
+};
 
 /** Sum of issued (non-void) invoice line amounts grouped by tenant plan. */
 export async function revenueByPlan(): Promise<PlanRevenue[]> {
-  const tenantRows = await adminDb()
-    .select({ id: tenants.id, plan: tenants.plan })
-    .from(tenants);
+  const tenantRows = await adminDb().select({ id: tenants.id, plan: tenants.plan }).from(tenants);
   const byPlan = new Map<string, { count: number; minor: number; currency: string }>();
   for (const tenant of tenantRows) {
     const plan = tenant.plan ?? 'unplanned';
@@ -292,6 +296,11 @@ export async function revenueByPlan(): Promise<PlanRevenue[]> {
     }
   }
   return [...byPlan.entries()]
-    .map(([plan, v]) => ({ plan, invoiceCount: v.count, billedMinor: v.minor, currency: v.currency }))
+    .map(([plan, v]) => ({
+      plan,
+      invoiceCount: v.count,
+      billedMinor: v.minor,
+      currency: v.currency,
+    }))
     .sort((a, b) => b.billedMinor - a.billedMinor);
 }

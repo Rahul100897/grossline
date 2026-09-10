@@ -13,7 +13,10 @@ export async function loadOrderFactsForWindow(
 ): Promise<{ facts: OrderFacts[]; watermark: Date | null }> {
   const rows = await withTenant(tenantId, (tx) =>
     tx
-      .select({ payload: schema.rawShopifyOrders.payload, syncedAt: schema.rawShopifyOrders.syncedAt })
+      .select({
+        payload: schema.rawShopifyOrders.payload,
+        syncedAt: schema.rawShopifyOrders.syncedAt,
+      })
       .from(schema.rawShopifyOrders)
       .where(
         and(

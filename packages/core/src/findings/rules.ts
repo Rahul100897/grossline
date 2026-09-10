@@ -37,7 +37,9 @@ function finding(f: {
   opportunityValueMinor?: number | null;
 }): RuleOutcome {
   const delta =
-    f.currentValue !== null && f.comparisonValue !== null ? f.currentValue - f.comparisonValue : null;
+    f.currentValue !== null && f.comparisonValue !== null
+      ? f.currentValue - f.comparisonValue
+      : null;
   return {
     status: 'fired',
     finding: {
@@ -113,7 +115,12 @@ export const deadCampaign: Rule = {
             entityLabel: c.label,
             moneyImpactMinor: c.spendMinor, // full spend
             currency: input.currency,
-            evidence: { spendMinor: c.spendMinor, attributedOrders: 0, platform: c.platform, floorMinor: floor },
+            evidence: {
+              spendMinor: c.spendMinor,
+              attributedOrders: 0,
+              platform: c.platform,
+              floorMinor: floor,
+            },
             checkMetric: 'ad_spend',
             checkBaseline: c.spendMinor,
           }),
@@ -136,7 +143,9 @@ export const brandedSearchShare: Rule = {
     const google = input.campaigns.filter((c) => c.platform === 'google_ads');
     const total = google.reduce((s, c) => s + c.spendMinor, 0);
     if (total === 0) return ok();
-    const brandedSpend = google.filter((c) => c.isBranded === true).reduce((s, c) => s + c.spendMinor, 0);
+    const brandedSpend = google
+      .filter((c) => c.isBranded === true)
+      .reduce((s, c) => s + c.spendMinor, 0);
     const share = brandedSpend / total;
     if (share <= input.thresholds.brandedShareCeil) return ok();
     return [
@@ -151,7 +160,12 @@ export const brandedSearchShare: Rule = {
         entityLabel: 'Branded search',
         moneyImpactMinor: brandedSpend,
         currency: input.currency,
-        evidence: { brandedSpendMinor: brandedSpend, googleSpendMinor: total, share, ceiling: input.thresholds.brandedShareCeil },
+        evidence: {
+          brandedSpendMinor: brandedSpend,
+          googleSpendMinor: total,
+          share,
+          ceiling: input.thresholds.brandedShareCeil,
+        },
         checkMetric: 'branded_search_share',
         checkBaseline: share,
       }),
@@ -183,7 +197,10 @@ export const searchTermWaste: Rule = {
         evidence: {
           wastedCostMinor: wasted,
           termCount: wasteful.length,
-          terms: wasteful.slice(0, 10).map((t) => t.label).join(', '),
+          terms: wasteful
+            .slice(0, 10)
+            .map((t) => t.label)
+            .join(', '),
         },
         checkMetric: 'search_term_cost',
         checkBaseline: wasted,
@@ -201,7 +218,8 @@ export const discountLeakage: Rule = {
     if (grossSalesMinor === null || discountsMinor === null || grossSalesMinor === 0) {
       return skip('gross sales or discounts not computed for the period');
     }
-    if (input.priorDiscountShare === null) return skip('no prior period to compare discount share against');
+    if (input.priorDiscountShare === null)
+      return skip('no prior period to compare discount share against');
     const currentShare = discountsMinor / grossSalesMinor;
     const delta = currentShare - input.priorDiscountShare;
     if (delta <= input.thresholds.discountLeakageDeltaCeil) return ok();
@@ -322,7 +340,8 @@ export const claimGap: Rule = {
   id: 'claim_gap',
   title: 'Claim gap',
   run(input) {
-    if (input.channelClaims.length === 0) return skip('no platform claim data to compare against UTM attribution');
+    if (input.channelClaims.length === 0)
+      return skip('no platform claim data to compare against UTM attribution');
     const tolerance = input.thresholds.claimGapTolerance;
     const outcomes: RuleOutcome[] = [];
     for (const c of input.channelClaims) {
@@ -425,7 +444,9 @@ export const spendHeadroom: Rule = {
     if (input.availability.hasSpendTarget && input.monthlySpendTargetMinor !== null) {
       const projected = input.account.spendProjectedMonthEndMinor;
       if (projected !== null) {
-        const ceiling = Math.round(input.monthlySpendTargetMinor * (1 + input.thresholds.pacingOveragePct));
+        const ceiling = Math.round(
+          input.monthlySpendTargetMinor * (1 + input.thresholds.pacingOveragePct),
+        );
         if (projected > ceiling) return ok();
       }
     }
@@ -487,7 +508,8 @@ export const scaleSignal: Rule = {
     const totalSpend = withRoas.reduce((s, c) => s + c.spendMinor, 0);
     if (totalSpend === 0) return skip('no campaign spend to compare against');
     // Spend-weighted account-average ROAS = total conversion value ÷ total spend.
-    const avgRoas = withRoas.reduce((s, c) => s + (c.roas as number) * c.spendMinor, 0) / totalSpend;
+    const avgRoas =
+      withRoas.reduce((s, c) => s + (c.roas as number) * c.spendMinor, 0) / totalSpend;
     if (avgRoas <= 0) return ok();
 
     // Materially above average AND holding a small share of spend.

@@ -55,8 +55,16 @@ describe('shopify auth strategies', () => {
 
   it('client_credentials fetches once and caches a ~24h token', async () => {
     const router = tokenRouter(86_399);
-    const first = await resolveShopifyAccess(ctxWith(router.impl), 'client_credentials', CC_PAYLOAD);
-    const second = await resolveShopifyAccess(ctxWith(router.impl), 'client_credentials', CC_PAYLOAD);
+    const first = await resolveShopifyAccess(
+      ctxWith(router.impl),
+      'client_credentials',
+      CC_PAYLOAD,
+    );
+    const second = await resolveShopifyAccess(
+      ctxWith(router.impl),
+      'client_credentials',
+      CC_PAYLOAD,
+    );
     expect(first.accessToken).toBe(SECRET_TOKEN);
     expect(second.accessToken).toBe(SECRET_TOKEN);
     expect(router.tokenCalls()).toBe(1);

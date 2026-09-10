@@ -48,9 +48,7 @@
         "admin_users_email_unique": {
           "name": "admin_users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -146,12 +144,8 @@
           "name": "audit_log_tenant_id_tenants_id_fk",
           "tableFrom": "audit_log",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -324,12 +318,8 @@
           "name": "connections_tenant_id_tenants_id_fk",
           "tableFrom": "connections",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -337,12 +327,8 @@
           "name": "connections_store_id_stores_id_fk",
           "tableFrom": "connections",
           "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["store_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -350,12 +336,8 @@
           "name": "connections_credential_ref_credentials_id_fk",
           "tableFrom": "connections",
           "tableTo": "credentials",
-          "columnsFrom": [
-            "credential_ref"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["credential_ref"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -428,12 +410,8 @@
           "name": "credentials_tenant_id_tenants_id_fk",
           "tableFrom": "credentials",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -683,12 +661,8 @@
           "name": "findings_tenant_id_tenants_id_fk",
           "tableFrom": "findings",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -851,12 +825,8 @@
           "name": "invoice_lines_tenant_id_tenants_id_fk",
           "tableFrom": "invoice_lines",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -864,12 +834,8 @@
           "name": "invoice_lines_invoice_id_invoices_id_fk",
           "tableFrom": "invoice_lines",
           "tableTo": "invoices",
-          "columnsFrom": [
-            "invoice_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invoice_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -965,12 +931,8 @@
           "name": "invoices_tenant_id_tenants_id_fk",
           "tableFrom": "invoices",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -980,9 +942,7 @@
         "invoices_number_unique": {
           "name": "invoices_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "number"
-          ]
+          "columns": ["number"]
         }
       },
       "policies": {},
@@ -1086,12 +1046,8 @@
           "name": "issue_log_tenant_id_tenants_id_fk",
           "tableFrom": "issue_log",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1178,12 +1134,8 @@
           "name": "metric_runs_tenant_id_tenants_id_fk",
           "tableFrom": "metric_runs",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1314,12 +1266,8 @@
           "name": "metric_values_tenant_id_tenants_id_fk",
           "tableFrom": "metric_values",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1327,12 +1275,8 @@
           "name": "metric_values_run_id_metric_runs_id_fk",
           "tableFrom": "metric_values",
           "tableTo": "metric_runs",
-          "columnsFrom": [
-            "run_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["run_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1422,12 +1366,8 @@
           "name": "payments_tenant_id_tenants_id_fk",
           "tableFrom": "payments",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1435,12 +1375,8 @@
           "name": "payments_invoice_id_invoices_id_fk",
           "tableFrom": "payments",
           "tableTo": "invoices",
-          "columnsFrom": [
-            "invoice_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invoice_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1555,12 +1491,8 @@
           "name": "product_costs_tenant_id_tenants_id_fk",
           "tableFrom": "product_costs",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1666,12 +1598,8 @@
           "name": "raw_google_ads_insights_tenant_id_tenants_id_fk",
           "tableFrom": "raw_google_ads_insights",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1679,12 +1607,8 @@
           "name": "raw_google_ads_insights_connection_id_connections_id_fk",
           "tableFrom": "raw_google_ads_insights",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1803,12 +1727,8 @@
           "name": "raw_meta_insights_tenant_id_tenants_id_fk",
           "tableFrom": "raw_meta_insights",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1816,12 +1736,8 @@
           "name": "raw_meta_insights_connection_id_connections_id_fk",
           "tableFrom": "raw_meta_insights",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1915,12 +1831,8 @@
           "name": "raw_shopify_customers_tenant_id_tenants_id_fk",
           "tableFrom": "raw_shopify_customers",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1928,12 +1840,8 @@
           "name": "raw_shopify_customers_store_id_stores_id_fk",
           "tableFrom": "raw_shopify_customers",
           "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["store_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2033,12 +1941,8 @@
           "name": "raw_shopify_orders_tenant_id_tenants_id_fk",
           "tableFrom": "raw_shopify_orders",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2046,12 +1950,8 @@
           "name": "raw_shopify_orders_store_id_stores_id_fk",
           "tableFrom": "raw_shopify_orders",
           "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["store_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2145,12 +2045,8 @@
           "name": "raw_shopify_products_tenant_id_tenants_id_fk",
           "tableFrom": "raw_shopify_products",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2158,12 +2054,8 @@
           "name": "raw_shopify_products_store_id_stores_id_fk",
           "tableFrom": "raw_shopify_products",
           "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["store_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2253,12 +2145,8 @@
           "name": "stores_tenant_id_tenants_id_fk",
           "tableFrom": "stores",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2346,12 +2234,8 @@
           "name": "sync_cursors_tenant_id_tenants_id_fk",
           "tableFrom": "sync_cursors",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2359,12 +2243,8 @@
           "name": "sync_cursors_connection_id_connections_id_fk",
           "tableFrom": "sync_cursors",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2464,12 +2344,8 @@
           "name": "sync_runs_tenant_id_tenants_id_fk",
           "tableFrom": "sync_runs",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2477,12 +2353,8 @@
           "name": "sync_runs_connection_id_connections_id_fk",
           "tableFrom": "sync_runs",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2545,12 +2417,8 @@
           "name": "tenant_calibration_tenant_id_tenants_id_fk",
           "tableFrom": "tenant_calibration",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2560,9 +2428,7 @@
         "tenant_calibration_tenant_id_unique": {
           "name": "tenant_calibration_tenant_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "tenant_id"
-          ]
+          "columns": ["tenant_id"]
         }
       },
       "policies": {},
@@ -2676,12 +2542,8 @@
           "name": "tenant_cost_inputs_tenant_id_tenants_id_fk",
           "tableFrom": "tenant_cost_inputs",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2788,9 +2650,7 @@
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -2848,12 +2708,8 @@
           "name": "ticket_messages_ticket_id_tickets_id_fk",
           "tableFrom": "ticket_messages",
           "tableTo": "tickets",
-          "columnsFrom": [
-            "ticket_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ticket_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2962,12 +2818,8 @@
           "name": "tickets_tenant_id_tenants_id_fk",
           "tableFrom": "tickets",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2983,145 +2835,82 @@
     "public.connection_health": {
       "name": "connection_health",
       "schema": "public",
-      "values": [
-        "healthy",
-        "degraded",
-        "broken",
-        "unknown"
-      ]
+      "values": ["healthy", "degraded", "broken", "unknown"]
     },
     "public.connection_provider": {
       "name": "connection_provider",
       "schema": "public",
-      "values": [
-        "shopify",
-        "google_ads",
-        "meta"
-      ]
+      "values": ["shopify", "google_ads", "meta"]
     },
     "public.finding_family": {
       "name": "finding_family",
       "schema": "public",
-      "values": [
-        "waste",
-        "growth",
-        "measurement"
-      ]
+      "values": ["waste", "growth", "measurement"]
     },
     "public.finding_status": {
       "name": "finding_status",
       "schema": "public",
-      "values": [
-        "new",
-        "recurring",
-        "resolved",
-        "dismissed"
-      ]
+      "values": ["new", "recurring", "resolved", "dismissed"]
     },
     "public.invoice_status": {
       "name": "invoice_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "sent",
-        "paid",
-        "void"
-      ]
+      "values": ["draft", "sent", "paid", "void"]
     },
     "public.metric_run_status": {
       "name": "metric_run_status",
       "schema": "public",
-      "values": [
-        "running",
-        "success",
-        "failed"
-      ]
+      "values": ["running", "success", "failed"]
     },
     "public.product_cost_source": {
       "name": "product_cost_source",
       "schema": "public",
-      "values": [
-        "shopify",
-        "upload"
-      ]
+      "values": ["shopify", "upload"]
     },
     "public.store_platform": {
       "name": "store_platform",
       "schema": "public",
-      "values": [
-        "shopify"
-      ]
+      "values": ["shopify"]
     },
     "public.sync_kind": {
       "name": "sync_kind",
       "schema": "public",
-      "values": [
-        "backfill",
-        "incremental"
-      ]
+      "values": ["backfill", "incremental"]
     },
     "public.sync_status": {
       "name": "sync_status",
       "schema": "public",
-      "values": [
-        "running",
-        "success",
-        "failed"
-      ]
+      "values": ["running", "success", "failed"]
     },
     "public.tenant_status": {
       "name": "tenant_status",
       "schema": "public",
-      "values": [
-        "onboarding",
-        "active",
-        "paused",
-        "churned"
-      ]
+      "values": ["onboarding", "active", "paused", "churned"]
     },
     "public.ticket_author": {
       "name": "ticket_author",
       "schema": "public",
-      "values": [
-        "admin",
-        "submitter"
-      ]
+      "values": ["admin", "submitter"]
     },
     "public.ticket_priority": {
       "name": "ticket_priority",
       "schema": "public",
-      "values": [
-        "low",
-        "normal",
-        "high"
-      ]
+      "values": ["low", "normal", "high"]
     },
     "public.ticket_source": {
       "name": "ticket_source",
       "schema": "public",
-      "values": [
-        "marketing",
-        "in_app"
-      ]
+      "values": ["marketing", "in_app"]
     },
     "public.ticket_status": {
       "name": "ticket_status",
       "schema": "public",
-      "values": [
-        "open",
-        "in_progress",
-        "closed"
-      ]
+      "values": ["open", "in_progress", "closed"]
     },
     "public.ticket_type": {
       "name": "ticket_type",
       "schema": "public",
-      "values": [
-        "bug",
-        "question",
-        "feedback",
-        "feature"
-      ]
+      "values": ["bug", "question", "feedback", "feature"]
     }
   },
   "schemas": {},

@@ -90,7 +90,9 @@ export class GoogleAdsUnlinkedAccountError extends Error {
 }
 
 function isPermissionError(bodyText: string): boolean {
-  return /USER_PERMISSION_DENIED|CUSTOMER_NOT_ENABLED|NOT_ADS_USER|PERMISSION_DENIED/.test(bodyText);
+  return /USER_PERMISSION_DENIED|CUSTOMER_NOT_ENABLED|NOT_ADS_USER|PERMISSION_DENIED/.test(
+    bodyText,
+  );
 }
 
 const searchStreamSchema = z.array(

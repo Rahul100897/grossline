@@ -88,7 +88,11 @@ export async function putCredential(
 
   const envelope = {
     v: 1 as const,
-    wrap: { iv: wrap.iv.toString('base64'), ct: wrap.ct.toString('base64'), tag: wrap.tag.toString('base64') },
+    wrap: {
+      iv: wrap.iv.toString('base64'),
+      ct: wrap.ct.toString('base64'),
+      tag: wrap.tag.toString('base64'),
+    },
     data: { ct: data.ct.toString('base64'), tag: data.tag.toString('base64') },
   };
 
@@ -115,7 +119,11 @@ export async function putCredential(
 export async function getCredential(
   tenantId: string,
   ref: string,
-): Promise<{ provider: CredentialProvider; payload: CredentialPayload; keyVersion: number } | null> {
+): Promise<{
+  provider: CredentialProvider;
+  payload: CredentialPayload;
+  keyVersion: number;
+} | null> {
   const refId = z.string().uuid().parse(ref);
   const [row] = await withTenant(tenantId, (tx) =>
     tx.select().from(credentials).where(eq(credentials.id, refId)).limit(1),

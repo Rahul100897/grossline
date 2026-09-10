@@ -60,7 +60,13 @@ export default async function NewMerchantPage({
           placeholder="499.00"
           hint="optional — leave empty rather than 0 if unpriced"
         />
-        <Field label="Fee currency" name="feeCurrency" maxLength={3} placeholder="USD" hint="defaults to reporting currency" />
+        <Field
+          label="Fee currency"
+          name="feeCurrency"
+          maxLength={3}
+          placeholder="USD"
+          hint="defaults to reporting currency"
+        />
         <div className="sm:col-span-2">
           <SubmitButton>Create merchant</SubmitButton>
         </div>

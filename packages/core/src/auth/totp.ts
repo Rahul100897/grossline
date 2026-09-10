@@ -69,6 +69,12 @@ export function verifyTotp(secret: string, code: string, window = 1): boolean {
 }
 
 export function otpauthUrl(secret: string, account: string, issuer = 'Grossline'): string {
-  const params = new URLSearchParams({ secret, issuer, algorithm: 'SHA1', digits: '6', period: '30' });
+  const params = new URLSearchParams({
+    secret,
+    issuer,
+    algorithm: 'SHA1',
+    digits: '6',
+    period: '30',
+  });
   return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(account)}?${params}`;
 }

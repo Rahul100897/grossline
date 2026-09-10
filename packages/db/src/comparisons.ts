@@ -32,7 +32,9 @@ export async function compareMetric(
   },
 ): Promise<MetricComparison> {
   const comparisonPeriod =
-    query.kind === 'previous_period' ? previousMonthPeriod(query.period) : yearAgoPeriod(query.period);
+    query.kind === 'previous_period'
+      ? previousMonthPeriod(query.period)
+      : yearAgoPeriod(query.period);
   const [currentRows, previousRows] = await Promise.all([
     getMetricValues(tenantId, {
       metric: query.metric,

@@ -4,12 +4,13 @@
 // not (yet) provide something a rule needs — per-campaign order attribution,
 // search-term reports, per-product refunds — the availability flag is false and
 // the dependent rule skips rather than firing on nothing.
-import type { CampaignFact, ChannelClaimFact, FindingsInput, FindingThresholds } from '@grossline/core';
-import {
-  getCostInputsEffectiveOn,
-  listConnections,
-  type Connection,
-} from '@grossline/db';
+import type {
+  CampaignFact,
+  ChannelClaimFact,
+  FindingsInput,
+  FindingThresholds,
+} from '@grossline/core';
+import { getCostInputsEffectiveOn, listConnections, type Connection } from '@grossline/db';
 import { loadMetricBundle, type MetricBundle } from './metric-bundle';
 
 /** First day of the previous calendar month for a YYYY-MM-01 period. */
@@ -91,14 +92,18 @@ export async function buildFindingsInput(
   const priorGross = prior.tenant('gross_sales')?.value ?? null;
   const priorDiscounts = prior.tenant('discounts')?.value ?? null;
   const priorDiscountShare =
-    priorGross !== null && priorGross !== 0 && priorDiscounts !== null ? priorDiscounts / priorGross : null;
+    priorGross !== null && priorGross !== 0 && priorDiscounts !== null
+      ? priorDiscounts / priorGross
+      : null;
 
   const isDemo = (c: Connection): boolean =>
     ((c.settings ?? {}) as Record<string, unknown>).demo === true;
   const realConns = connections.filter((c) => !isDemo(c));
   const hasGoogle =
-    realConns.some((c) => c.provider === 'google_ads') || bundle.at('ad_spend', 'platform:google_ads') !== null;
-  const hasMeta = realConns.some((c) => c.provider === 'meta') || bundle.at('ad_spend', 'platform:meta') !== null;
+    realConns.some((c) => c.provider === 'google_ads') ||
+    bundle.at('ad_spend', 'platform:google_ads') !== null;
+  const hasMeta =
+    realConns.some((c) => c.provider === 'meta') || bundle.at('ad_spend', 'platform:meta') !== null;
 
   const campaigns = campaignsFrom(bundle);
   const channelClaims = channelClaimsFrom(bundle);
@@ -138,7 +143,8 @@ export async function buildFindingsInput(
       // Per-campaign order attribution and branded classification are not yet
       // computed; a campaign name (rare) enables branded classification only.
       hasCampaignAttribution: campaigns.some((c) => c.attributedOrders !== null),
-      hasBrandedClassification: hasGoogle && campaigns.some((c) => c.platform === 'google_ads' && c.isBranded !== null),
+      hasBrandedClassification:
+        hasGoogle && campaigns.some((c) => c.platform === 'google_ads' && c.isBranded !== null),
       hasSearchTerms: false,
       hasProductRefunds: false,
       hasSpendTarget: monthlySpendTargetMinor !== null,

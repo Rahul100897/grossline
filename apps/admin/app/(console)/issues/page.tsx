@@ -103,7 +103,10 @@ export default async function IssuesPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Filter
         </button>
         {filtering ? (
@@ -114,7 +117,9 @@ export default async function IssuesPage({
       </form>
 
       {open.length === 0 ? (
-        <EmptyState>Nothing open. Every connection is healthy and every backfill is complete.</EmptyState>
+        <EmptyState>
+          Nothing open. Every connection is healthy and every backfill is complete.
+        </EmptyState>
       ) : filtered.length === 0 ? (
         <EmptyState>No open issues match that filter.</EmptyState>
       ) : (

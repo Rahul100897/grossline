@@ -52,8 +52,6 @@ describe('row-level security', () => {
   });
 
   it('the app role cannot read admin_users at all', async () => {
-    await expect(appPool().query('SELECT * FROM admin_users')).rejects.toThrow(
-      /permission denied/,
-    );
+    await expect(appPool().query('SELECT * FROM admin_users')).rejects.toThrow(/permission denied/);
   });
 });

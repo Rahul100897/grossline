@@ -15,7 +15,10 @@ function base64urlEncode(bytes: Uint8Array): string {
 }
 
 function base64urlDecode(str: string): Uint8Array<ArrayBuffer> {
-  const padded = str.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(str.length / 4) * 4, '=');
+  const padded = str
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+    .padEnd(Math.ceil(str.length / 4) * 4, '=');
   const bin = atob(padded);
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
@@ -35,7 +38,11 @@ async function hmacKey(secret: string) {
 
 export async function createSessionToken(payload: SessionPayload, secret: string): Promise<string> {
   const data = base64urlEncode(new TextEncoder().encode(JSON.stringify(payload)));
-  const sig = await crypto.subtle.sign('HMAC', await hmacKey(secret), new TextEncoder().encode(data));
+  const sig = await crypto.subtle.sign(
+    'HMAC',
+    await hmacKey(secret),
+    new TextEncoder().encode(data),
+  );
   return `${data}.${base64urlEncode(new Uint8Array(sig))}`;
 }
 

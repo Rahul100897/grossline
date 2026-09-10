@@ -26,7 +26,9 @@ describe('buildShopifyInstallUrl', () => {
         state: 'state-token',
       }),
     );
-    expect(url.origin + url.pathname).toBe('https://demo-alpha.myshopify.com/admin/oauth/authorize');
+    expect(url.origin + url.pathname).toBe(
+      'https://demo-alpha.myshopify.com/admin/oauth/authorize',
+    );
     expect(url.searchParams.get('client_id')).toBe('client123');
     expect(url.searchParams.get('scope')).toBe('read_orders,read_all_orders');
     expect(url.searchParams.get('redirect_uri')).toBe('http://localhost:3000/api/shopify/callback');

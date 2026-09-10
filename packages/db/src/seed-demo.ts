@@ -38,10 +38,38 @@ const money = (n: number) => ({
 
 // ---- catalogue ----
 const PRODUCTS = [
-  { id: 'gid://shopify/Product/91000001', title: 'Aurora Mug', sku: 'AUR-MUG-01', price: 24, cost: 6.5, variantId: 'gid://shopify/ProductVariant/92000001' },
-  { id: 'gid://shopify/Product/91000002', title: 'Field Notebook', sku: 'FLD-NB-01', price: 50, cost: 14, variantId: 'gid://shopify/ProductVariant/92000002' },
-  { id: 'gid://shopify/Product/91000003', title: 'Trailhead Flask', sku: 'TRL-FLK-01', price: 44, cost: 12.5, variantId: 'gid://shopify/ProductVariant/92000003' },
-  { id: 'gid://shopify/Product/91000004', title: 'Summit Tote', sku: 'SMT-TOTE-01', price: 68, cost: 21, variantId: 'gid://shopify/ProductVariant/92000004' },
+  {
+    id: 'gid://shopify/Product/91000001',
+    title: 'Aurora Mug',
+    sku: 'AUR-MUG-01',
+    price: 24,
+    cost: 6.5,
+    variantId: 'gid://shopify/ProductVariant/92000001',
+  },
+  {
+    id: 'gid://shopify/Product/91000002',
+    title: 'Field Notebook',
+    sku: 'FLD-NB-01',
+    price: 50,
+    cost: 14,
+    variantId: 'gid://shopify/ProductVariant/92000002',
+  },
+  {
+    id: 'gid://shopify/Product/91000003',
+    title: 'Trailhead Flask',
+    sku: 'TRL-FLK-01',
+    price: 44,
+    cost: 12.5,
+    variantId: 'gid://shopify/ProductVariant/92000003',
+  },
+  {
+    id: 'gid://shopify/Product/91000004',
+    title: 'Summit Tote',
+    sku: 'SMT-TOTE-01',
+    price: 68,
+    cost: 21,
+    variantId: 'gid://shopify/ProductVariant/92000004',
+  },
 ] as const;
 
 const HIGH_REFUND_SKU = 'TRL-FLK-01'; // ~25% of flask line items get refunded
@@ -89,7 +117,7 @@ async function findOrCreateDemoTenant(): Promise<Tenant> {
   });
 }
 
-const chunk = <T,>(arr: T[], size: number): T[][] => {
+const chunk = <T>(arr: T[], size: number): T[][] => {
   const out: T[][] = [];
   for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
   return out;
@@ -151,8 +179,12 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
   const orderRows: Parameters<typeof upsertRawShopifyOrders>[2] = [];
 
   for (let m = 0; m < MONTHS; m++) {
-    const monthStart = new Date(Date.UTC(firstMonth.getUTCFullYear(), firstMonth.getUTCMonth() + m, 1));
-    const monthEnd = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 1));
+    const monthStart = new Date(
+      Date.UTC(firstMonth.getUTCFullYear(), firstMonth.getUTCMonth() + m, 1),
+    );
+    const monthEnd = new Date(
+      Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 1),
+    );
     const daysInMonth = Math.round((monthEnd.getTime() - monthStart.getTime()) / 86_400_000);
     const calendarMonth = monthStart.getUTCMonth() + 1;
 
@@ -227,7 +259,8 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
           originalUnitPriceSet: money(product.price),
           discountedUnitPriceSet: money(product.price * (1 - discountFraction)),
           totalDiscountSet: money(lineDiscount),
-          discountAllocations: lineDiscount > 0 ? [{ allocatedAmountSet: money(lineDiscount) }] : [],
+          discountAllocations:
+            lineDiscount > 0 ? [{ allocatedAmountSet: money(lineDiscount) }] : [],
           taxLines: [],
         };
       });
@@ -246,7 +279,9 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
             refundedTotal += amount;
             refunds.push({
               id: `gid://shopify/Refund/97${String(++refundSeq).padStart(7, '0')}`,
-              createdAt: new Date(createdAt.getTime() + (2 + rand() * 12) * 86_400_000).toISOString(),
+              createdAt: new Date(
+                createdAt.getTime() + (2 + rand() * 12) * 86_400_000,
+              ).toISOString(),
               note: 'demo refund',
               totalRefundedSet: money(amount),
               refundLineItems: [
@@ -311,12 +346,25 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
             firstVisit: {
               id: `gid://shopify/CustomerVisit/99${String(orderSeq).padStart(7, '0')}`,
               source: channel.source,
-              sourceType: channel.medium === 'paid' ? 'SOCIAL' : channel.medium === 'cpc' ? 'SEARCH' : channel.medium === 'email' ? 'EMAIL' : 'DIRECT',
+              sourceType:
+                channel.medium === 'paid'
+                  ? 'SOCIAL'
+                  : channel.medium === 'cpc'
+                    ? 'SEARCH'
+                    : channel.medium === 'email'
+                      ? 'EMAIL'
+                      : 'DIRECT',
               referrerUrl: null,
               landingPage: 'https://demo-brand.example/',
               occurredAt: new Date(createdAt.getTime() - 86_400_000).toISOString(),
               utmParameters: channel.medium
-                ? { source: channel.source, medium: channel.medium, campaign: channel.campaign, content: null, term: null }
+                ? {
+                    source: channel.source,
+                    medium: channel.medium,
+                    campaign: channel.campaign,
+                    content: null,
+                    term: null,
+                  }
                 : null,
             },
             lastVisit: null,
@@ -419,7 +467,9 @@ export async function seedDemoTenant(now: Date = new Date()): Promise<SeedSummar
         // The real API returns account-level actions when requested; the demo
         // account row is the sum of its campaigns, like Meta's own totals.
         actions:
-          accountPurchases > 0 ? [{ action_type: 'purchase', value: String(accountPurchases) }] : [],
+          accountPurchases > 0
+            ? [{ action_type: 'purchase', value: String(accountPurchases) }]
+            : [],
         action_values:
           accountPurchases > 0
             ? [{ action_type: 'purchase', value: accountPurchaseValue.toFixed(2) }]

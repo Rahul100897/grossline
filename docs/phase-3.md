@@ -63,6 +63,7 @@ Issues are **derived**, not a table you write to. A connection that recovers sto
 Where you actually do the analysis. Pick a tenant and a period, see every metric from Phase 2 with comparisons, drill from monthly summary to daily to campaign.
 
 Non-negotiable display rules, all of which the metric layer already provides:
+
 - Absent is absent. Never render a missing value as zero or a dash that reads like zero.
 - Completeness meta shown wherever margin appears — a margin over 60% of SKUs is labelled as such.
 - Provisional flags shown on cohort metrics whose window has not closed.

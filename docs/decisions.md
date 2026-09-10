@@ -25,6 +25,7 @@ simplest option was chosen. Anything here can be revisited.
   session as a staging copy) is now redundant — every file in it exists in
   this repo. It was left in place because deleting directories was out of
   scope for autonomous mode; safe to delete manually.
+
 ## 2026-09-05 — Task 0.1 monorepo scaffold
 
 - **Local ports 5433/6380.** This machine already runs Postgres on 5432 and
@@ -157,7 +158,7 @@ simplest option was chosen. Anything here can be revisited.
 
 - **Backfill windows: orders by `created_at`, customers/products by
   `updated_at`.** Created-at gives complete period coverage for orders (the
-  node is fetched in its *current* state, so later refunds ride along even in
+  node is fetched in its _current_ state, so later refunds ride along even in
   old windows). Customers/products have no meaningful creation window; anything
   touched in the backfill window is captured and incremental keeps them fresh.
   Known gap: a customer or product untouched for >13 months is absent until
@@ -174,7 +175,7 @@ simplest option was chosen. Anything here can be revisited.
   inline in orders) and attaches flattened children by `__parentId`; an
   orphaned child is kept as a root flagged `__orphaned` rather than dropped.
 - **Raw upsert semantics.** `raw_shopify_*` rows are only ever replaced by a
-  *newer platform payload for the same gid* (that is what idempotent re-sync
+  _newer platform payload for the same gid_ (that is what idempotent re-sync
   means); no derived values are ever written into them.
 
 ## 2026-09-05 — Task 1.3 Meta connector
@@ -212,7 +213,7 @@ simplest option was chosen. Anything here can be revisited.
   `pnpm connect:google` still records everything so re-linking needs no
   reconfiguration. Linking is a per-account onboarding step.
 - **Developer token at Test access → Basic Access switch-over** (config only):
-  1. While at Test access, only *test* MCC hierarchies answer; connect the
+  1. While at Test access, only _test_ MCC hierarchies answer; connect the
      test MCC id via `GOOGLE_ADS_LOGIN_CUSTOMER_ID` and a test client account.
   2. When Basic Access is granted (needs getgrossline.com live and the
      application approved), change `GOOGLE_ADS_LOGIN_CUSTOMER_ID` (or the
@@ -235,7 +236,7 @@ simplest option was chosen. Anything here can be revisited.
   world, not about a tenant; duplicating rows per tenant would add risk, not
   isolation.
 - **One boundary source**: `monthWindow(reportingTz, y, m)` returns the UTC
-  instants (for timestamped data) *and* the date labels (for platform daily
+  instants (for timestamped data) _and_ the date labels (for platform daily
   rows) of a reporting month. A platform day is never re-cut into another
   timezone — it belongs to the month whose label it carries; the residual
   difference is a documented structural variance for reconciliation.
@@ -335,7 +336,7 @@ returns only the last 60 days of orders.
   (encrypted, like every credential).
 - **Authorization-code offline tokens ARE stored encrypted** — they cannot be
   re-derived. The install URL is printed by `pnpm connect:shopify …
-  authorization_code` with a signed one-hour state token carrying the tenant;
+authorization_code` with a signed one-hour state token carrying the tenant;
   the flow completes in the admin app's `/api/shopify/callback` (hmac +
   state verified, shop domain anchored), which is exempt from session
   middleware because it authenticates cryptographically. Redirect URI comes
@@ -345,7 +346,7 @@ returns only the last 60 days of orders.
   degrade the connection naming the 60-day limit; a successful sync keeps the
   connection degraded (with `last_success_at` still recorded) until the scope
   is granted and connect is re-run.
-- Not implemented yet: Shopify's *expiring* offline tokens (90-day refresh
+- Not implemented yet: Shopify's _expiring_ offline tokens (90-day refresh
   tokens, currently required only for new public apps). Ours is custom
   distribution; revisit if Shopify extends the requirement.
 
@@ -357,7 +358,7 @@ returns only the last 60 days of orders.
   beats the `shopify` sync. Missing stays `null` — never zero.
 - **Shopify unitCost import dating.** Shopify keeps no cost history, so the
   first sighting of a variant's cost applies from 1970-01-01 (already-synced
-  history resolves); a *changed* cost inserts a new row effective the import
+  history resolves); a _changed_ cost inserts a new row effective the import
   date, freezing history. Merchant CSV uploads override via the tie-break.
 - **CSV upload is a CLI** (`pnpm costs:upload`), not an admin page — Rahul is
   the only user and lives in a terminal; per-row line-numbered error report,
@@ -389,11 +390,11 @@ returns only the last 60 days of orders.
 Three real differences from the synthetic fixtures, found and fixed:
 
 1. **`customerJourneySummary.momentsCount` is an object** (`Count { count
-   precision }`), not a scalar, in API 2026-07. Query and fixtures corrected.
+precision }`), not a scalar, in API 2026-07. Query and fixtures corrected.
 2. **Bulk operations reject a connection nested inside a list field** — the
    `refunds → refundLineItems` selection is refused live ("Queries that
    contain a connection field within a list field are not currently
-   supported"). Fix: the bulk query carries refund *headers* only, and the
+   supported"). Fix: the bulk query carries refund _headers_ only, and the
    connector enriches refunded orders afterwards with per-order
    `node(id:){ refunds { refundLineItems(first:100) } }` queries (validated
    live; supported outside bulk). Final stored payload shape is unchanged.
@@ -477,7 +478,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   writing to `metric_values` via the tenant-scoped helpers. Line-item money
   math over jsonb in SQL would be miserable, float-prone and untestable as
   pure goldens; the integer-minor-unit discipline lives in one place this
-  way. The *storage* contract CLAUDE.md actually protects is intact: raw is
+  way. The _storage_ contract CLAUDE.md actually protects is intact: raw is
   never touched, metrics land in `metrics_*`-style tables, recompute is total
   and idempotent. Say the word and 2.x can be ported to SQL.
 - **One generic `metric_values` table** (metric, grain, period, scope, value,
@@ -591,7 +592,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   differ slightly — the panel is labelled "coverage", the margin badges carry
   the authoritative completeness.
 - **Every metric is drillable.** Tenant-level metrics drill to their daily
-  series; scoped metrics (ad_*, channel_*, platform_*) drill to the campaign/
+  series; scoped metrics (ad__, channel__, platform_*) drill to the campaign/
   platform breakdown. Platform-reported rows (referenceOnly/neverBlended meta)
   are badged and carry a "not blended, not additive across platforms" note so
   they are never summed with blended figures.
@@ -608,10 +609,10 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   the HTML. The HTML→PDF wrapper, however, lives twice: `services/worker/src/pdf`
   for the worker / Phase 5 report job (worker's own Node runtime), and
   `apps/admin/lib/pdf.ts` for the invoice download. Next's bundler follows
-  Playwright's dynamic `require('chromium-bidi/...')` through any *transpiled*
-  workspace package and fails to resolve it; importing Playwright *directly* in
+  Playwright's dynamic `require('chromium-bidi/...')` through any _transpiled_
+  workspace package and fails to resolve it; importing Playwright _directly_ in
   the admin app plus `serverExternalPackages: ['playwright','playwright-core',
-  'chromium-bidi']` leaves it external and required at runtime. The 15-line
+'chromium-bidi']` leaves it external and required at runtime. The 15-line
   wrapper is duplicated; the template that matters is not.
 - **Invoice totals are never denormalised** — the total is always the sum of
   invoice_lines, computed on read. No amount column to drift.
@@ -709,7 +710,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   `entity` and `entity_label`; I split the stable match key (`entity_key`, e.g.
   a campaign scope) from the display label (`entity_label`) and the type
   (`entity`: account/campaign/product/discount/channel), so "matching by rule_id
-  + entity" is unambiguous and labels can change without breaking recurrence.
+  - entity" is unambiguous and labels can change without breaking recurrence.
 - **The state machine is pure (`packages/core/src/findings`).** It never reads
   the database or hand-sets a status; the worker persists what it returns. This
   is what makes the three-period transition test possible without infrastructure.
@@ -717,7 +718,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   (evaluated, nothing wrong), or `skipped` (missing inputs, with a reason).
   Keeping `ok` distinct from `skipped` is what lets a test prove no rule fires on
   incomplete data, and lets "nothing needs changing" be claimed only when every
-  rule that *could* evaluate returned `ok`.
+  rule that _could_ evaluate returned `ok`.
 - **Re-firing after resolution starts a fresh episode** (status `new`,
   `first_seen_period` reset, count 1) rather than resuming the old count — the
   simplest rule, and it reads correctly to a client ("this is back").
@@ -753,7 +754,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 
 - **Rules read a typed `FindingsInput`, not raw metric strings.** The worker
   selects the metric layer into `{ account, campaigns[], searchTerms[],
-  productRefunds[], channelClaims[], thresholds, availability }`; each rule is a
+productRefunds[], channelClaims[], thresholds, availability }`; each rule is a
   pure function of that. This keeps rules golden-testable from literals and
   makes "the model never calculates" structural — rules only read pre-computed
   numbers.
@@ -955,7 +956,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 
 - **Conservative opportunity = `round(shareShift × (campaignRoas − avgRoas))`**,
   where `shareShift = round(campaignSpend × 0.25)` (a bounded share shift). This
-  is the revenue *difference* between the campaign's efficiency and the account
+  is the revenue _difference_ between the campaign's efficiency and the account
   average applied to a bounded increment — NOT the campaign's ROAS applied to
   more budget, which is the exact mistake the framing principle forbids (wrong in
   the direction that loses a client money). The finding text says it is an
@@ -974,10 +975,10 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   outperformer is evaluated → ok).
 - On the demo today the ad campaigns carry no per-campaign platform data, so this
   rule skips honestly — same as the other entity-level rules.
-  **Correction observed at A5:** the demo *does* carry campaign-level
+  **Correction observed at A5:** the demo _does_ carry campaign-level
   `platform_roas` (the seed generates campaign ad rows with conversion value), so
-  `scale_signal` actually fires on the demo. It is the per-campaign *order
-  attribution* the dead-campaign/branded/search-term rules need that the demo
+  `scale_signal` actually fires on the demo. It is the per-campaign _order
+  attribution_ the dead-campaign/branded/search-term rules need that the demo
   lacks — those still skip. So the demo's mixed report is payback (waste) +
   spend_headroom (growth, surfaced) + scale_signal (growth, suppressed by the
   one-growth cap) + claim_gap (measurement).
@@ -986,7 +987,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 
 - **The review card badges by family, not severity.** Growth findings are
   severity `info` like claim gap, so the old `severity === 'info' → "measurement
-  risk"` badge would have mislabelled them (and mislabelled resolved rows too).
+risk"` badge would have mislabelled them (and mislabelled resolved rows too).
   The card now reads family: a green left accent + a "growth opportunity" badge +
   the value shown as "+$X opportunity" in the positive tone; measurement shows
   "measurement risk"; waste is the default look. A growth finding never reads like
@@ -1172,7 +1173,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   no recipients. Recipients are passed per send (v1: the analyst), like reports.
 - **Worker gained a dependency-free Resend email helper** (mirrors the admin one
   and the Anthropic commentary call); no SDK. CLI `pnpm digest:send <tenant>
-  <YYYY-MM-DD> [email]` prints the digest (dry run) and optionally sends.
+<YYYY-MM-DD> [email]` prints the digest (dry run) and optionally sends.
 - Verified on the demo (2026-08-15 window): "Net sales USD 5,277.59 · Ad spend
   USD 1,594.50 · MER 3.31 · Orders 58 · AOV USD 90.99" with three deduped flags —
   a digest you would send.
@@ -1240,7 +1241,7 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
 - **Orphaned headers / split tables** are prevented in the template's print CSS:
   `thead { display: table-header-group }` repeats the header on every page a
   table spans; `tr { break-inside: avoid }` keeps a row whole; `.block/.finding/
-  .card { break-inside: avoid }` keep sections and cards whole where they fit.
+.card { break-inside: avoid }` keep sections and cards whole where they fit.
 - **Fonts** are embedded by Chromium automatically (it subsets and embeds the
   faces it renders into the PDF), so no base64 font is bundled into the HTML —
   keeping the page small and dependency-free, consistent with the invoice PDF.

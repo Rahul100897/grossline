@@ -28,7 +28,11 @@ export type ReportHonesty = {
   costProvenance: string | null;
 };
 
-export type WaterfallRow = { label: string; amountMinor: number | null; kind?: 'subtotal' | 'total' };
+export type WaterfallRow = {
+  label: string;
+  amountMinor: number | null;
+  kind?: 'subtotal' | 'total';
+};
 
 export type ChannelRow = {
   label: string;
@@ -177,8 +181,16 @@ function honestyBar(h: ReportHonesty): string {
 function efficiencySection(m: ReportModel): string {
   const e = m.efficiency;
   const cards = [
-    { label: 'Blended MER', value: ratio(e.merValue), sub: `break-even ${ratio(e.breakEvenMer)}${e.targetMer !== null ? ` · target ${ratio(e.targetMer)}` : ''}` },
-    { label: 'Blended CAC', value: money(e.blendedCacMinor, m.currency), sub: `first-order contribution ${money(e.firstOrderContributionMinor, m.currency)}` },
+    {
+      label: 'Blended MER',
+      value: ratio(e.merValue),
+      sub: `break-even ${ratio(e.breakEvenMer)}${e.targetMer !== null ? ` · target ${ratio(e.targetMer)}` : ''}`,
+    },
+    {
+      label: 'Blended CAC',
+      value: money(e.blendedCacMinor, m.currency),
+      sub: `first-order contribution ${money(e.firstOrderContributionMinor, m.currency)}`,
+    },
   ];
   return `
   <section class="block">
@@ -186,7 +198,8 @@ function efficiencySection(m: ReportModel): string {
     <div class="cards">
       ${cards
         .map(
-          (c) => `<div class="card"><div class="card-label">${c.label}</div><div class="card-value">${c.value}</div><div class="card-sub">${c.sub}</div></div>`,
+          (c) =>
+            `<div class="card"><div class="card-label">${c.label}</div><div class="card-value">${c.value}</div><div class="card-sub">${c.sub}</div></div>`,
         )
         .join('')}
     </div>
@@ -196,7 +209,8 @@ function efficiencySection(m: ReportModel): string {
 function marginSection(m: ReportModel): string {
   const rows = m.margin.rows
     .map((r) => {
-      const cls = r.kind === 'total' ? ' class="total"' : r.kind === 'subtotal' ? ' class="subtotal"' : '';
+      const cls =
+        r.kind === 'total' ? ' class="total"' : r.kind === 'subtotal' ? ' class="subtotal"' : '';
       return `<tr${cls}><td>${escapeHtml(r.label)}</td><td class="num">${money(r.amountMinor, m.currency)}</td></tr>`;
     })
     .join('');
@@ -275,7 +289,10 @@ function whatChangedSection(m: ReportModel): string {
 function findingsSection(m: ReportModel): string {
   if (m.nothingNeedsChanging && m.findings.every((f) => f.family === 'measurement')) {
     const measurement = m.findings
-      .map((f) => `<div class="finding measurement"><div class="finding-head"><span class="finding-title">${escapeHtml(f.title)}</span><span class="finding-badge">${familyBadgeText[f.family]}</span></div><p>${escapeHtml(f.text)}</p></div>`)
+      .map(
+        (f) =>
+          `<div class="finding measurement"><div class="finding-head"><span class="finding-title">${escapeHtml(f.title)}</span><span class="finding-badge">${familyBadgeText[f.family]}</span></div><p>${escapeHtml(f.text)}</p></div>`,
+      )
       .join('');
     return `
   <section class="block">
@@ -315,7 +332,10 @@ function checksSection(m: ReportModel): string {
       : `<h3>How last month's checks turned out</h3>
          <table class="grid"><thead><tr><th>Recommendation</th><th>Result</th><th>Status</th></tr></thead>
          <tbody>${m.lastMonthOutcomes
-           .map((o) => `<tr><td>${escapeHtml(o.label)}</td><td>${escapeHtml(o.result)}</td><td>${escapeHtml(o.status)}</td></tr>`)
+           .map(
+             (o) =>
+               `<tr><td>${escapeHtml(o.label)}</td><td>${escapeHtml(o.result)}</td><td>${escapeHtml(o.status)}</td></tr>`,
+           )
            .join('')}</tbody></table>`;
   return `
   <section class="block">

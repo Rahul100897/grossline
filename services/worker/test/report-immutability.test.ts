@@ -16,9 +16,23 @@ async function putMetric(metric: string, value: number, scope = ''): Promise<voi
   await withTenant(tenantId, (tx) =>
     tx
       .insert(schema.metricValues)
-      .values({ tenantId, metric, grain: 'month', period, scope, value: String(value), currency: 'USD' })
+      .values({
+        tenantId,
+        metric,
+        grain: 'month',
+        period,
+        scope,
+        value: String(value),
+        currency: 'USD',
+      })
       .onConflictDoUpdate({
-        target: [schema.metricValues.tenantId, schema.metricValues.metric, schema.metricValues.grain, schema.metricValues.period, schema.metricValues.scope],
+        target: [
+          schema.metricValues.tenantId,
+          schema.metricValues.metric,
+          schema.metricValues.grain,
+          schema.metricValues.period,
+          schema.metricValues.scope,
+        ],
         set: { value: String(value) },
       }),
   );

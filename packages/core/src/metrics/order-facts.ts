@@ -5,7 +5,9 @@
 import { z } from 'zod';
 import { decimalToMinorUnits } from '../money';
 
-const shopMoney = z.object({ shopMoney: z.object({ amount: z.string(), currencyCode: z.string() }) });
+const shopMoney = z.object({
+  shopMoney: z.object({ amount: z.string(), currencyCode: z.string() }),
+});
 
 const lineItemSchema = z
   .object({
@@ -159,7 +161,9 @@ export function orderFactsFromPayload(payload: unknown): OrderFacts {
     refundedQuantity: refundedByLine.get(li.id) ?? 0,
     isGiftCard: li.isGiftCard ?? false,
     originalUnitPriceMinor: minor(li.originalUnitPriceSet),
-    discountedUnitPriceMinor: li.discountedUnitPriceSet ? minor(li.discountedUnitPriceSet) : minor(li.originalUnitPriceSet),
+    discountedUnitPriceMinor: li.discountedUnitPriceSet
+      ? minor(li.discountedUnitPriceSet)
+      : minor(li.originalUnitPriceSet),
   }));
   const giftLineIds = new Set(lines.filter((l) => l.isGiftCard).map((l) => l.lineItemId));
   const saleLines = lines.filter((l) => !l.isGiftCard);

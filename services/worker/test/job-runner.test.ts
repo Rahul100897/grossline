@@ -66,7 +66,10 @@ describe('job runner', () => {
       async () => {
         const counts = await dlq.getJobCounts('waiting', 'active', 'completed', 'delayed');
         const total =
-          (counts.waiting ?? 0) + (counts.active ?? 0) + (counts.completed ?? 0) + (counts.delayed ?? 0);
+          (counts.waiting ?? 0) +
+          (counts.active ?? 0) +
+          (counts.completed ?? 0) +
+          (counts.delayed ?? 0);
         expect(total).toBe(1);
       },
       { timeout: 20_000, interval: 100 },
@@ -160,7 +163,10 @@ describe('job runner', () => {
       tenantId,
       provider: 'shopify',
       externalAccountId: `scoped-${randomUUID().slice(0, 8)}`,
-      settings: { authStrategy: 'legacy_static', scopeWarning: 'read_all_orders not granted: 60 days only' },
+      settings: {
+        authStrategy: 'legacy_static',
+        scopeWarning: 'read_all_orders not granted: 60 days only',
+      },
     });
     const events = new QueueEvents(SYNC_QUEUE, {
       connection: connection.duplicate({ maxRetriesPerRequest: null }),

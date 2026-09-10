@@ -84,7 +84,9 @@ export async function shopifyGraphQL(
       continue;
     }
     if (envelope.errors && envelope.errors.length > 0) {
-      throw new Error(`shopify graphql errors: ${envelope.errors.map((e) => e.message).join('; ')}`);
+      throw new Error(
+        `shopify graphql errors: ${envelope.errors.map((e) => e.message).join('; ')}`,
+      );
     }
     return envelope.data;
   }

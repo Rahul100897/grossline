@@ -90,13 +90,11 @@ export async function writeReconciledFindings(
     ]);
 
     // Remove untouched rows from a previous run of this period that vanished.
-    const existing = await tx
-      .select()
-      .from(findings)
-      .where(eq(findings.period, period));
+    const existing = await tx.select().from(findings).where(eq(findings.period, period));
     for (const row of existing) {
       const key = `${row.ruleId} ${row.entityKey}`;
-      const touched = row.approvedAt !== null || row.editedAt !== null || row.status === 'dismissed';
+      const touched =
+        row.approvedAt !== null || row.editedAt !== null || row.status === 'dismissed';
       if (!producedKeys.has(key) && !touched) {
         await tx.delete(findings).where(eq(findings.id, row.id));
       }
@@ -202,7 +200,11 @@ export async function writeReconciledFindings(
   });
 }
 
-export type FindingFilter = { period?: string; status?: FindingStatus; includeSuppressed?: boolean };
+export type FindingFilter = {
+  period?: string;
+  status?: FindingStatus;
+  includeSuppressed?: boolean;
+};
 
 export async function listFindings(
   tenantId: string,
@@ -217,7 +219,11 @@ export async function listFindings(
     tx
       .select()
       .from(findings)
-      .where(clauses.length > 0 ? and(...(clauses as NonNullable<(typeof clauses)[number]>[])) : undefined)
+      .where(
+        clauses.length > 0
+          ? and(...(clauses as NonNullable<(typeof clauses)[number]>[]))
+          : undefined,
+      )
       .orderBy(desc(findings.moneyImpactMinor)),
   );
 }
@@ -232,10 +238,7 @@ export async function getFinding(tenantId: string, id: string): Promise<Finding 
 /** Periods that have any findings, newest first — for the review picker. */
 export async function listFindingPeriods(tenantId: string): Promise<string[]> {
   const rows = await withTenant(tenantId, (tx) =>
-    tx
-      .selectDistinct({ period: findings.period })
-      .from(findings)
-      .orderBy(desc(findings.period)),
+    tx.selectDistinct({ period: findings.period }).from(findings).orderBy(desc(findings.period)),
   );
   return rows.map((r) => r.period);
 }
@@ -297,11 +300,7 @@ export async function unapproveFinding(tenantId: string, id: string): Promise<vo
  * state machine can resurface it only when the numbers move materially. Marking
  * it "deliberate" is a dismissal with that reason.
  */
-export async function dismissFinding(
-  tenantId: string,
-  id: string,
-  reason: string,
-): Promise<void> {
+export async function dismissFinding(tenantId: string, id: string, reason: string): Promise<void> {
   await withTenant(tenantId, async (tx) => {
     const [row] = await tx.select().from(findings).where(eq(findings.id, id)).limit(1);
     if (!row) return;

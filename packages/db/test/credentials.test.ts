@@ -101,9 +101,7 @@ describe('credential store', () => {
 
   it('refuses a malformed master key version', async () => {
     vi.stubEnv('MASTER_KEY_VERSION', 'zero');
-    await expect(putCredential(tenantA, 'shopify', payload)).rejects.toThrow(
-      /MASTER_KEY_VERSION/,
-    );
+    await expect(putCredential(tenantA, 'shopify', payload)).rejects.toThrow(/MASTER_KEY_VERSION/);
     vi.unstubAllEnvs();
   });
 });

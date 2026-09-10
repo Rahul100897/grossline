@@ -51,12 +51,22 @@ describe('deterministic templates (tier 1)', () => {
       currentValue: 0.63,
       comparisonValue: 0.6166,
       delta: 0.0134,
-      evidence: { claimGap: 0.63, tolerance: 0.6166, platformConversions: 120, storeOrders: 44, spendMinor: 365_000, measurementRisk: true },
+      evidence: {
+        claimGap: 0.63,
+        tolerance: 0.6166,
+        platformConversions: 120,
+        storeOrders: 44,
+        spendMinor: 365_000,
+        measurementRisk: true,
+      },
       checkMetric: 'claim_gap',
     };
     for (const f of [payback, claim]) {
       const t = renderTemplate(f);
-      expect(foreignFigures(t.text, f), `${f.ruleId} template must contain no foreign figures`).toEqual([]);
+      expect(
+        foreignFigures(t.text, f),
+        `${f.ruleId} template must contain no foreign figures`,
+      ).toEqual([]);
     }
   });
 });
@@ -76,7 +86,13 @@ describe('growth commentary variants (task 5.A5)', () => {
     currentValue: 3.0,
     comparisonValue: 2.0,
     delta: 1.0,
-    evidence: { mer: 3.0, breakEvenMer: 2.0, totalAdSpendMinor: 1_000_000, headroomMinor: 500_000, safetyMargin: 0.2 },
+    evidence: {
+      mer: 3.0,
+      breakEvenMer: 2.0,
+      totalAdSpendMinor: 1_000_000,
+      headroomMinor: 500_000,
+      safetyMargin: 0.2,
+    },
     checkMetric: 'mer',
   };
 
@@ -94,7 +110,15 @@ describe('growth commentary variants (task 5.A5)', () => {
     currentValue: 7.0,
     comparisonValue: 3.0,
     delta: 4.0,
-    evidence: { roas: 7.0, accountAvgRoas: 3.0, spendShare: 0.2, campaignSpendMinor: 40_000, shareShiftMinor: 10_000, platform: 'meta', platformReported: true },
+    evidence: {
+      roas: 7.0,
+      accountAvgRoas: 3.0,
+      spendShare: 0.2,
+      campaignSpendMinor: 40_000,
+      shareShiftMinor: 10_000,
+      platform: 'meta',
+      platformReported: true,
+    },
     checkMetric: 'platform_roas',
   };
 
@@ -117,7 +141,10 @@ describe('growth commentary variants (task 5.A5)', () => {
   it('both growth templates pass their own figure guard', () => {
     for (const f of [headroom, scale]) {
       const t = renderTemplate(f);
-      expect(foreignFigures(t.text, f), `${f.ruleId} template must contain no foreign figures`).toEqual([]);
+      expect(
+        foreignFigures(t.text, f),
+        `${f.ruleId} template must contain no foreign figures`,
+      ).toEqual([]);
     }
   });
 

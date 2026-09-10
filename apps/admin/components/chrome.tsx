@@ -11,8 +11,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       {NAV_ITEMS.map((item) => {
-        const active =
-          item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+        const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}
@@ -55,11 +54,7 @@ export function Shell({ children, signOut }: { children: ReactNode; signOut: Rea
       </div>
       {open ? (
         <div className="fixed inset-0 z-30 desk:hidden">
-          <div
-            className="absolute inset-0 bg-ink/30"
-            onClick={() => setOpen(false)}
-            aria-hidden
-          />
+          <div className="absolute inset-0 bg-ink/30" onClick={() => setOpen(false)} aria-hidden />
           <nav className="absolute inset-y-0 left-0 w-56 border-r border-hairline bg-paper py-3.5">
             <div className="flex items-center justify-between px-4 pb-3.5">
               <span className="font-semibold tracking-tight">Grossline</span>

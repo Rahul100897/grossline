@@ -1,14 +1,6 @@
 import { listStores, type Store } from '@grossline/db';
 import { requireSession } from '../../../../../lib/auth';
-import {
-  EmptyState,
-  ErrorState,
-  Panel,
-  Table,
-  Td,
-  Th,
-  Tr,
-} from '../../../../../components/ui';
+import { EmptyState, ErrorState, Panel, Table, Td, Th, Tr } from '../../../../../components/ui';
 
 export const dynamic = 'force-dynamic';
 

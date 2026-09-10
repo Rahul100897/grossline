@@ -5,15 +5,7 @@
 import Link from 'next/link';
 import { getAdminUserById, type AdminUser } from '@grossline/db';
 import { requireSession } from '../../../../lib/auth';
-import {
-  Absent,
-  EmptyState,
-  PageHeader,
-  Panel,
-  Table,
-  Td,
-  Tr,
-} from '../../../../components/ui';
+import { Absent, EmptyState, PageHeader, Panel, Table, Td, Tr } from '../../../../components/ui';
 import { formatDate } from '../../../../lib/format';
 
 export const dynamic = 'force-dynamic';

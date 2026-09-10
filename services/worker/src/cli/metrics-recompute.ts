@@ -6,10 +6,7 @@ import { closeDbPools } from '@grossline/db';
 import { recomputeMetricsRange } from '../metrics/pipeline';
 
 const monthArg = z.string().regex(/^\d{4}-\d{2}$/);
-const args = z
-  .tuple([z.string().uuid(), monthArg])
-  .rest(monthArg)
-  .safeParse(process.argv.slice(2));
+const args = z.tuple([z.string().uuid(), monthArg]).rest(monthArg).safeParse(process.argv.slice(2));
 if (!args.success) {
   console.error('Usage: pnpm metrics:recompute <tenantId> <fromYYYY-MM> [toYYYY-MM]');
   process.exit(1);

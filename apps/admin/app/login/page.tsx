@@ -17,7 +17,9 @@ export default async function LoginPage({
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center p-8">
       <h1 className="text-2xl font-semibold">Grossline admin</h1>
       <p className="mt-1 text-sm text-neutral-500">
-        {showTotp ? 'Sign in with email, password and TOTP code.' : 'Sign in with email and password.'}
+        {showTotp
+          ? 'Sign in with email, password and TOTP code.'
+          : 'Sign in with email and password.'}
       </p>
       {error ? (
         <p className="mt-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">

@@ -19,11 +19,7 @@ export async function grantedScopes(
   creds: ShopifyCredentials,
 ): Promise<string[]> {
   const data = scopesSchema.parse(
-    await shopifyGraphQL(
-      ctx,
-      creds,
-      `{ currentAppInstallation { accessScopes { handle } } }`,
-    ),
+    await shopifyGraphQL(ctx, creds, `{ currentAppInstallation { accessScopes { handle } } }`),
   );
   return data.currentAppInstallation.accessScopes.map((s) => s.handle);
 }

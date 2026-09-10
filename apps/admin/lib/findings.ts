@@ -45,7 +45,10 @@ export function ruleTitle(ruleId: string): string {
 
 /** Family badge label + tone for the review card (task 5.A5). A growth finding
  * must never read like a waste finding at a glance. */
-export function familyBadge(f: Finding): { label: string; tone: 'waste' | 'growth' | 'measurement' } {
+export function familyBadge(f: Finding): {
+  label: string;
+  tone: 'waste' | 'growth' | 'measurement';
+} {
   switch (f.family) {
     case 'growth':
       return { label: 'Growth opportunity', tone: 'growth' };
@@ -99,7 +102,9 @@ export function isReviewed(f: Finding): boolean {
 
 /** True for a finding that awaits the analyst — surfaced, not yet acted on. */
 export function needsReview(f: Finding): boolean {
-  return !f.suppressed && f.status !== 'dismissed' && f.status !== 'resolved' && f.approvedAt === null;
+  return (
+    !f.suppressed && f.status !== 'dismissed' && f.status !== 'resolved' && f.approvedAt === null
+  );
 }
 
 export type FindingGroups = {
@@ -111,7 +116,13 @@ export type FindingGroups = {
 };
 
 export function groupFindings(findings: Finding[]): FindingGroups {
-  const groups: FindingGroups = { needsReview: [], approved: [], resolved: [], suppressed: [], dismissed: [] };
+  const groups: FindingGroups = {
+    needsReview: [],
+    approved: [],
+    resolved: [],
+    suppressed: [],
+    dismissed: [],
+  };
   for (const f of findings) {
     if (f.status === 'dismissed') groups.dismissed.push(f);
     else if (f.suppressed) groups.suppressed.push(f);

@@ -15,9 +15,33 @@ import { calibrateThresholds, type CalibrationInput } from '../src/index';
 const tenantA: CalibrationInput = {
   currency: 'USD',
   months: [
-    { period: '2026-06-01', contributionMarginRate: 0.7, breakEvenRoas: 1 / 0.7, totalAdSpendMinor: 1_000_000, blendedCacMinor: 4000, discountShare: 0.05, claimGaps: [0.3, 0.2] },
-    { period: '2026-07-01', contributionMarginRate: 0.7, breakEvenRoas: 1 / 0.7, totalAdSpendMinor: 1_200_000, blendedCacMinor: 4200, discountShare: 0.06, claimGaps: [0.35, 0.25] },
-    { period: '2026-08-01', contributionMarginRate: 0.7, breakEvenRoas: 1 / 0.7, totalAdSpendMinor: 1_100_000, blendedCacMinor: 4400, discountShare: 0.055, claimGaps: [0.32, 0.22] },
+    {
+      period: '2026-06-01',
+      contributionMarginRate: 0.7,
+      breakEvenRoas: 1 / 0.7,
+      totalAdSpendMinor: 1_000_000,
+      blendedCacMinor: 4000,
+      discountShare: 0.05,
+      claimGaps: [0.3, 0.2],
+    },
+    {
+      period: '2026-07-01',
+      contributionMarginRate: 0.7,
+      breakEvenRoas: 1 / 0.7,
+      totalAdSpendMinor: 1_200_000,
+      blendedCacMinor: 4200,
+      discountShare: 0.06,
+      claimGaps: [0.35, 0.25],
+    },
+    {
+      period: '2026-08-01',
+      contributionMarginRate: 0.7,
+      breakEvenRoas: 1 / 0.7,
+      totalAdSpendMinor: 1_100_000,
+      blendedCacMinor: 4400,
+      discountShare: 0.055,
+      claimGaps: [0.32, 0.22],
+    },
   ],
 };
 
@@ -31,9 +55,33 @@ const tenantA: CalibrationInput = {
 const tenantB: CalibrationInput = {
   currency: 'USD',
   months: [
-    { period: '2026-06-01', contributionMarginRate: 0.3, breakEvenRoas: 1 / 0.3, totalAdSpendMinor: 200_000, blendedCacMinor: 8000, discountShare: 0.12, claimGaps: [0.5, 0.45] },
-    { period: '2026-07-01', contributionMarginRate: 0.3, breakEvenRoas: 1 / 0.3, totalAdSpendMinor: 250_000, blendedCacMinor: 8500, discountShare: 0.13, claimGaps: [0.55, 0.48] },
-    { period: '2026-08-01', contributionMarginRate: 0.3, breakEvenRoas: 1 / 0.3, totalAdSpendMinor: 220_000, blendedCacMinor: 9000, discountShare: 0.125, claimGaps: [0.52, 0.46] },
+    {
+      period: '2026-06-01',
+      contributionMarginRate: 0.3,
+      breakEvenRoas: 1 / 0.3,
+      totalAdSpendMinor: 200_000,
+      blendedCacMinor: 8000,
+      discountShare: 0.12,
+      claimGaps: [0.5, 0.45],
+    },
+    {
+      period: '2026-07-01',
+      contributionMarginRate: 0.3,
+      breakEvenRoas: 1 / 0.3,
+      totalAdSpendMinor: 250_000,
+      blendedCacMinor: 8500,
+      discountShare: 0.13,
+      claimGaps: [0.55, 0.48],
+    },
+    {
+      period: '2026-08-01',
+      contributionMarginRate: 0.3,
+      breakEvenRoas: 1 / 0.3,
+      totalAdSpendMinor: 220_000,
+      blendedCacMinor: 9000,
+      discountShare: 0.125,
+      claimGaps: [0.52, 0.46],
+    },
   ],
 };
 
@@ -80,7 +128,15 @@ describe('per-tenant threshold calibration', () => {
     const t = calibrateThresholds({
       currency: 'USD',
       months: [
-        { period: '2026-08-01', contributionMarginRate: null, breakEvenRoas: null, totalAdSpendMinor: 500_000, blendedCacMinor: null, discountShare: null, claimGaps: [] },
+        {
+          period: '2026-08-01',
+          contributionMarginRate: null,
+          breakEvenRoas: null,
+          totalAdSpendMinor: 500_000,
+          blendedCacMinor: null,
+          discountShare: null,
+          claimGaps: [],
+        },
       ],
     });
     expect(t.breakEvenMer).toBeNull();

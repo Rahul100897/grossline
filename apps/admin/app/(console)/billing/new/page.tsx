@@ -31,13 +31,13 @@ export default async function NewInvoicePage({
   const tenants = await listTenants();
   if (tenants.length === 0) notFound();
 
-  const tenantId = query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
+  const tenantId =
+    query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
   const tenant = await getTenant(tenantId);
   if (!tenant) notFound();
 
   const quarters = recentQuarters();
-  const chosen =
-    quarters.find((q) => q.label === query.quarter) ?? currentQuarter();
+  const chosen = quarters.find((q) => q.label === query.quarter) ?? currentQuarter();
   const months = quarterMonths(chosen.year, chosen.q);
   const currency = tenant.feeCurrency;
   const fee = feeDecimal(tenant.monthlyFeeMinor, currency);
@@ -48,7 +48,10 @@ export default async function NewInvoicePage({
 
   return (
     <>
-      <PageHeader title="New invoice" sub="Pick a merchant and a quarter; edit the period lines as needed." />
+      <PageHeader
+        title="New invoice"
+        sub="Pick a merchant and a quarter; edit the period lines as needed."
+      />
       <FormNotice error={query.error} />
 
       {/* Merchant + quarter pickers reload the page with fresh defaults. */}
@@ -67,7 +70,10 @@ export default async function NewInvoicePage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Reset lines
         </button>
       </form>
@@ -102,10 +108,20 @@ export default async function NewInvoicePage({
                     />
                   </Td>
                   <Td>
-                    <input name={`line_${i}_periodStart`} type="date" defaultValue={m.periodStart} className={input} />
+                    <input
+                      name={`line_${i}_periodStart`}
+                      type="date"
+                      defaultValue={m.periodStart}
+                      className={input}
+                    />
                   </Td>
                   <Td>
-                    <input name={`line_${i}_periodEnd`} type="date" defaultValue={m.periodEnd} className={input} />
+                    <input
+                      name={`line_${i}_periodEnd`}
+                      type="date"
+                      defaultValue={m.periodEnd}
+                      className={input}
+                    />
                   </Td>
                   <Td num>
                     <input

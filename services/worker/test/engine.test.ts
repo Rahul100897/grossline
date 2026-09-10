@@ -1,8 +1,19 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { logger } from '@grossline/core';
-import { clearCursors, closeDbPools, createConnection, createTenant, getConnection } from '@grossline/db';
-import { backfillProgress, chunkWindow, runBackfill, runIncremental } from '../src/connectors/engine';
+import {
+  clearCursors,
+  closeDbPools,
+  createConnection,
+  createTenant,
+  getConnection,
+} from '@grossline/db';
+import {
+  backfillProgress,
+  chunkWindow,
+  runBackfill,
+  runIncremental,
+} from '../src/connectors/engine';
 import type { Connector, DateWindow, SyncContext } from '../src/connectors/types';
 
 const WINDOW: DateWindow = {
@@ -86,7 +97,11 @@ describe('resumable backfill', () => {
     // Uninterrupted reference run.
     const sinkA: string[] = [];
     const connA = await makeConnection();
-    const summaryA = await runBackfill(ctxFor(connA), makeFakeConnector(sinkA, { value: null }), WINDOW);
+    const summaryA = await runBackfill(
+      ctxFor(connA),
+      makeFakeConnector(sinkA, { value: null }),
+      WINDOW,
+    );
     expect(summaryA.chunksRun).toBe(6);
 
     // Interrupted run: dies at the start of chunk 4.
@@ -106,7 +121,11 @@ describe('resumable backfill', () => {
     expect(midConn!.backfillCompletedAt).toBeNull();
 
     // Resume: same window, fresh connector instance, no injected failure.
-    const summaryB = await runBackfill(ctxFor(connB), makeFakeConnector(sinkB, { value: null }), WINDOW);
+    const summaryB = await runBackfill(
+      ctxFor(connB),
+      makeFakeConnector(sinkB, { value: null }),
+      WINDOW,
+    );
     expect(summaryB.chunksSkipped).toBe(3);
     expect(summaryB.chunksRun).toBe(3);
     expect(sinkB).toEqual(sinkA);
@@ -121,7 +140,9 @@ describe('resumable backfill', () => {
     const sink: string[] = [];
     const connId = await makeConnection();
     const failAt = { value: 1 as number | null };
-    await expect(runBackfill(ctxFor(connId), makeFakeConnector(sink, failAt), WINDOW)).rejects.toThrow();
+    await expect(
+      runBackfill(ctxFor(connId), makeFakeConnector(sink, failAt), WINDOW),
+    ).rejects.toThrow();
     await expect(
       runBackfill(ctxFor(connId), makeFakeConnector(sink, { value: null }), {
         start: new Date('2025-01-01T00:00:00Z'),
@@ -145,9 +166,6 @@ describe('incremental', () => {
     const connector = makeFakeConnector(sink, { value: null });
     await runIncremental(ctxFor(connId), connector);
     await runIncremental(ctxFor(connId), connector);
-    expect(sink).toEqual([
-      'incremental-since:null',
-      'incremental-since:2026-07-01T00:00:00Z',
-    ]);
+    expect(sink).toEqual(['incremental-since:null', 'incremental-since:2026-07-01T00:00:00Z']);
   });
 });

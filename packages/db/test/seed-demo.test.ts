@@ -1,9 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { closeDbPools } from '../src/client';
-import {
-  countRawGoogleAdsInsights,
-  countRawMetaInsights,
-} from '../src/index';
+import { countRawGoogleAdsInsights, countRawMetaInsights } from '../src/index';
 import { countRawShopify } from '../src/raw-shopify';
 import { schema } from '../src/index';
 import { withTenant } from '../src/tenant-scope';
@@ -24,7 +21,10 @@ beforeAll(async () => {
   summary = await seedDemoTenant(FIXED_NOW);
   orders = (
     await withTenant(summary.tenantId, (tx) => tx.select().from(schema.rawShopifyOrders))
-  ).map((r) => ({ payload: r.payload as Record<string, unknown>, orderCreatedAt: r.orderCreatedAt }));
+  ).map((r) => ({
+    payload: r.payload as Record<string, unknown>,
+    orderCreatedAt: r.orderCreatedAt,
+  }));
 }, 120_000);
 
 afterAll(async () => {
@@ -102,8 +102,9 @@ describe('seed:demo', () => {
       let value = 0;
       for (const row of rows) {
         if (row.campaignId !== campaignId) continue;
-        const metrics = (row.payload as { metrics: { costMicros: string; conversionsValue: number } })
-          .metrics;
+        const metrics = (
+          row.payload as { metrics: { costMicros: string; conversionsValue: number } }
+        ).metrics;
         spend += Number(metrics.costMicros) / 1_000_000;
         value += metrics.conversionsValue;
       }

@@ -2,16 +2,18 @@
 // finding with a check-metric becomes a recommendation; the next period's value
 // of that metric is the measured result and the pure classifier decides the
 // status. Read-only over findings + metric_values.
-import {
-  classifyRecommendation,
-  type RecStatus,
-} from '@grossline/core';
+import { classifyRecommendation, type RecStatus } from '@grossline/core';
 import { getMetricValues, listFindings, listMetricPeriods, type Finding } from '@grossline/db';
 import { formatMinor, formatPct, formatRatio } from './format';
 import { ruleTitle } from './findings';
 
 /** Check metrics measured in money (else a rate/ratio). */
-const MONEY_CHECK = new Set(['blended_cac', 'spend_projected_month_end', 'ad_spend', 'search_term_cost']);
+const MONEY_CHECK = new Set([
+  'blended_cac',
+  'spend_projected_month_end',
+  'ad_spend',
+  'search_term_cost',
+]);
 const RATE_CHECK = new Set(['claim_gap', 'discount_share', 'branded_search_share', 'refund_rate']);
 
 export type Recommendation = {
@@ -94,7 +96,8 @@ export async function buildRecommendationHistory(
     const m = formatCheck(measured, a.checkMetric, currency);
     let resultText: string;
     if (judge.status === 'pending') resultText = 'awaiting next month';
-    else if (judge.status === 'resolved') resultText = measured !== null ? `resolved — ${a.checkMetric} now ${m}` : 'resolved';
+    else if (judge.status === 'resolved')
+      resultText = measured !== null ? `resolved — ${a.checkMetric} now ${m}` : 'resolved';
     else if (a.family === 'growth' && judge.status === 'worsened')
       // A growth bet that was tried and did not hold — a genuine report line.
       resultText = `tried — ${a.checkMetric} ${b} → ${m}, would revert`;

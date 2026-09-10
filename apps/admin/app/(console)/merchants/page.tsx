@@ -99,7 +99,10 @@ export default async function MerchantsPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Filter
         </button>
         {filtering ? (

@@ -27,8 +27,7 @@ async function main(): Promise<void> {
     return;
   }
   for (const conn of connections) {
-    const window =
-      kind === 'backfill' ? backfillWindowFor(conn.provider) : undefined;
+    const window = kind === 'backfill' ? backfillWindowFor(conn.provider) : undefined;
     const jobId = await enqueueSync(connection, {
       tenantId,
       kind,

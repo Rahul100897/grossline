@@ -63,9 +63,15 @@ describe('ranking and suppression', () => {
     const kept = ranked.filter((f) => !f.suppressed).map((f) => f.ruleId);
     expect(kept).toEqual(['r1', 'r2', 'r3']);
     const overCap = ranked.find((f) => f.ruleId === 'r4');
-    expect(overCap).toMatchObject({ suppressed: true, suppressedReason: 'over the three-per-period cap' });
+    expect(overCap).toMatchObject({
+      suppressed: true,
+      suppressedReason: 'over the three-per-period cap',
+    });
     const belowFloor = ranked.find((f) => f.ruleId === 'r5');
-    expect(belowFloor).toMatchObject({ suppressed: true, suppressedReason: 'below the minimum impact threshold' });
+    expect(belowFloor).toMatchObject({
+      suppressed: true,
+      suppressedReason: 'below the minimum impact threshold',
+    });
     // Every finding is recorded, not discarded.
     expect(ranked).toHaveLength(5);
   });
@@ -130,10 +136,7 @@ describe('ranking across families (task 5.A2)', () => {
     ]);
 
     // Equal value (200k each) → the waste finding ranks above the growth one.
-    const tie = rankAndSuppress(
-      [growthDraft('g_eq', 200_000), draft('w_eq', 200_000)],
-      thresholds,
-    );
+    const tie = rankAndSuppress([growthDraft('g_eq', 200_000), draft('w_eq', 200_000)], thresholds);
     expect(tie.filter((f) => !f.suppressed).map((f) => f.ruleId)).toEqual(['w_eq', 'g_eq']);
   });
 

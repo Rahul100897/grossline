@@ -36,7 +36,10 @@ export async function POST(request: NextRequest): Promise<Response> {
   try {
     parsed = intakeSchema.parse(await request.json());
   } catch {
-    return NextResponse.json({ ok: false, error: 'invalid submission' }, { status: 400, headers: corsHeaders() });
+    return NextResponse.json(
+      { ok: false, error: 'invalid submission' },
+      { status: 400, headers: corsHeaders() },
+    );
   }
 
   // Silently accept honeypot hits so bots get no signal, but store nothing.
@@ -54,7 +57,10 @@ export async function POST(request: NextRequest): Promise<Response> {
       submitterEmail: parsed.submitterEmail ?? null,
     });
   } catch {
-    return NextResponse.json({ ok: false, error: 'could not save' }, { status: 500, headers: corsHeaders() });
+    return NextResponse.json(
+      { ok: false, error: 'could not save' },
+      { status: 500, headers: corsHeaders() },
+    );
   }
   return NextResponse.json({ ok: true }, { headers: corsHeaders() });
 }

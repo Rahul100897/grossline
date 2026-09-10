@@ -83,7 +83,13 @@ export function computeChannelMetrics(input: {
 
   const points: MetricPoint[] = [];
   for (const [scope, count] of firstOrders) {
-    points.push({ metric: 'channel_orders_first_touch', grain: 'month', period: monthPeriod, scope, value: count });
+    points.push({
+      metric: 'channel_orders_first_touch',
+      grain: 'month',
+      period: monthPeriod,
+      scope,
+      value: count,
+    });
   }
   for (const [scope, revenue] of firstRevenue) {
     points.push({
@@ -97,13 +103,32 @@ export function computeChannelMetrics(input: {
     });
   }
   for (const [scope, count] of lastOrders) {
-    points.push({ metric: 'channel_orders_last_touch', grain: 'month', period: monthPeriod, scope, value: count });
+    points.push({
+      metric: 'channel_orders_last_touch',
+      grain: 'month',
+      period: monthPeriod,
+      scope,
+      value: count,
+    });
   }
   for (const [scope, count] of landingOrders) {
-    points.push({ metric: 'landing_page_orders', grain: 'month', period: monthPeriod, scope, value: count });
+    points.push({
+      metric: 'landing_page_orders',
+      grain: 'month',
+      period: monthPeriod,
+      scope,
+      value: count,
+    });
   }
   for (const [scope, revenue] of landingRevenue) {
-    points.push({ metric: 'landing_page_revenue', grain: 'month', period: monthPeriod, scope, value: revenue, currency });
+    points.push({
+      metric: 'landing_page_revenue',
+      grain: 'month',
+      period: monthPeriod,
+      scope,
+      value: revenue,
+      currency,
+    });
   }
 
   if (daysToConversion.length > 0) {
@@ -123,9 +148,13 @@ export function computeChannelMetrics(input: {
   const platformConversions = new Map<string, number>();
   for (const day of input.platformDays) {
     if (!window.dateStrings.includes(day.date)) continue;
-    const isPlatformRow = day.platform === 'meta' ? day.level === 'account' : day.level === 'campaign';
+    const isPlatformRow =
+      day.platform === 'meta' ? day.level === 'account' : day.level === 'campaign';
     if (!isPlatformRow) continue;
-    platformConversions.set(day.platform, (platformConversions.get(day.platform) ?? 0) + day.conversions);
+    platformConversions.set(
+      day.platform,
+      (platformConversions.get(day.platform) ?? 0) + day.conversions,
+    );
   }
   for (const [platform, conversions] of platformConversions) {
     if (conversions <= 0) continue; // no denominator, no gap

@@ -70,7 +70,9 @@ export default async function OverviewPage() {
     return (
       <>
         <PageHeader title="Overview" />
-        <ErrorState>Could not load the overview. Is the database up? Check DATABASE_URL.</ErrorState>
+        <ErrorState>
+          Could not load the overview. Is the database up? Check DATABASE_URL.
+        </ErrorState>
       </>
     );
   }
@@ -84,7 +86,10 @@ export default async function OverviewPage() {
       <NumberStrip
         items={[
           {
-            label: mrr.unpriced > 0 ? `monthly recurring (${mrr.unpriced} unpriced)` : 'monthly recurring',
+            label:
+              mrr.unpriced > 0
+                ? `monthly recurring (${mrr.unpriced} unpriced)`
+                : 'monthly recurring',
             value: mrr.formatted ?? <Absent reason="no fees set yet" />,
           },
           {
@@ -92,7 +97,8 @@ export default async function OverviewPage() {
             value: collectedText ?? <Absent reason="nothing collected yet" />,
           },
           {
-            label: counts.blocking > 0 ? `open issues (${counts.blocking} blocking)` : 'open issues',
+            label:
+              counts.blocking > 0 ? `open issues (${counts.blocking} blocking)` : 'open issues',
             value: formatCount(counts.total),
             tone: counts.blocking > 0 ? 'attn' : counts.total > 0 ? 'ink' : 'good',
           },
@@ -105,7 +111,9 @@ export default async function OverviewPage() {
 
       <SectionHeader
         title="Needs your attention"
-        right={<span className="text-[12px] text-slate">blocking first, then by cost to you today</span>}
+        right={
+          <span className="text-[12px] text-slate">blocking first, then by cost to you today</span>
+        }
       />
       {issues.length === 0 ? (
         <EmptyState>Nothing needs your attention. Every connection is healthy.</EmptyState>

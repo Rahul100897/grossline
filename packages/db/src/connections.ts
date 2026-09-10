@@ -73,10 +73,7 @@ export async function resetBackfill(tenantId: string, connectionId: string): Pro
   });
 }
 
-export async function markBackfillComplete(
-  tenantId: string,
-  connectionId: string,
-): Promise<void> {
+export async function markBackfillComplete(tenantId: string, connectionId: string): Promise<void> {
   await withTenant(tenantId, (tx) =>
     tx
       .update(connections)

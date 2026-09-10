@@ -7,7 +7,12 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { closeDbPools, getTenant, getTenantBySlug, recordReconciliationRun } from '@grossline/db';
-import { expectedFileSchema, reconcile, summariseReconciliation, type ExpectedFile } from '../reconcile';
+import {
+  expectedFileSchema,
+  reconcile,
+  summariseReconciliation,
+  type ExpectedFile,
+} from '../reconcile';
 
 const args = z
   .tuple([z.string().min(1), z.string().regex(/^\d{4}-\d{2}$/)])
@@ -23,7 +28,8 @@ const [tenantIdOrSlug, month, expectedPathArg] = args.data;
 
 function loadExpected(slug: string): ExpectedFile | null {
   const path =
-    expectedPathArg ?? join(process.cwd(), '..', '..', 'docs', 'reconciliation', 'expected', `${slug}.json`);
+    expectedPathArg ??
+    join(process.cwd(), '..', '..', 'docs', 'reconciliation', 'expected', `${slug}.json`);
   if (!existsSync(path)) return null;
   return expectedFileSchema.parse(JSON.parse(readFileSync(path, 'utf8')));
 }
@@ -55,7 +61,11 @@ async function main(): Promise<void> {
       '\nNo expected-values file found. Record the platform UI figures per docs/reconciliation.md.',
     );
   }
-  console.log(report.ok ? '\nOK — every variance within tolerance or explained.' : '\nFAIL — unexplained variance outside tolerance.');
+  console.log(
+    report.ok
+      ? '\nOK — every variance within tolerance or explained.'
+      : '\nFAIL — unexplained variance outside tolerance.',
+  );
 
   // Record that reconciliation ran for this period — the report send gate reads
   // this (task 5.B4). Resolve the tenant id (the CLI accepts a slug too).

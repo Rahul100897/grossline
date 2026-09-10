@@ -22,8 +22,19 @@ function model(over: Partial<ReportModel> = {}): ReportModel {
       costCompleteness: 0.98,
       costProvenance: 'merchant upload + Shopify',
     },
-    headline: { sentence: 'August 2026 worked — USD 12,500.00 of contribution after ad spend, up on last month.', contributionMinor: 1_250_000, direction: 'up' },
-    efficiency: { merValue: 2.82, breakEvenMer: 1.8, targetMer: null, blendedCacMinor: 5842, firstOrderContributionMinor: 5431 },
+    headline: {
+      sentence:
+        'August 2026 worked — USD 12,500.00 of contribution after ad spend, up on last month.',
+      contributionMinor: 1_250_000,
+      direction: 'up',
+    },
+    efficiency: {
+      merValue: 2.82,
+      breakEvenMer: 1.8,
+      targetMer: null,
+      blendedCacMinor: 5842,
+      firstOrderContributionMinor: 5431,
+    },
     margin: {
       rows: [
         { label: 'Gross sales', amountMinor: 2_000_000 },
@@ -35,22 +46,59 @@ function model(over: Partial<ReportModel> = {}): ReportModel {
       completeness: 0.98,
     },
     channels: [
-      { label: 'Meta', spendMinor: 400_000, platformConversions: 120, storeOrders: 44, claimGap: 0.63 },
-      { label: 'Google Ads', spendMinor: 300_000, platformConversions: 80, storeOrders: 60, claimGap: 0.25 },
+      {
+        label: 'Meta',
+        spendMinor: 400_000,
+        platformConversions: 120,
+        storeOrders: 44,
+        claimGap: 0.63,
+      },
+      {
+        label: 'Google Ads',
+        spendMinor: 300_000,
+        platformConversions: 80,
+        storeOrders: 60,
+        claimGap: 0.25,
+      },
     ],
     whatChanged: [
       { label: 'Net sales', current: 'USD 18,600.00', mom: '+USD 1,200.00', yoy: null },
       { label: 'Blended MER', current: '2.82', mom: '+0.32', yoy: '+0.40' },
     ],
     findings: [
-      { title: 'Payback broken', entityLabel: 'Whole account', family: 'waste', valueLabel: 'USD 558.96 at stake', text: 'Blended CAC is USD 58.42 while first-order contribution is only USD 54.31.' },
-      { title: 'Spend headroom', entityLabel: 'Whole account', family: 'growth', valueLabel: '+USD 4,508.01 opportunity', text: 'At today’s efficiency there is roughly USD 4,508.01 of additional monthly spend that would still clear break-even. Efficiency falls as spend rises.' },
-      { title: 'Claim gap', entityLabel: 'Meta', family: 'measurement', valueLabel: 'no money at stake', text: 'Meta claims 120 conversions against 44 store-recorded orders — a measurement risk.' },
+      {
+        title: 'Payback broken',
+        entityLabel: 'Whole account',
+        family: 'waste',
+        valueLabel: 'USD 558.96 at stake',
+        text: 'Blended CAC is USD 58.42 while first-order contribution is only USD 54.31.',
+      },
+      {
+        title: 'Spend headroom',
+        entityLabel: 'Whole account',
+        family: 'growth',
+        valueLabel: '+USD 4,508.01 opportunity',
+        text: 'At today’s efficiency there is roughly USD 4,508.01 of additional monthly spend that would still clear break-even. Efficiency falls as spend rises.',
+      },
+      {
+        title: 'Claim gap',
+        entityLabel: 'Meta',
+        family: 'measurement',
+        valueLabel: 'no money at stake',
+        text: 'Meta claims 120 conversions against 44 store-recorded orders — a measurement risk.',
+      },
     ],
     nothingNeedsChanging: false,
-    checksThisMonth: ['blended CAC against first-order contribution', 'blended MER against break-even'],
+    checksThisMonth: [
+      'blended CAC against first-order contribution',
+      'blended MER against break-even',
+    ],
     lastMonthOutcomes: [
-      { label: 'Payback broken · Whole account', result: 'blended_cac USD 64.73 → USD 54.44', status: 'improving' },
+      {
+        label: 'Payback broken · Whole account',
+        result: 'blended_cac USD 64.73 → USD 54.44',
+        status: 'improving',
+      },
     ],
     freeReport: null,
     ...over,
@@ -60,7 +108,15 @@ function model(over: Partial<ReportModel> = {}): ReportModel {
 describe('report template (task 5.B1)', () => {
   it('renders the seven fixed sections in order', () => {
     const html = renderReportHtml(model());
-    const sections = ['Headline', 'Blended efficiency', 'Margin', 'Channel &amp; claim gap', 'What changed', 'Findings', 'What we check next month'];
+    const sections = [
+      'Headline',
+      'Blended efficiency',
+      'Margin',
+      'Channel &amp; claim gap',
+      'What changed',
+      'Findings',
+      'What we check next month',
+    ];
     let last = -1;
     for (const s of sections) {
       const idx = html.indexOf(`>${s}<`);
@@ -104,7 +160,13 @@ describe('report template (task 5.B1)', () => {
       model({
         nothingNeedsChanging: true,
         findings: [
-          { title: 'Claim gap', entityLabel: 'Meta', family: 'measurement', valueLabel: 'no money at stake', text: 'A measurement risk to note.' },
+          {
+            title: 'Claim gap',
+            entityLabel: 'Meta',
+            family: 'measurement',
+            valueLabel: 'no money at stake',
+            text: 'A measurement risk to note.',
+          },
         ],
         checksThisMonth: [],
       }),
@@ -113,7 +175,9 @@ describe('report template (task 5.B1)', () => {
   });
 
   it('renders the free-first-report footer when present', () => {
-    const html = renderReportHtml(model({ freeReport: { periodLabel: 'August 2026', priceText: 'USD 400 / month' } }));
+    const html = renderReportHtml(
+      model({ freeReport: { periodLabel: 'August 2026', priceText: 'USD 400 / month' } }),
+    );
     expect(html).toContain('complimentary');
     expect(html).toContain('USD 400 / month');
   });
@@ -128,7 +192,12 @@ describe('report template (task 5.B1)', () => {
   });
 
   it('report PDF options set per-page margins and a page-number footer', () => {
-    expect(REPORT_PDF_OPTIONS.margin).toEqual({ top: '14mm', bottom: '16mm', left: '14mm', right: '14mm' });
+    expect(REPORT_PDF_OPTIONS.margin).toEqual({
+      top: '14mm',
+      bottom: '16mm',
+      left: '14mm',
+      right: '14mm',
+    });
     expect(REPORT_PDF_OPTIONS.footerHtml).toContain('pageNumber');
     expect(REPORT_PDF_OPTIONS.footerHtml).toContain('totalPages');
   });

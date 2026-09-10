@@ -26,14 +26,14 @@ Admin console runs at `localhost:3000`. Marketing site at `localhost:4321`.
 
 ## Commands
 
-| Command | What it does |
-|---|---|
-| `pnpm dev` | admin + worker |
-| `pnpm verify` | typecheck, lint, test, migration check — same as CI |
-| `pnpm db:migrate` | apply migrations |
-| `pnpm db:studio` | inspect the database |
-| `pnpm seed:demo` | load the demo tenant |
-| `pnpm worker:sync <tenantId>` | run one tenant's sync manually |
+| Command                       | What it does                                        |
+| ----------------------------- | --------------------------------------------------- |
+| `pnpm dev`                    | admin + worker                                      |
+| `pnpm verify`                 | typecheck, lint, test, migration check — same as CI |
+| `pnpm db:migrate`             | apply migrations                                    |
+| `pnpm db:studio`              | inspect the database                                |
+| `pnpm seed:demo`              | load the demo tenant                                |
+| `pnpm worker:sync <tenantId>` | run one tenant's sync manually                      |
 
 Run `pnpm verify` before every push. If it fails locally it will fail in CI.
 

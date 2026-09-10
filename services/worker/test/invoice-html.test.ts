@@ -9,8 +9,18 @@ const base = {
     dueOn: '2026-09-15',
     notes: null,
     lines: [
-      { description: 'Analytics — July', periodStart: '2026-07-01', periodEnd: '2026-07-31', amountMinor: 49900 },
-      { description: 'Analytics — August', periodStart: '2026-08-01', periodEnd: '2026-08-31', amountMinor: 49900 },
+      {
+        description: 'Analytics — July',
+        periodStart: '2026-07-01',
+        periodEnd: '2026-07-31',
+        amountMinor: 49900,
+      },
+      {
+        description: 'Analytics — August',
+        periodStart: '2026-08-01',
+        periodEnd: '2026-08-31',
+        amountMinor: 49900,
+      },
     ],
   },
   business: {

@@ -63,7 +63,8 @@ export async function loadPlatformDays(
   );
   for (const row of metaRows) {
     const payload = metaRowSchema.parse(row.payload);
-    const currency = payload.account_currency ?? currencyByConnection.get(row.connectionId) ?? reportingCurrency;
+    const currency =
+      payload.account_currency ?? currencyByConnection.get(row.connectionId) ?? reportingCurrency;
     const spendMinor = payload.spend ? decimalToMinorUnits(payload.spend, currency) : 0;
     const valueMinor = (() => {
       const raw = payload.action_values?.find((e) => e.action_type === 'purchase')?.value;
@@ -75,11 +76,25 @@ export async function loadPlatformDays(
       campaignId: row.campaignId === '' ? null : row.campaignId,
       campaignName: payload.campaign_name ?? null,
       date: row.date,
-      spendMinor: await convertMinorOnDate('meta', spendMinor, currency, reportingCurrency, row.date, trace),
+      spendMinor: await convertMinorOnDate(
+        'meta',
+        spendMinor,
+        currency,
+        reportingCurrency,
+        row.date,
+        trace,
+      ),
       impressions: Number(payload.impressions ?? 0),
       clicks: Number(payload.clicks ?? 0),
       conversions: purchase(payload.actions),
-      conversionValueMinor: await convertMinorOnDate('meta', valueMinor, currency, reportingCurrency, row.date, trace),
+      conversionValueMinor: await convertMinorOnDate(
+        'meta',
+        valueMinor,
+        currency,
+        reportingCurrency,
+        row.date,
+        trace,
+      ),
     });
   }
 
@@ -103,11 +118,25 @@ export async function loadPlatformDays(
       campaignId: String(payload.campaign?.id ?? row.campaignId),
       campaignName: payload.campaign?.name ?? null,
       date: row.date,
-      spendMinor: await convertMinorOnDate('google_ads', spendMinor, currency, reportingCurrency, row.date, trace),
+      spendMinor: await convertMinorOnDate(
+        'google_ads',
+        spendMinor,
+        currency,
+        reportingCurrency,
+        row.date,
+        trace,
+      ),
       impressions: Number(payload.metrics?.impressions ?? 0),
       clicks: Number(payload.metrics?.clicks ?? 0),
       conversions: payload.metrics?.conversions ?? 0,
-      conversionValueMinor: await convertMinorOnDate('google_ads', valueMinor, currency, reportingCurrency, row.date, trace),
+      conversionValueMinor: await convertMinorOnDate(
+        'google_ads',
+        valueMinor,
+        currency,
+        reportingCurrency,
+        row.date,
+        trace,
+      ),
     });
   }
 

@@ -51,7 +51,9 @@ async function loadGoogleContext(ctx: SyncContext): Promise<LoadedContext> {
     (typeof settings.loginCustomerId === 'string' ? settings.loginCustomerId : null) ??
     process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID;
   if (!loginCustomerId) {
-    throw new Error('no login-customer-id: set connection settings or GOOGLE_ADS_LOGIN_CUSTOMER_ID');
+    throw new Error(
+      'no login-customer-id: set connection settings or GOOGLE_ADS_LOGIN_CUSTOMER_ID',
+    );
   }
   return {
     creds: googleAdsCredentialsSchema.parse(credential.payload),

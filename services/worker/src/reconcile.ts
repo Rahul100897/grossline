@@ -7,7 +7,14 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { monthWindow } from '@grossline/core';
-import { getTenant, getTenantBySlug, listConnections, schema, withTenant, type Tenant } from '@grossline/db';
+import {
+  getTenant,
+  getTenantBySlug,
+  listConnections,
+  schema,
+  withTenant,
+  type Tenant,
+} from '@grossline/db';
 
 // ---- expected-values file ----
 
@@ -43,11 +50,7 @@ export const TOLERANCES: Record<MetricKey, number> = {
 };
 
 export type MetricKey =
-  | 'shopifyNetSales'
-  | 'shopifyOrders'
-  | 'newCustomers'
-  | 'metaSpend'
-  | 'googleCost';
+  'shopifyNetSales' | 'shopifyOrders' | 'newCustomers' | 'metaSpend' | 'googleCost';
 
 export type ReconciliationRow = {
   metric: MetricKey;
@@ -95,7 +98,9 @@ const orderPayloadSchema = z
       .array(
         z.object({
           refundLineItems: z
-            .array(z.object({ subtotalSet: z.object({ shopMoney: z.object({ amount: z.string() }) }) }))
+            .array(
+              z.object({ subtotalSet: z.object({ shopMoney: z.object({ amount: z.string() }) }) }),
+            )
             .optional(),
         }),
       )
@@ -157,8 +162,7 @@ export async function computeOurTotals(
     netSalesCents += grossCents - discountCents - returnsCents;
 
     const orderIndex = order.customerJourneySummary?.customerOrderIndex;
-    const isNew =
-      orderIndex != null ? orderIndex === 1 : order.customer?.numberOfOrders === '1';
+    const isNew = orderIndex != null ? orderIndex === 1 : order.customer?.numberOfOrders === '1';
     if (isNew) newCustomers++;
   }
 
@@ -300,7 +304,12 @@ export async function reconcile(input: {
       };
     }
     const variance = ours[metric] - expected.value;
-    const variancePct = expected.value === 0 ? (ours[metric] === 0 ? 0 : Infinity) : Math.abs(variance / expected.value);
+    const variancePct =
+      expected.value === 0
+        ? ours[metric] === 0
+          ? 0
+          : Infinity
+        : Math.abs(variance / expected.value);
     const within = variancePct <= TOLERANCES[metric] + 1e-12;
     const status = within ? 'within' : expected.explanation ? 'explained' : 'outside';
     return {

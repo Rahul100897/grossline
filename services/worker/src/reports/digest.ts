@@ -4,13 +4,7 @@
 // days. The text builder and the schedule check are pure; the assembly reads the
 // daily metric layer and recent findings.
 import { minorUnitExponent, logger } from '@grossline/core';
-import {
-  getMetricValues,
-  getSettings,
-  getTenant,
-  listFindings,
-  listTenants,
-} from '@grossline/db';
+import { getMetricValues, getSettings, getTenant, listFindings, listTenants } from '@grossline/db';
 import { sendEmail, type SendResult } from '../email';
 
 export type DigestConfig = {
@@ -89,7 +83,12 @@ function dateLabels(end: string, days: number): string[] {
   return out.reverse();
 }
 
-async function sumDaily(tenantId: string, metric: string, periods: string[], scope = ''): Promise<number> {
+async function sumDaily(
+  tenantId: string,
+  metric: string,
+  periods: string[],
+  scope = '',
+): Promise<number> {
   const rows = await getMetricValues(tenantId, { metric, grain: 'day', periods, scope });
   return rows.reduce((s, r) => s + Number(r.value), 0);
 }
@@ -162,7 +161,11 @@ export async function buildWeeklyDigest(tenantId: string, asOf: string): Promise
     numbers: { netSalesMinor, adSpendMinor, mer, orders, aovMinor },
     flags,
   };
-  return { input, text: buildDigestText(input), hasContent: netSalesMinor > 0 || orders > 0 || flags.length > 0 };
+  return {
+    input,
+    text: buildDigestText(input),
+    hasContent: netSalesMinor > 0 || orders > 0 || flags.length > 0,
+  };
 }
 
 /**
@@ -190,12 +193,20 @@ export async function sendWeeklyDigests(
     const digest = await buildWeeklyDigest(tenant.id, asOf);
     let result: SendResult;
     try {
-      result = await sendEmail({ to: recipients, subject: `${tenant.name} — weekly digest`, text: digest.text });
+      result = await sendEmail({
+        to: recipients,
+        subject: `${tenant.name} — weekly digest`,
+        text: digest.text,
+      });
     } catch (error) {
       result = { sent: false, reason: error instanceof Error ? error.message : 'send failed' };
     }
     results.push({ tenantId: tenant.id, sent: result.sent, reason: result.reason });
   }
-  logger.info('weekly digests processed', { asOf, count: results.length, sent: results.filter((r) => r.sent).length });
+  logger.info('weekly digests processed', {
+    asOf,
+    count: results.length,
+    sent: results.filter((r) => r.sent).length,
+  });
   return results;
 }

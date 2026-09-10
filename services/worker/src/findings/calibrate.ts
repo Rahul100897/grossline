@@ -26,13 +26,16 @@ async function monthFor(tenantId: string, period: string): Promise<CalibrationMo
   };
   const breakEvenRow = rows.find((r) => r.metric === 'break_even_roas' && r.scope === '');
   const contributionMarginRate =
-    breakEvenRow && typeof (breakEvenRow.meta as { contributionMarginRate?: unknown })?.contributionMarginRate === 'number'
-      ? ((breakEvenRow.meta as { contributionMarginRate: number }).contributionMarginRate)
+    breakEvenRow &&
+    typeof (breakEvenRow.meta as { contributionMarginRate?: unknown })?.contributionMarginRate ===
+      'number'
+      ? (breakEvenRow.meta as { contributionMarginRate: number }).contributionMarginRate
       : null;
 
   const gross = tenantVal('gross_sales');
   const discounts = tenantVal('discounts');
-  const discountShare = gross !== null && gross !== 0 && discounts !== null ? discounts / gross : null;
+  const discountShare =
+    gross !== null && gross !== 0 && discounts !== null ? discounts / gross : null;
 
   const claimGaps = rows
     .filter((r) => r.metric === 'claim_gap' && r.scope !== '')

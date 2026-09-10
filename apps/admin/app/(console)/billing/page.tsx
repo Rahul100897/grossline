@@ -111,7 +111,12 @@ export default async function BillingPage() {
           },
           {
             label: `net settled ${q.label}`,
-            value: collected.netInrMinor > 0 ? formatMinor(collected.netInrMinor, INR) : <Absent reason="none recorded" />,
+            value:
+              collected.netInrMinor > 0 ? (
+                formatMinor(collected.netInrMinor, INR)
+              ) : (
+                <Absent reason="none recorded" />
+              ),
           },
           {
             label: 'outstanding (draft + sent)',
@@ -199,7 +204,11 @@ export default async function BillingPage() {
                     )}
                   </Td>
                   <Td num>
-                    {p.netInrMinor !== null ? formatMinor(p.netInrMinor, INR) : <Absent reason="—" />}
+                    {p.netInrMinor !== null ? (
+                      formatMinor(p.netInrMinor, INR)
+                    ) : (
+                      <Absent reason="—" />
+                    )}
                   </Td>
                   <Td num quiet>
                     {p.fxRate ?? <Absent reason="—" />}
@@ -243,7 +252,10 @@ export default async function BillingPage() {
         </div>
 
         <div>
-          <SectionHeader title="Upcoming renewals" right={<span className="text-[12px] text-slate">next 90 days</span>} />
+          <SectionHeader
+            title="Upcoming renewals"
+            right={<span className="text-[12px] text-slate">next 90 days</span>}
+          />
           {renewals.length === 0 ? (
             <EmptyState>No design-partner rates expiring in the next 90 days.</EmptyState>
           ) : (
@@ -260,7 +272,10 @@ export default async function BillingPage() {
                   {renewals.map((r) => (
                     <Tr key={r.tenant.id}>
                       <Td>
-                        <Link href={`/merchants/${r.tenant.id}/billing`} className="hover:underline">
+                        <Link
+                          href={`/merchants/${r.tenant.id}/billing`}
+                          className="hover:underline"
+                        >
                           {r.tenant.name}
                         </Link>
                       </Td>

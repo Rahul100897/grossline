@@ -7,16 +7,16 @@ whether acting on it worked. This is the part clients pay for.
 
 ## What shipped, by task
 
-| Task | What | Where |
-|---|---|---|
-| 4.1 Schema + state machine | findings + tenant_calibration tables (RLS); pure `reconcileFindings` computes new→recurring→resolved and keeps dismissals sticky | `packages/core/src/findings/{state-machine,types}.ts`, `packages/db/src/findings.ts`, migrations 0027–0028 |
-| 4.2 Calibration | pure `calibrateThresholds` from the tenant's own history + margin; per-tenant storage + Thresholds tab | `packages/core/src/findings/calibration.ts`, `packages/db/src/calibration.ts`, `services/worker/src/findings/calibrate.ts`, `merchants/[id]/thresholds` |
-| 4.3 Rules library | nine pure, golden-tested rules → finding record or null | `packages/core/src/findings/rules.ts` |
-| 4.4 Ranking + pipeline | pure `rankAndSuppress` (floor, cap 3, claim-gap exempt); worker pipeline build→run→rank→reconcile→persist | `packages/core/src/findings/ranking.ts`, `services/worker/src/findings/{build-input,pipeline}.ts` |
-| 4.5 Review console | `/findings` queue: read, edit, approve, dismiss, mark deliberate | `apps/admin/app/(console)/findings/*`, `components/finding-card.tsx` |
-| 4.6 Commentary | tier-1 deterministic templates + tier-2 guarded Anthropic narrative | `packages/core/src/findings/commentary.ts`, `services/worker/src/findings/commentary.ts` |
-| 4.7 Recommendation tracking | pure `classifyRecommendation`; history table on the Findings page | `packages/core/src/findings/recommendations.ts`, `apps/admin/lib/recommendations.ts` |
-| 4.8 Findings as issues | unreviewed findings → blocking issue, clears on approval | `apps/admin/lib/issues.ts` (`findings` type) |
+| Task                        | What                                                                                                                             | Where                                                                                                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 4.1 Schema + state machine  | findings + tenant_calibration tables (RLS); pure `reconcileFindings` computes new→recurring→resolved and keeps dismissals sticky | `packages/core/src/findings/{state-machine,types}.ts`, `packages/db/src/findings.ts`, migrations 0027–0028                                              |
+| 4.2 Calibration             | pure `calibrateThresholds` from the tenant's own history + margin; per-tenant storage + Thresholds tab                           | `packages/core/src/findings/calibration.ts`, `packages/db/src/calibration.ts`, `services/worker/src/findings/calibrate.ts`, `merchants/[id]/thresholds` |
+| 4.3 Rules library           | nine pure, golden-tested rules → finding record or null                                                                          | `packages/core/src/findings/rules.ts`                                                                                                                   |
+| 4.4 Ranking + pipeline      | pure `rankAndSuppress` (floor, cap 3, claim-gap exempt); worker pipeline build→run→rank→reconcile→persist                        | `packages/core/src/findings/ranking.ts`, `services/worker/src/findings/{build-input,pipeline}.ts`                                                       |
+| 4.5 Review console          | `/findings` queue: read, edit, approve, dismiss, mark deliberate                                                                 | `apps/admin/app/(console)/findings/*`, `components/finding-card.tsx`                                                                                    |
+| 4.6 Commentary              | tier-1 deterministic templates + tier-2 guarded Anthropic narrative                                                              | `packages/core/src/findings/commentary.ts`, `services/worker/src/findings/commentary.ts`                                                                |
+| 4.7 Recommendation tracking | pure `classifyRecommendation`; history table on the Findings page                                                                | `packages/core/src/findings/recommendations.ts`, `apps/admin/lib/recommendations.ts`                                                                    |
+| 4.8 Findings as issues      | unreviewed findings → blocking issue, clears on approval                                                                         | `apps/admin/lib/issues.ts` (`findings` type)                                                                                                            |
 
 ## The invariants (all enforced and tested)
 

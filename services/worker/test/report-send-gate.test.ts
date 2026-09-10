@@ -20,7 +20,8 @@ let findingId: string;
 const period = '2026-08-01';
 
 // The gate's composition, mirrored from apps/admin/lib/reports.ts.
-const canSend = (unreviewed: number, reconciled: boolean): boolean => unreviewed === 0 && reconciled;
+const canSend = (unreviewed: number, reconciled: boolean): boolean =>
+  unreviewed === 0 && reconciled;
 
 beforeAll(async () => {
   tenantId = (

@@ -8,7 +8,8 @@ import { savePlans } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
-const cell = 'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+const cell =
+  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
 
 function feeDecimal(minor: number, currency: string): string {
   const exp = minorUnitExponent(currency);
@@ -31,7 +32,11 @@ export default async function PlansPage({
 
   // Render existing plans plus three blank rows to add more.
   const rows = [
-    ...settings.plans.map((p) => ({ plan: p.plan, fee: feeDecimal(p.monthlyFeeMinor, p.currency), currency: p.currency })),
+    ...settings.plans.map((p) => ({
+      plan: p.plan,
+      fee: feeDecimal(p.monthlyFeeMinor, p.currency),
+      currency: p.currency,
+    })),
     ...Array.from({ length: 3 }, () => ({ plan: '', fee: '', currency: 'USD' })),
   ];
 
@@ -63,13 +68,29 @@ export default async function PlansPage({
               {rows.map((r, i) => (
                 <tr key={i} className="group">
                   <Td>
-                    <input name="plan" defaultValue={r.plan} placeholder="starter" className={`${cell} w-full`} />
+                    <input
+                      name="plan"
+                      defaultValue={r.plan}
+                      placeholder="starter"
+                      className={`${cell} w-full`}
+                    />
                   </Td>
                   <Td num>
-                    <input name="fee" defaultValue={r.fee} inputMode="decimal" placeholder="499.00" className={`${cell} w-28 text-right`} />
+                    <input
+                      name="fee"
+                      defaultValue={r.fee}
+                      inputMode="decimal"
+                      placeholder="499.00"
+                      className={`${cell} w-28 text-right`}
+                    />
                   </Td>
                   <Td>
-                    <input name="currency" defaultValue={r.currency} maxLength={3} className={`${cell} w-20`} />
+                    <input
+                      name="currency"
+                      defaultValue={r.currency}
+                      maxLength={3}
+                      className={`${cell} w-20`}
+                    />
                   </Td>
                 </tr>
               ))}

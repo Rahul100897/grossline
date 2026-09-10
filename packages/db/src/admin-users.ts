@@ -49,11 +49,13 @@ export async function writeAuditLog(entry: {
   subject?: string;
   metadata?: Record<string, unknown>;
 }): Promise<void> {
-  await adminDb().insert(auditLog).values({
-    actor: entry.actor,
-    action: entry.action,
-    tenantId: entry.tenantId ?? null,
-    subject: entry.subject ?? null,
-    metadata: entry.metadata ?? null,
-  });
+  await adminDb()
+    .insert(auditLog)
+    .values({
+      actor: entry.actor,
+      action: entry.action,
+      tenantId: entry.tenantId ?? null,
+      subject: entry.subject ?? null,
+      metadata: entry.metadata ?? null,
+    });
 }

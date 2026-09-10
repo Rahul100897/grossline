@@ -47,9 +47,7 @@
       "uniqueConstraints": {
         "admin_users_email_unique": {
           "name": "admin_users_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "nullsNotDistinct": false
         }
       },
@@ -111,13 +109,9 @@
         "audit_log_tenant_id_tenants_id_fk": {
           "name": "audit_log_tenant_id_tenants_id_fk",
           "tableFrom": "audit_log",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -220,39 +214,27 @@
         "connections_tenant_id_tenants_id_fk": {
           "name": "connections_tenant_id_tenants_id_fk",
           "tableFrom": "connections",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "connections_store_id_stores_id_fk": {
           "name": "connections_store_id_stores_id_fk",
           "tableFrom": "connections",
-          "columnsFrom": [
-            "store_id"
-          ],
+          "columnsFrom": ["store_id"],
           "tableTo": "stores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "connections_credential_ref_credentials_id_fk": {
           "name": "connections_credential_ref_credentials_id_fk",
           "tableFrom": "connections",
-          "columnsFrom": [
-            "credential_ref"
-          ],
+          "columnsFrom": ["credential_ref"],
           "tableTo": "credentials",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -324,13 +306,9 @@
         "credentials_tenant_id_tenants_id_fk": {
           "name": "credentials_tenant_id_tenants_id_fk",
           "tableFrom": "credentials",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -503,13 +481,9 @@
         "metric_runs_tenant_id_tenants_id_fk": {
           "name": "metric_runs_tenant_id_tenants_id_fk",
           "tableFrom": "metric_runs",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -639,26 +613,18 @@
         "metric_values_tenant_id_tenants_id_fk": {
           "name": "metric_values_tenant_id_tenants_id_fk",
           "tableFrom": "metric_values",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "metric_values_run_id_metric_runs_id_fk": {
           "name": "metric_values_run_id_metric_runs_id_fk",
           "tableFrom": "metric_values",
-          "columnsFrom": [
-            "run_id"
-          ],
+          "columnsFrom": ["run_id"],
           "tableTo": "metric_runs",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -772,13 +738,9 @@
         "product_costs_tenant_id_tenants_id_fk": {
           "name": "product_costs_tenant_id_tenants_id_fk",
           "tableFrom": "product_costs",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -883,26 +845,18 @@
         "raw_google_ads_insights_tenant_id_tenants_id_fk": {
           "name": "raw_google_ads_insights_tenant_id_tenants_id_fk",
           "tableFrom": "raw_google_ads_insights",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "raw_google_ads_insights_connection_id_connections_id_fk": {
           "name": "raw_google_ads_insights_connection_id_connections_id_fk",
           "tableFrom": "raw_google_ads_insights",
-          "columnsFrom": [
-            "connection_id"
-          ],
+          "columnsFrom": ["connection_id"],
           "tableTo": "connections",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1020,26 +974,18 @@
         "raw_meta_insights_tenant_id_tenants_id_fk": {
           "name": "raw_meta_insights_tenant_id_tenants_id_fk",
           "tableFrom": "raw_meta_insights",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "raw_meta_insights_connection_id_connections_id_fk": {
           "name": "raw_meta_insights_connection_id_connections_id_fk",
           "tableFrom": "raw_meta_insights",
-          "columnsFrom": [
-            "connection_id"
-          ],
+          "columnsFrom": ["connection_id"],
           "tableTo": "connections",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1132,26 +1078,18 @@
         "raw_shopify_customers_tenant_id_tenants_id_fk": {
           "name": "raw_shopify_customers_tenant_id_tenants_id_fk",
           "tableFrom": "raw_shopify_customers",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "raw_shopify_customers_store_id_stores_id_fk": {
           "name": "raw_shopify_customers_store_id_stores_id_fk",
           "tableFrom": "raw_shopify_customers",
-          "columnsFrom": [
-            "store_id"
-          ],
+          "columnsFrom": ["store_id"],
           "tableTo": "stores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1250,26 +1188,18 @@
         "raw_shopify_orders_tenant_id_tenants_id_fk": {
           "name": "raw_shopify_orders_tenant_id_tenants_id_fk",
           "tableFrom": "raw_shopify_orders",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "raw_shopify_orders_store_id_stores_id_fk": {
           "name": "raw_shopify_orders_store_id_stores_id_fk",
           "tableFrom": "raw_shopify_orders",
-          "columnsFrom": [
-            "store_id"
-          ],
+          "columnsFrom": ["store_id"],
           "tableTo": "stores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1362,26 +1292,18 @@
         "raw_shopify_products_tenant_id_tenants_id_fk": {
           "name": "raw_shopify_products_tenant_id_tenants_id_fk",
           "tableFrom": "raw_shopify_products",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "raw_shopify_products_store_id_stores_id_fk": {
           "name": "raw_shopify_products_store_id_stores_id_fk",
           "tableFrom": "raw_shopify_products",
-          "columnsFrom": [
-            "store_id"
-          ],
+          "columnsFrom": ["store_id"],
           "tableTo": "stores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1470,13 +1392,9 @@
         "stores_tenant_id_tenants_id_fk": {
           "name": "stores_tenant_id_tenants_id_fk",
           "tableFrom": "stores",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1563,26 +1481,18 @@
         "sync_cursors_tenant_id_tenants_id_fk": {
           "name": "sync_cursors_tenant_id_tenants_id_fk",
           "tableFrom": "sync_cursors",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "sync_cursors_connection_id_connections_id_fk": {
           "name": "sync_cursors_connection_id_connections_id_fk",
           "tableFrom": "sync_cursors",
-          "columnsFrom": [
-            "connection_id"
-          ],
+          "columnsFrom": ["connection_id"],
           "tableTo": "connections",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1681,26 +1591,18 @@
         "sync_runs_tenant_id_tenants_id_fk": {
           "name": "sync_runs_tenant_id_tenants_id_fk",
           "tableFrom": "sync_runs",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "sync_runs_connection_id_connections_id_fk": {
           "name": "sync_runs_connection_id_connections_id_fk",
           "tableFrom": "sync_runs",
-          "columnsFrom": [
-            "connection_id"
-          ],
+          "columnsFrom": ["connection_id"],
           "tableTo": "connections",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1817,13 +1719,9 @@
         "tenant_cost_inputs_tenant_id_tenants_id_fk": {
           "name": "tenant_cost_inputs_tenant_id_tenants_id_fk",
           "tableFrom": "tenant_cost_inputs",
-          "columnsFrom": [
-            "tenant_id"
-          ],
+          "columnsFrom": ["tenant_id"],
           "tableTo": "tenants",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1904,9 +1802,7 @@
       "uniqueConstraints": {
         "tenants_slug_unique": {
           "name": "tenants_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "nullsNotDistinct": false
         }
       },
@@ -1919,72 +1815,42 @@
     "public.connection_health": {
       "name": "connection_health",
       "schema": "public",
-      "values": [
-        "healthy",
-        "degraded",
-        "broken",
-        "unknown"
-      ]
+      "values": ["healthy", "degraded", "broken", "unknown"]
     },
     "public.connection_provider": {
       "name": "connection_provider",
       "schema": "public",
-      "values": [
-        "shopify",
-        "google_ads",
-        "meta"
-      ]
+      "values": ["shopify", "google_ads", "meta"]
     },
     "public.metric_run_status": {
       "name": "metric_run_status",
       "schema": "public",
-      "values": [
-        "running",
-        "success",
-        "failed"
-      ]
+      "values": ["running", "success", "failed"]
     },
     "public.product_cost_source": {
       "name": "product_cost_source",
       "schema": "public",
-      "values": [
-        "shopify",
-        "upload"
-      ]
+      "values": ["shopify", "upload"]
     },
     "public.store_platform": {
       "name": "store_platform",
       "schema": "public",
-      "values": [
-        "shopify"
-      ]
+      "values": ["shopify"]
     },
     "public.sync_kind": {
       "name": "sync_kind",
       "schema": "public",
-      "values": [
-        "backfill",
-        "incremental"
-      ]
+      "values": ["backfill", "incremental"]
     },
     "public.sync_status": {
       "name": "sync_status",
       "schema": "public",
-      "values": [
-        "running",
-        "success",
-        "failed"
-      ]
+      "values": ["running", "success", "failed"]
     },
     "public.tenant_status": {
       "name": "tenant_status",
       "schema": "public",
-      "values": [
-        "onboarding",
-        "active",
-        "paused",
-        "churned"
-      ]
+      "values": ["onboarding", "active", "paused", "churned"]
     }
   },
   "schemas": {},

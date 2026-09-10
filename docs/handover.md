@@ -117,6 +117,7 @@ Money everywhere is integer minor units.
 ## 5. What exists, phase by phase
 
 ### Phase 0–1 — Foundations & connectors
+
 Monorepo, CI, RLS, encrypted credentials. Shopify connector with three auth
 strategies (`legacy_static`, `client_credentials`, `authorization_code`); one
 real dev store connected via client_credentials (`rahul-developer-store`).
@@ -128,6 +129,7 @@ explanations (`services/worker/src/reconcile.ts`, expected files in
 `docs/reconciliation/expected/`).
 
 ### Phase 2 — Metric layer
+
 Every metric in `docs/metrics.md` computes into `metric_values`, recomputable
 from raw. Computers in `packages/core/src/metrics/*` orchestrated by
 `services/worker/src/metrics/pipeline.ts`. Order date = **processedAt**
@@ -141,8 +143,10 @@ reference-only), blended (MER, aMER, blended CAC, ad-spend share), channels
 (store-recorded first/last touch, claim gap).
 
 ### Phase 3 — Admin console
+
 Ten-item sidebar (off-canvas below 900px), design system with tabular figures
 and dense tables, empty + error states on every page.
+
 - **Overview** — four numbers + prioritised attention list.
 - **Merchants** — list + detail tabs (Overview / Connections / Stores / Metrics
   / Costs / Thresholds / Billing / Notes); tenant creation and Shopify connect
@@ -161,6 +165,7 @@ and dense tables, empty + error states on every page.
   prices, thresholds, alerts, business/invoicing details, admin account.
 
 ### Phase 4 — Findings engine
+
 For any tenant and month: ranked, actionable findings with client-ready prose,
 an editorial review gate, and recommendation tracking. See
 `docs/phase-4-handover.md`. Enforced invariants: structured records first,
@@ -174,6 +179,7 @@ Anthropic narrative); recommendation history; and findings-as-issues (an
 unreviewed month is blocking).
 
 ### Phase 5 — Growth findings, report delivery, marketing site
+
 See `docs/phase-5-handover.md`. **Growth findings:** two rules (`spend_headroom`,
 `scale_signal`) that point at money available, ranked across families (waste
 above growth at equal value, cap 3, at most one growth, growth suppressed when
@@ -210,6 +216,7 @@ Worker CLIs (`pnpm --filter @grossline/worker <name> …`): `sync`,
 **Node:** `export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; nvm use 22`.
 
 **Full demo (raw → findings), reproducible:**
+
 ```
 docker compose up -d && pnpm db:migrate && pnpm seed:demo
 DEMO=<demo tenant id>
@@ -221,6 +228,7 @@ for m in 2026-05 2026-06 2026-07 2026-08; do
 done
 pnpm --filter @grossline/worker findings:calibrate $DEMO --force     # run before findings:compute
 ```
+
 This yields the demo's real finding set (recurring `payback_broken` + a
 `claim_gap` measurement risk) and a multi-month recommendation history with a
 resolved case.
@@ -251,10 +259,11 @@ password with `ADMIN_PASSWORD='…' pnpm seed:admin` (inline, not in `.env`).
 One root `.env` (names in `.env.example`). Key vars: `DATABASE_URL` (5433),
 `REDIS_URL` (6380), `SESSION_SECRET`, `ADMIN_EMAIL`/`ADMIN_TOTP_*`, Shopify
 `SHOPIFY_CLIENT_ID|SECRET|STORE_TOKEN`, Meta/Google API creds, `RESEND_API_KEY`
-+ `SUPPORT_FROM_EMAIL`, `PUBLIC_ADMIN_URL` (marketing→admin intake origin),
-`ANTHROPIC_API_KEY` + `ANTHROPIC_MODEL`. No production deploy target is wired
-yet; the app runs locally. Playwright needs Chromium
-(`pnpm --filter @grossline/worker exec playwright install chromium`).
+
+- `SUPPORT_FROM_EMAIL`, `PUBLIC_ADMIN_URL` (marketing→admin intake origin),
+  `ANTHROPIC_API_KEY` + `ANTHROPIC_MODEL`. No production deploy target is wired
+  yet; the app runs locally. Playwright needs Chromium
+  (`pnpm --filter @grossline/worker exec playwright install chromium`).
 
 ---
 

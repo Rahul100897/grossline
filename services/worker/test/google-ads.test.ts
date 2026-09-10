@@ -151,7 +151,10 @@ describe('google ads backfill', () => {
           ),
         ),
     );
-    const metrics = (zeroDay!.payload as Record<string, unknown>).metrics as Record<string, unknown>;
+    const metrics = (zeroDay!.payload as Record<string, unknown>).metrics as Record<
+      string,
+      unknown
+    >;
     expect(metrics.costMicros).toBe('0');
   });
 

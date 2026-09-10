@@ -77,7 +77,11 @@ export async function metaGet(
   const maxAttempts = 5;
   const backoffBaseMs = Number(process.env.META_BACKOFF_MS ?? 5000);
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const res = await fetchWithRetry(url.toString(), { method: 'GET' }, { fetchImpl: ctx.fetchImpl });
+    const res = await fetchWithRetry(
+      url.toString(),
+      { method: 'GET' },
+      { fetchImpl: ctx.fetchImpl },
+    );
     const body: unknown = await res.json();
     if (res.ok) return body;
 

@@ -7,7 +7,10 @@
         "id": "gid://shopify/Refund/7300301",
         "createdAt": "2026-02-10T11:20:00Z",
         "note": "one flask arrived dented",
-        "totalRefundedSet": { "shopMoney": { "amount": "44.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" } },
+        "totalRefundedSet": {
+          "shopMoney": { "amount": "44.00", "currencyCode": "USD" },
+          "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" }
+        },
         "refundLineItems": {
           "edges": [
             {
@@ -16,8 +19,14 @@
                 "quantity": 1,
                 "restockType": "RETURN",
                 "lineItem": { "id": "gid://shopify/LineItem/6101004" },
-                "subtotalSet": { "shopMoney": { "amount": "44.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" } },
-                "totalTaxSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } }
+                "subtotalSet": {
+                  "shopMoney": { "amount": "44.00", "currencyCode": "USD" },
+                  "presentmentMoney": { "amount": "44.00", "currencyCode": "USD" }
+                },
+                "totalTaxSet": {
+                  "shopMoney": { "amount": "0.00", "currencyCode": "USD" },
+                  "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" }
+                }
               }
             }
           ]
@@ -32,7 +41,10 @@
         "id": "gid://shopify/Refund/7300302",
         "createdAt": "2026-02-21T10:00:00Z",
         "note": "cancelled before fulfilment",
-        "totalRefundedSet": { "shopMoney": { "amount": "24.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" } },
+        "totalRefundedSet": {
+          "shopMoney": { "amount": "24.00", "currencyCode": "USD" },
+          "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" }
+        },
         "refundLineItems": {
           "edges": [
             {
@@ -41,8 +53,14 @@
                 "quantity": 1,
                 "restockType": "CANCEL",
                 "lineItem": { "id": "gid://shopify/LineItem/6101006" },
-                "subtotalSet": { "shopMoney": { "amount": "24.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" } },
-                "totalTaxSet": { "shopMoney": { "amount": "0.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" } }
+                "subtotalSet": {
+                  "shopMoney": { "amount": "24.00", "currencyCode": "USD" },
+                  "presentmentMoney": { "amount": "24.00", "currencyCode": "USD" }
+                },
+                "totalTaxSet": {
+                  "shopMoney": { "amount": "0.00", "currencyCode": "USD" },
+                  "presentmentMoney": { "amount": "0.00", "currencyCode": "USD" }
+                }
               }
             }
           ]
@@ -57,7 +75,10 @@
         "id": "gid://shopify/Refund/7300303",
         "createdAt": "2026-02-27T09:15:00Z",
         "note": "late delivery — shipping refunded",
-        "totalRefundedSet": { "shopMoney": { "amount": "7.00", "currencyCode": "USD" }, "presentmentMoney": { "amount": "7.00", "currencyCode": "USD" } },
+        "totalRefundedSet": {
+          "shopMoney": { "amount": "7.00", "currencyCode": "USD" },
+          "presentmentMoney": { "amount": "7.00", "currencyCode": "USD" }
+        },
         "refundLineItems": { "edges": [] }
       }
     ]

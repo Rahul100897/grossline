@@ -35,7 +35,8 @@ export const dynamic = 'force-dynamic';
 const pickerInput =
   'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
 const btn = 'rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover';
-const btnPrimary = 'rounded border border-ink bg-ink px-2.5 py-1 text-[13px] text-paper hover:bg-slate';
+const btnPrimary =
+  'rounded border border-ink bg-ink px-2.5 py-1 text-[13px] text-paper hover:bg-slate';
 
 function statusTone(status: Report['status']): 'good' | 'attn' | 'neutral' {
   if (status === 'sent') return 'good';
@@ -75,13 +76,15 @@ export default async function ReportsPage({
     );
   }
 
-  const tenantId = query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
+  const tenantId =
+    query.tenant && tenants.some((t) => t.id === query.tenant) ? query.tenant : tenants[0]!.id;
   const [tenant, periods, archive] = await Promise.all([
     getTenant(tenantId),
     listMetricPeriods(tenantId, 'month'),
     listReports(tenantId),
   ]);
-  const period = query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
+  const period =
+    query.period && periods.includes(query.period) ? query.period : (periods[0] ?? null);
 
   const report = period ? await getReport(tenantId, period) : null;
   const gate = period ? await computeSendGate(tenantId, period) : null;
@@ -121,9 +124,13 @@ export default async function ReportsPage({
       </form>
 
       {query.saved ? (
-        <p className="mb-3 text-[12px] text-good">{decodeURIComponent(query.saved) === '1' ? 'Saved.' : decodeURIComponent(query.saved)}</p>
+        <p className="mb-3 text-[12px] text-good">
+          {decodeURIComponent(query.saved) === '1' ? 'Saved.' : decodeURIComponent(query.saved)}
+        </p>
       ) : null}
-      {query.error ? <p className="mb-3 text-[12px] text-attn">{decodeURIComponent(query.error)}</p> : null}
+      {query.error ? (
+        <p className="mb-3 text-[12px] text-attn">{decodeURIComponent(query.error)}</p>
+      ) : null}
 
       {!period ? (
         <EmptyState>
@@ -167,7 +174,9 @@ export default async function ReportsPage({
                     </button>
                   </form>
                 ) : null}
-                {report ? <span className="text-[12px] text-slate">built {formatDate(report.builtAt)}</span> : null}
+                {report ? (
+                  <span className="text-[12px] text-slate">built {formatDate(report.builtAt)}</span>
+                ) : null}
               </div>
 
               {/* Send gate */}
@@ -190,7 +199,10 @@ export default async function ReportsPage({
               {sent ? (
                 <div className="text-[12px] text-good">
                   Sent {report?.sentAt ? formatDate(report.sentAt) : ''} to{' '}
-                  {Array.isArray(report?.recipients) ? (report!.recipients as string[]).join(', ') : ''}.
+                  {Array.isArray(report?.recipients)
+                    ? (report!.recipients as string[]).join(', ')
+                    : ''}
+                  .
                 </div>
               ) : (
                 <form action={sendReport} className="flex flex-wrap items-center gap-2">
@@ -201,10 +213,16 @@ export default async function ReportsPage({
                     placeholder="recipient@merchant.com, …"
                     className={`${pickerInput} min-w-[260px]`}
                   />
-                  <button type="submit" className={btnPrimary} disabled={!report || !(gate?.canSend ?? false)}>
+                  <button
+                    type="submit"
+                    className={btnPrimary}
+                    disabled={!report || !(gate?.canSend ?? false)}
+                  >
                     Send
                   </button>
-                  {!report ? <span className="text-[12px] text-slate">build the report first</span> : null}
+                  {!report ? (
+                    <span className="text-[12px] text-slate">build the report first</span>
+                  ) : null}
                 </form>
               )}
             </div>
@@ -214,15 +232,25 @@ export default async function ReportsPage({
             <>
               <SectionHeader
                 title="WhatsApp summary"
-                right={<span className="text-[12px] text-slate">paste into a chat on the day it lands</span>}
+                right={
+                  <span className="text-[12px] text-slate">
+                    paste into a chat on the day it lands
+                  </span>
+                }
               />
               <Panel>
-                <CopyBlock text={buildWhatsAppSummary(report.snapshot as ReportModel)} label="Copy summary" />
+                <CopyBlock
+                  text={buildWhatsAppSummary(report.snapshot as ReportModel)}
+                  label="Copy summary"
+                />
               </Panel>
             </>
           ) : null}
 
-          <SectionHeader title="Archive" right={<span className="text-[12px] text-slate">what was built and sent</span>} />
+          <SectionHeader
+            title="Archive"
+            right={<span className="text-[12px] text-slate">what was built and sent</span>}
+          />
           {archive.length === 0 ? (
             <EmptyState>No reports built yet.</EmptyState>
           ) : (

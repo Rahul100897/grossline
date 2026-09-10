@@ -76,7 +76,12 @@ export default async function InvoiceDetailPage({
         <h1 className="text-[15px] font-semibold tracking-tight">{invoice.number}</h1>
         <Badge tone={statusTone(invoice.status)}>{invoice.status}</Badge>
         <span className="text-[12px] text-slate">{tenantName}</span>
-        <a href={pdfHref} target="_blank" rel="noreferrer" className="text-[13px] text-ink underline">
+        <a
+          href={pdfHref}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[13px] text-ink underline"
+        >
           view / download PDF
         </a>
         <Link href="/billing" className="text-[13px] text-slate hover:text-ink">
@@ -113,7 +118,9 @@ export default async function InvoiceDetailPage({
                 issued {formatDate(invoice.issuedOn)} · due {formatDate(invoice.dueOn)}
               </Td>
               <Td num>
-                <span className="font-medium">{formatMinor(invoice.totalMinor, invoice.currency)}</span>
+                <span className="font-medium">
+                  {formatMinor(invoice.totalMinor, invoice.currency)}
+                </span>
               </Td>
             </Tr>
           </tbody>
@@ -170,7 +177,11 @@ export default async function InvoiceDetailPage({
                       )}
                     </Td>
                     <Td num>
-                      {p.netInrMinor !== null ? formatMinor(p.netInrMinor, INR) : <Absent reason="—" />}
+                      {p.netInrMinor !== null ? (
+                        formatMinor(p.netInrMinor, INR)
+                      ) : (
+                        <Absent reason="—" />
+                      )}
                     </Td>
                     <Td num quiet>
                       {p.fxRate ?? <Absent reason="—" />}
@@ -185,7 +196,10 @@ export default async function InvoiceDetailPage({
       )}
 
       <SectionHeader title="Record a payment" />
-      <form action={recordPaymentAction} className="grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3">
+      <form
+        action={recordPaymentAction}
+        className="grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3"
+      >
         <input type="hidden" name="tenantId" value={tenantId} />
         <input type="hidden" name="invoiceId" value={invoice.id} />
         <Field
@@ -195,11 +209,38 @@ export default async function InvoiceDetailPage({
           required
           hint="what the merchant paid"
         />
-        <Field label="Currency" name="grossCurrency" defaultValue={invoice.currency} maxLength={3} required />
-        <Field label="Received on" name="receivedOn" type="date" defaultValue={new Date().toISOString().slice(0, 10)} required />
-        <Field label={`Xflow fee (${invoice.currency})`} name="xflowFee" inputMode="decimal" hint="optional" />
-        <Field label="Net settled (INR)" name="netInr" inputMode="decimal" hint="what hit your INR account" />
-        <Field label="USD→INR rate" name="fxRate" inputMode="decimal" hint="Xflow's effective rate" />
+        <Field
+          label="Currency"
+          name="grossCurrency"
+          defaultValue={invoice.currency}
+          maxLength={3}
+          required
+        />
+        <Field
+          label="Received on"
+          name="receivedOn"
+          type="date"
+          defaultValue={new Date().toISOString().slice(0, 10)}
+          required
+        />
+        <Field
+          label={`Xflow fee (${invoice.currency})`}
+          name="xflowFee"
+          inputMode="decimal"
+          hint="optional"
+        />
+        <Field
+          label="Net settled (INR)"
+          name="netInr"
+          inputMode="decimal"
+          hint="what hit your INR account"
+        />
+        <Field
+          label="USD→INR rate"
+          name="fxRate"
+          inputMode="decimal"
+          hint="Xflow's effective rate"
+        />
         <Field label="Reference" name="reference" hint="UTR / Xflow id" />
         <label className="flex items-center gap-2 self-end text-[13px]">
           <input type="checkbox" name="markPaid" defaultChecked />

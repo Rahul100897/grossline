@@ -70,7 +70,8 @@ export async function recordPaymentAction(formData: FormData): Promise<void> {
       subject: base.invoiceId,
     });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not record';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not record';
   }
   if (failure !== null) redirect(`${back}&error=${encodeURIComponent(failure)}`);
   redirect(`${back}&saved=1`);

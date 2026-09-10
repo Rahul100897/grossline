@@ -98,7 +98,13 @@ beforeAll(async () => {
     }
   }
   for (const row of fixture('meta/synthetic-insights-account.json').data) {
-    metaRows.push({ adAccountId: 'act_ads_test', level: 'account', campaignId: '', date: row.date_start, payload: row });
+    metaRows.push({
+      adAccountId: 'act_ads_test',
+      level: 'account',
+      campaignId: '',
+      date: row.date_start,
+      payload: row,
+    });
   }
   await upsertRawMetaInsights(tenantId, metaConn.id, metaRows);
 
@@ -159,7 +165,9 @@ describe('platform totals match the raw tables exactly', () => {
 
     expect((await value('ad_spend', 'campaign:google_ads:22222222221')).value).toBe(10115);
     expect((await value('ad_spend', 'campaign:google_ads:22222222222')).value).toBe(18036);
-    expect((await value('platform_conversion_value', 'campaign:google_ads:22222222222')).value).toBe(23720);
+    expect(
+      (await value('platform_conversion_value', 'campaign:google_ads:22222222222')).value,
+    ).toBe(23720);
   });
 });
 
@@ -185,7 +193,11 @@ describe('platform-reported figures never blend', () => {
 
   it('labels every platform metric as platform-reported, ROAS as reference-only', async () => {
     const roas = await value('platform_roas', 'platform:meta');
-    expect(roas.meta).toMatchObject({ platformReported: true, referenceOnly: true, neverBlended: true });
+    expect(roas.meta).toMatchObject({
+      platformReported: true,
+      referenceOnly: true,
+      neverBlended: true,
+    });
   });
 });
 

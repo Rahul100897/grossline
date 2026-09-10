@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { fetchWithRetry } from '../src/connectors/http';
 
-function fetchSequence(responses: (Response | Error)[]): { impl: typeof fetch; calls: () => number } {
+function fetchSequence(responses: (Response | Error)[]): {
+  impl: typeof fetch;
+  calls: () => number;
+} {
   let i = 0;
   const impl = (async () => {
     const next = responses[Math.min(i, responses.length - 1)]!;
@@ -19,7 +22,11 @@ describe('fetchWithRetry', () => {
       new Response('slow down', { status: 429, headers: { 'retry-after': '0' } }),
       new Response('ok', { status: 200 }),
     ]);
-    const res = await fetchWithRetry('https://example.test/x', {}, { fetchImpl: impl, baseDelayMs: 1 });
+    const res = await fetchWithRetry(
+      'https://example.test/x',
+      {},
+      { fetchImpl: impl, baseDelayMs: 1 },
+    );
     expect(res.status).toBe(200);
     expect(calls()).toBe(3);
   });
@@ -52,7 +59,11 @@ describe('fetchWithRetry', () => {
   it('retries network errors and gives up after maxAttempts', async () => {
     const { impl, calls } = fetchSequence([new Error('ECONNRESET')]);
     await expect(
-      fetchWithRetry('https://example.test/x', {}, { fetchImpl: impl, maxAttempts: 3, baseDelayMs: 1 }),
+      fetchWithRetry(
+        'https://example.test/x',
+        {},
+        { fetchImpl: impl, maxAttempts: 3, baseDelayMs: 1 },
+      ),
     ).rejects.toThrow(/ECONNRESET/);
     expect(calls()).toBe(3);
   });

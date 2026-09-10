@@ -65,7 +65,10 @@ export default async function SupportPage({
 
   return (
     <>
-      <PageHeader title="Support" sub="Tickets from the marketing site and the in-app widget, in one place." />
+      <PageHeader
+        title="Support"
+        sub="Tickets from the marketing site and the in-app widget, in one place."
+      />
 
       <form method="get" className="mb-3 flex flex-wrap items-center gap-2">
         <select name="status" defaultValue={query.status ?? ''} className={filterInput}>
@@ -92,7 +95,10 @@ export default async function SupportPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+        <button
+          type="submit"
+          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+        >
           Filter
         </button>
         {filtering ? (

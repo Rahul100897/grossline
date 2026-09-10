@@ -14,20 +14,20 @@ Two kinds of file:
 
 All names, domains and IDs in both kinds are fictional after anonymisation.
 
-| File | What it covers |
-|---|---|
-| `synthetic-bulk-orders.jsonl` | Bulk-op JSONL: plain order, order-level discount, partial refund, multi-currency (EUR presentment), cancelled order, shipping-only refund; line items and refund line items as flattened `__parentId` children |
-| `synthetic-bulk-customers.jsonl` | Customers with lifetime order counts |
-| `synthetic-bulk-products.jsonl` | Products with variants (flattened) incl. `inventoryItem.unitCost`, one variant with missing cost |
-| `synthetic-orders-incremental-page1.json` | Paginated incremental orders response, page 1 (updated existing order — refund added) |
-| `synthetic-orders-incremental-page2.json` | Page 2 (a new order), `hasNextPage: false` |
-| `synthetic-order-refunds.json` | Per-order refund enrichment responses (bulk ops cannot nest `refundLineItems` in the `refunds` list — live-API constraint, 2026-09-05) |
-| `recorded-bulk-customers.jsonl` | REAL bulk customers export (anonymised, no PII fields) |
-| `recorded-bulk-products.jsonl` | REAL bulk products export with `__parentId` variant children (anonymised) |
-| `recorded-orders-incremental-empty.json` | REAL empty incremental orders page |
-| `recorded-bulk-orders.jsonl` | REAL bulk orders export (anonymised): 10 seeded test orders — discount codes (percent + fixed) with allocations, partial/full refunds, a cancellation with auto-refund, mixed quantities, repeat customer, shipping charged vs free, tax lines |
-| `recorded-order-refunds.json` | REAL per-order refund enrichment responses for the three refunded orders |
-| `recorded-orders-incremental.json` | REAL incremental orders page containing all ten orders |
+| File                                      | What it covers                                                                                                                                                                                                                                 |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `synthetic-bulk-orders.jsonl`             | Bulk-op JSONL: plain order, order-level discount, partial refund, multi-currency (EUR presentment), cancelled order, shipping-only refund; line items and refund line items as flattened `__parentId` children                                 |
+| `synthetic-bulk-customers.jsonl`          | Customers with lifetime order counts                                                                                                                                                                                                           |
+| `synthetic-bulk-products.jsonl`           | Products with variants (flattened) incl. `inventoryItem.unitCost`, one variant with missing cost                                                                                                                                               |
+| `synthetic-orders-incremental-page1.json` | Paginated incremental orders response, page 1 (updated existing order — refund added)                                                                                                                                                          |
+| `synthetic-orders-incremental-page2.json` | Page 2 (a new order), `hasNextPage: false`                                                                                                                                                                                                     |
+| `synthetic-order-refunds.json`            | Per-order refund enrichment responses (bulk ops cannot nest `refundLineItems` in the `refunds` list — live-API constraint, 2026-09-05)                                                                                                         |
+| `recorded-bulk-customers.jsonl`           | REAL bulk customers export (anonymised, no PII fields)                                                                                                                                                                                         |
+| `recorded-bulk-products.jsonl`            | REAL bulk products export with `__parentId` variant children (anonymised)                                                                                                                                                                      |
+| `recorded-orders-incremental-empty.json`  | REAL empty incremental orders page                                                                                                                                                                                                             |
+| `recorded-bulk-orders.jsonl`              | REAL bulk orders export (anonymised): 10 seeded test orders — discount codes (percent + fixed) with allocations, partial/full refunds, a cancellation with auto-refund, mixed quantities, repeat customer, shipping charged vs free, tax lines |
+| `recorded-order-refunds.json`             | REAL per-order refund enrichment responses for the three refunded orders                                                                                                                                                                       |
+| `recorded-orders-incremental.json`        | REAL incremental orders page containing all ten orders                                                                                                                                                                                         |
 
 The seeded orders were created by `scripts/seed-dev-orders.ts` (dev-only,
 hard-guarded to rahul-developer-store). Note: Shopify does not allow setting

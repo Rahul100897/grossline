@@ -12,7 +12,10 @@ const formSchema = z.object({
   status: z.enum(['onboarding', 'trial', 'active', 'paused', 'churned']),
   monthlyFee: z.string(),
   feeCurrency: z.string().length(3),
-  partnerRateUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.literal('')),
+  partnerRateUntil: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .or(z.literal('')),
 });
 
 export async function saveBilling(formData: FormData): Promise<void> {
@@ -42,7 +45,8 @@ export async function saveBilling(formData: FormData): Promise<void> {
     });
     await writeAuditLog({ actor: session.sub, action: 'tenant.billing.update', tenantId });
   } catch (error) {
-    failure = error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
+    failure =
+      error instanceof Error ? (error.message.split('\n')[0] ?? error.message) : 'could not save';
   }
   if (failure !== null) redirect(`${back}?error=${encodeURIComponent(failure)}`);
   redirect(`${back}?saved=1`);

@@ -31,11 +31,7 @@ export { parseCsv } from './csv';
 export { orderFactsFromPayload, type OrderFacts, type OrderLineFact } from './metrics/order-facts';
 export { computeRevenueMetrics, rate, type MetricPoint } from './metrics/revenue';
 export { computeCustomerMetrics, acquisitionCohortIds, cohortAnchor } from './metrics/customers';
-export {
-  computeBlendedMetrics,
-  platformForSource,
-  PLATFORM_SOURCES,
-} from './metrics/blended';
+export { computeBlendedMetrics, platformForSource, PLATFORM_SOURCES } from './metrics/blended';
 export {
   computeMarginMetrics,
   type CostInputsSnapshot,
@@ -99,7 +95,11 @@ export {
 } from './findings/commentary';
 export type { CommentaryFinding, FourPart } from './findings/commentary';
 export { classifyRecommendation } from './findings/recommendations';
-export type { RecStatus, RecommendationInput, RecommendationJudgement } from './findings/recommendations';
+export type {
+  RecStatus,
+  RecommendationInput,
+  RecommendationJudgement,
+} from './findings/recommendations';
 export type {
   FindingEntity,
   FindingFamily,
@@ -124,11 +124,7 @@ export {
   verifyTotp,
   otpauthUrl,
 } from './auth/totp';
-export {
-  createSessionToken,
-  verifySessionToken,
-  type SessionPayload,
-} from './auth/session';
+export { createSessionToken, verifySessionToken, type SessionPayload } from './auth/session';
 export {
   buildShopifyInstallUrl,
   verifyShopifyHmac,

@@ -78,7 +78,9 @@ export function FindingCard({
               <span className="text-[12px] font-normal italic text-slate">opportunity</span>
             )
           ) : (
-            impact ?? <span className="text-[12px] font-normal italic text-slate">no money at stake</span>
+            (impact ?? (
+              <span className="text-[12px] font-normal italic text-slate">no money at stake</span>
+            ))
           )}
         </span>
       </div>
@@ -97,10 +99,15 @@ export function FindingCard({
             className="w-full rounded border border-hairline bg-panel px-2 py-1.5 text-[13px] outline-none focus:border-slate"
           />
           <div className="mt-1 flex items-center gap-2">
-            <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+            <button
+              type="submit"
+              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+            >
               Save text
             </button>
-            {finding.editedAt ? <span className="text-[12px] text-slate">edited {formatDate(finding.editedAt)}</span> : null}
+            {finding.editedAt ? (
+              <span className="text-[12px] text-slate">edited {formatDate(finding.editedAt)}</span>
+            ) : null}
           </div>
         </form>
       ) : null}
@@ -109,7 +116,10 @@ export function FindingCard({
         {!dismissed && !approved ? (
           <form action={approve}>
             {hidden}
-            <button type="submit" className="rounded border border-ink bg-ink px-2.5 py-1 text-[13px] text-paper hover:bg-slate">
+            <button
+              type="submit"
+              className="rounded border border-ink bg-ink px-2.5 py-1 text-[13px] text-paper hover:bg-slate"
+            >
               Approve
             </button>
           </form>
@@ -117,7 +127,10 @@ export function FindingCard({
         {approved ? (
           <form action={unapprove}>
             {hidden}
-            <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+            <button
+              type="submit"
+              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+            >
               Unapprove
             </button>
           </form>
@@ -128,7 +141,10 @@ export function FindingCard({
             <span className="text-[12px] text-slate">
               dismissed{finding.dismissedReason ? ` — ${finding.dismissedReason}` : ''}
             </span>
-            <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+            <button
+              type="submit"
+              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+            >
               Reopen
             </button>
           </form>
@@ -144,7 +160,10 @@ export function FindingCard({
               <input type="checkbox" name="deliberate" />
               deliberate
             </label>
-            <button type="submit" className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover">
+            <button
+              type="submit"
+              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+            >
               Dismiss
             </button>
           </form>

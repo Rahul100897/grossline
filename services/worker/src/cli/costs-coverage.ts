@@ -41,7 +41,9 @@ async function main(): Promise<void> {
     `  provenance: ${p.uploadLines} from merchant upload, ${p.shopifyDatedLines} shopify (dated), ` +
       `${p.shopifyEpochAssumedLines} shopify (EPOCH-ASSUMED — applied to all history without a real date)`,
   );
-  console.log(`  revenue at stake: ${fmt(coverage.revenueAtStakeMinor, currency)} of ${fmt(coverage.totalRevenueMinor, currency)}`);
+  console.log(
+    `  revenue at stake: ${fmt(coverage.revenueAtStakeMinor, currency)} of ${fmt(coverage.totalRevenueMinor, currency)}`,
+  );
   if (coverage.missing.length > 0) {
     console.log(`  missing costs (${coverage.missing.length} sku/variant key(s)):`);
     for (const m of coverage.missing) {

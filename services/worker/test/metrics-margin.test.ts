@@ -60,10 +60,34 @@ async function makeTenant(withInputs: boolean): Promise<string> {
   });
   await loadRecordedOrders(tenantId, store.id);
   await upsertProductCosts(tenantId, [
-    { sku: 'ABT141A-10', unitCostMinor: 600, currency: 'USD', effectiveFrom: '2026-01-01', source: 'upload' },
-    { sku: 'ABT141A-1115', unitCostMinor: 1000, currency: 'USD', effectiveFrom: '2026-01-01', source: 'upload' },
-    { sku: 'ABT141A-210', unitCostMinor: 500, currency: 'USD', effectiveFrom: '2026-01-01', source: 'upload' },
-    { sku: 'ABT151U-5', unitCostMinor: 1500, currency: 'USD', effectiveFrom: '2026-01-01', source: 'upload' },
+    {
+      sku: 'ABT141A-10',
+      unitCostMinor: 600,
+      currency: 'USD',
+      effectiveFrom: '2026-01-01',
+      source: 'upload',
+    },
+    {
+      sku: 'ABT141A-1115',
+      unitCostMinor: 1000,
+      currency: 'USD',
+      effectiveFrom: '2026-01-01',
+      source: 'upload',
+    },
+    {
+      sku: 'ABT141A-210',
+      unitCostMinor: 500,
+      currency: 'USD',
+      effectiveFrom: '2026-01-01',
+      source: 'upload',
+    },
+    {
+      sku: 'ABT151U-5',
+      unitCostMinor: 1500,
+      currency: 'USD',
+      effectiveFrom: '2026-01-01',
+      source: 'upload',
+    },
     // ABT141A-212 deliberately missing
   ]);
   if (withInputs) {

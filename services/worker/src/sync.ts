@@ -98,7 +98,12 @@ async function ensureSyncRun(job: Job<SyncJobData>): Promise<string> {
 async function finishSyncRun(
   tenantId: string,
   syncRunId: string,
-  patch: { status: 'success' | 'failed'; rowsWritten?: number; durationMs?: number; error?: string },
+  patch: {
+    status: 'success' | 'failed';
+    rowsWritten?: number;
+    durationMs?: number;
+    error?: string;
+  },
 ): Promise<void> {
   await withTenant(tenantId, (tx) =>
     tx
@@ -177,7 +182,11 @@ export function createSyncWorker(connection: IORedis): Worker<SyncJobData> {
           data.tenantId,
           data.connectionId,
           typeof scopeWarning === 'string'
-            ? { health: 'degraded', lastError: `warning: ${scopeWarning}`, lastSuccessAt: new Date() }
+            ? {
+                health: 'degraded',
+                lastError: `warning: ${scopeWarning}`,
+                lastSuccessAt: new Date(),
+              }
             : { health: 'healthy', lastError: null, lastSuccessAt: new Date() },
         );
       }

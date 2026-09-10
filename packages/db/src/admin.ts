@@ -76,7 +76,11 @@ export type UpdateTenantInput = z.input<typeof updateTenantSchema>;
 export async function updateTenant(tenantId: string, patch: UpdateTenantInput): Promise<Tenant> {
   const data = updateTenantSchema.parse(patch);
   if (Object.keys(data).length === 0) throw new Error('updateTenant: empty patch');
-  const [row] = await adminDb().update(tenants).set(data).where(eq(tenants.id, tenantId)).returning();
+  const [row] = await adminDb()
+    .update(tenants)
+    .set(data)
+    .where(eq(tenants.id, tenantId))
+    .returning();
   if (!row) throw new Error(`updateTenant: no tenant ${tenantId}`);
   return row;
 }
