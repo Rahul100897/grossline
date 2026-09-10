@@ -71,7 +71,7 @@ export default async function MerchantBillingPage({
           label="Status"
           name="status"
           defaultValue={tenant.status}
-          options={['onboarding', 'active', 'paused', 'churned'].map((s) => ({
+          options={['onboarding', 'trial', 'active', 'paused', 'churned'].map((s) => ({
             value: s,
             label: s,
           }))}

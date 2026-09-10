@@ -225,6 +225,13 @@
       "when": 1788990691581,
       "tag": "0031_reconciliation_runs",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1789006702912,
+      "tag": "0032_tenant_trial_status",
+      "breakpoints": true
     }
   ]
 }

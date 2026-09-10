@@ -11,7 +11,7 @@ const formSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/, 'slug must be lowercase kebab-case'),
   reportingCurrency: z.string().length(3),
   reportingTimezone: z.string().min(1),
-  status: z.enum(['onboarding', 'active', 'paused', 'churned']),
+  status: z.enum(['onboarding', 'trial', 'active', 'paused', 'churned']),
   plan: z.string(),
   monthlyFee: z.string(),
   feeCurrency: z.string().length(3),

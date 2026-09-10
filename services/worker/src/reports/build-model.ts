@@ -160,6 +160,21 @@ export async function buildReportModel(
   if (!tenant) throw new Error(`tenant not found: ${tenantId}`);
   const currency = tenant.reportingCurrency;
 
+  // Trial tenants get a footer stating this report is free and the price after
+  // (task 5.B7). An explicit opts.freeReport overrides.
+  const freeReport =
+    opts.freeReport !== undefined
+      ? opts.freeReport
+      : tenant.status === 'trial'
+        ? {
+            periodLabel: periodLabel(period),
+            priceText:
+              tenant.monthlyFeeMinor !== null
+                ? `${money(tenant.monthlyFeeMinor, tenant.feeCurrency)} / month`
+                : 'the plan price',
+          }
+        : null;
+
   const [bundle, thresholds, connections, allFindings, metricPeriods] = await Promise.all([
     loadMetricBundle(tenantId, period),
     thresholdsFor(tenantId),
@@ -329,6 +344,6 @@ export async function buildReportModel(
     nothingNeedsChanging,
     checksThisMonth,
     lastMonthOutcomes,
-    freeReport: opts.freeReport ?? null,
+    freeReport,
   };
 }

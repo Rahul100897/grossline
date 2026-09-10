@@ -47,7 +47,7 @@ export default async function NewMerchantPage({
           label="Status"
           name="status"
           defaultValue="onboarding"
-          options={['onboarding', 'active', 'paused', 'churned'].map((s) => ({
+          options={['onboarding', 'trial', 'active', 'paused', 'churned'].map((s) => ({
             value: s,
             label: s,
           }))}

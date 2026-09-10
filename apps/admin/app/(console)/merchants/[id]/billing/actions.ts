@@ -9,7 +9,7 @@ import { requireSession } from '../../../../../lib/auth';
 const formSchema = z.object({
   tenantId: z.string().uuid(),
   plan: z.string(),
-  status: z.enum(['onboarding', 'active', 'paused', 'churned']),
+  status: z.enum(['onboarding', 'trial', 'active', 'paused', 'churned']),
   monthlyFee: z.string(),
   feeCurrency: z.string().length(3),
   partnerRateUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.literal('')),

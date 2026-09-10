@@ -1038,6 +1038,36 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.B7: Trial status + free first report
+
+- **`trial` added to `tenant_status`** (migration `ALTER TYPE … ADD VALUE`, clean
+  on PG16 since the value is only added, not used, in the migration). MRR already
+  sums only `status === 'active'` tenants, so trial is excluded from MRR/billing
+  automatically; it is included everywhere else (a trial's broken sync still
+  raises an Issue). Both the create and update tenant zod enums gained `trial`,
+  and every status `<select>` (new-tenant + billing tabs) offers it.
+- **Report footer** states the free period + price for a trial tenant: the
+  builder auto-sets `freeReport` from `tenant.status === 'trial'` (price from the
+  tenant's monthly fee, else "the plan price"); an explicit `opts.freeReport`
+  still overrides.
+- **Issues rule `trial`**: a trial whose latest report was **sent ≥ 14 days ago**
+  with no decision recorded raises an attention issue ("free first report sent N
+  days ago — no decision recorded"). It clears the moment the tenant is converted
+  (→ active) or offboarded (→ churned) — derived, no stored state.
+- **Offboarding is one action.** `offboardTenant` (admin connection) deletes all
+  the tenant's data in FK-safe order (metrics, raw, billing, findings, reports,
+  reconciliation runs, cost inputs, calibration, connections, stores,
+  credentials, tenant-linked tickets) and marks the tenant churned with its fee
+  cleared. The tenant row and audit log are kept as the record. The console
+  requires typing the slug to confirm; DB-tested on a throwaway tenant. (I did
+  not run it against any real tenant — deleting real data is prohibited for me.)
+- **Not built (Part 2, per spec):** self-serve trial signup, prospect demo login,
+  automated expiry emails.
+- Verified: offboard DB test (data gone, status churned); MRR exclusion is the
+  pre-existing `active`-only filter. The browser click-through was not driven
+  (admin login needs a password); the pieces (create-as-trial, build/send report,
+  convert button, offboard action) are wired and unit/DB-tested.
+
 ## 2026-09-10 — Task 5.B6: WhatsApp summary block
 
 - **`buildWhatsAppSummary(ReportModel)`** — a pure four-line block: tenant +
