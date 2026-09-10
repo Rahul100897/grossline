@@ -1038,6 +1038,19 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.B6: WhatsApp summary block
+
+- **`buildWhatsAppSummary(ReportModel)`** — a pure four-line block: tenant +
+  period, the headline sentence, three numbers (MER vs break-even · net sales ·
+  contribution), and the top surfaced finding in one line (a measurement note
+  never leads; "Nothing needs changing this month." when there is no actionable
+  finding). Built from the stored snapshot so it says exactly what the report
+  says. Golden-tested.
+- **Not an integration — a copy button.** The Reports page shows the block for any
+  built report in a read-only `CopyBlock` client component (clipboard API with a
+  select fallback). Founders live on WhatsApp; this is how a report gets read on
+  the day it lands.
+
 ## 2026-09-10 — Task 5.B5: Weekly digest
 
 - **Five numbers over the trailing seven days** — net sales, ad spend, MER,

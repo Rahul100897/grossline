@@ -10,9 +10,12 @@ import {
   listTenants,
   type Report,
 } from '@grossline/db';
+import { buildWhatsAppSummary } from '@grossline/worker/report-whatsapp';
+import type { ReportModel } from '@grossline/worker/report-html';
 import { requireSession } from '../../../lib/auth';
 import { computeSendGate } from '../../../lib/reports';
 import { formatDate } from '../../../lib/format';
+import { CopyBlock } from '../../../components/copy-block';
 import {
   Badge,
   EmptyState,
@@ -206,6 +209,18 @@ export default async function ReportsPage({
               )}
             </div>
           </Panel>
+
+          {report ? (
+            <>
+              <SectionHeader
+                title="WhatsApp summary"
+                right={<span className="text-[12px] text-slate">paste into a chat on the day it lands</span>}
+              />
+              <Panel>
+                <CopyBlock text={buildWhatsAppSummary(report.snapshot as ReportModel)} label="Copy summary" />
+              </Panel>
+            </>
+          ) : null}
 
           <SectionHeader title="Archive" right={<span className="text-[12px] text-slate">what was built and sent</span>} />
           {archive.length === 0 ? (

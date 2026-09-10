@@ -10,6 +10,7 @@
     "./report-model": "./src/reports/build-model.ts",
     "./reports-pipeline": "./src/reports/pipeline.ts",
     "./digest": "./src/reports/digest.ts",
+    "./report-whatsapp": "./src/reports/whatsapp.ts",
     "./pdf": "./src/pdf/render.ts",
     "./reconcile": "./src/reconcile.ts",
     "./findings-calibrate": "./src/findings/calibrate.ts",
