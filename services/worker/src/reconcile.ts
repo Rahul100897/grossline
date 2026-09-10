@@ -245,6 +245,20 @@ export async function structuralNotes(
 
 // ---- the report ----
 
+/** A one-line status + summary for the reconciliation-run record (task 5.B4). */
+export function summariseReconciliation(report: ReconciliationReport): {
+  status: 'ok' | 'variance';
+  summary: string;
+} {
+  const counts = { within: 0, explained: 0, outside: 0, 'no-expected': 0 } as Record<
+    ReconciliationRow['status'],
+    number
+  >;
+  for (const r of report.rows) counts[r.status] += 1;
+  const summary = `${counts.within} within · ${counts.explained} explained · ${counts.outside} outside · ${counts['no-expected']} no platform figure`;
+  return { status: report.ok ? 'ok' : 'variance', summary };
+}
+
 export async function reconcile(input: {
   tenantIdOrSlug: string;
   month: string; // YYYY-MM
