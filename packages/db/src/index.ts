@@ -7,6 +7,7 @@ export {
   getTenantBySlug,
   listTenants,
   listActiveTenants,
+  offboardTenant,
   type CreateTenantInput,
   type UpdateTenantInput,
   type Tenant,

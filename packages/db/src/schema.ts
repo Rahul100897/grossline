@@ -15,7 +15,9 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-export const tenantStatus = pgEnum('tenant_status', ['onboarding', 'active', 'paused', 'churned']);
+// 'trial' (task 5.B7): served the free first report; excluded from MRR/billing,
+// included in everything else (a trial's broken sync still appears on Issues).
+export const tenantStatus = pgEnum('tenant_status', ['onboarding', 'trial', 'active', 'paused', 'churned']);
 export const storePlatform = pgEnum('store_platform', ['shopify']);
 export const connectionProvider = pgEnum('connection_provider', ['shopify', 'google_ads', 'meta']);
 // 'unknown' = never synced. Health only becomes 'healthy' on real evidence

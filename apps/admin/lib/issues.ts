@@ -10,6 +10,7 @@ import {
   latestCostCompleteness,
   latestSyncRun,
   listConnections,
+  listReports,
   listResolvedIssues,
   listTenants,
   periodsWithUnreviewedFindings,
@@ -29,7 +30,8 @@ export type IssueType =
   | 'reconciliation'
   | 'onboarding'
   | 'billing'
-  | 'findings';
+  | 'findings'
+  | 'trial';
 
 export type Issue = {
   id: string;
@@ -45,6 +47,8 @@ export type Issue = {
 };
 
 const STUCK_ONBOARDING_DAYS = 3;
+/** A trial where the report was sent this long ago with no decision recorded. */
+const TRIAL_DECISION_DAYS = 14;
 
 function connectionIssues(tenant: Tenant, connection: Connection): Issue[] {
   const issues: Issue[] = [];
@@ -205,6 +209,31 @@ export async function deriveIssues(
         since: new Date(`${period}T00:00:00Z`),
         weight: 70,
       });
+    }
+
+    // Trial decision overdue (task 5.B7): the free first report was sent and no
+    // decision (convert or offboard) has been recorded 14 days later. Clears the
+    // moment the tenant is converted to active or offboarded (churned).
+    if (tenant.status === 'trial') {
+      const sent = (await listReports(tenant.id))
+        .filter((r) => r.status === 'sent' && r.sentAt instanceof Date)
+        .sort((a, b) => (b.sentAt as Date).getTime() - (a.sentAt as Date).getTime())[0];
+      if (sent) {
+        const ageDays = (now.getTime() - (sent.sentAt as Date).getTime()) / 86_400_000;
+        if (ageDays >= TRIAL_DECISION_DAYS) {
+          issues.push({
+            id: `trial-${tenant.id}`,
+            severity: 'attention',
+            type: 'trial',
+            tenantId: tenant.id,
+            tenant: tenant.name,
+            summary: `free first report sent ${Math.floor(ageDays)} days ago — no decision recorded`,
+            action: 'convert the merchant to active, or offboard them',
+            since: sent.sentAt as Date,
+            weight: 55,
+          });
+        }
+      }
     }
   }
 

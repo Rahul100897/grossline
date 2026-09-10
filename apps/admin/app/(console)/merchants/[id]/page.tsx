@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTenant, lastMetricRun, listConnections, type Connection } from '@grossline/db';
 import { requireSession } from '../../../../lib/auth';
 import { deriveIssues } from '../../../../lib/issues';
+import { convertTrial, offboard } from './actions';
 import { ageDays, formatDate, formatMinor } from '../../../../lib/format';
 import {
   Absent,
@@ -24,11 +25,14 @@ const isDemoConnection = (c: Connection): boolean =>
 
 export default async function MerchantOverviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ saved?: string; error?: string }>;
 }) {
   await requireSession();
   const { id } = await params;
+  const query = (await searchParams) ?? {};
   const tenant = await getTenant(id);
   if (!tenant) notFound();
 
@@ -75,8 +79,66 @@ export default async function MerchantOverviewPage({
     },
   ];
 
+  const btn = 'rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover';
+
   return (
     <>
+      {query.saved ? (
+        <p className="mb-3 text-[12px] text-good">
+          {query.saved === 'converted'
+            ? 'Converted to an active merchant.'
+            : query.saved === 'offboarded'
+              ? 'Offboarded — connections revoked and data deleted.'
+              : 'Saved.'}
+        </p>
+      ) : null}
+      {query.error ? <p className="mb-3 text-[12px] text-attn">{query.error}</p> : null}
+
+      {tenant.status === 'trial' ? (
+        <>
+          <SectionHeader title="Trial decision" right={<Badge tone="attn">trial</Badge>} />
+          <Panel>
+            <div className="flex flex-col gap-3 p-1">
+              <p className="text-[12px] text-slate">
+                This merchant is on the free first report. Record a decision: convert them to a paying
+                plan, or offboard them.
+              </p>
+              <form action={convertTrial}>
+                <input type="hidden" name="tenantId" value={tenant.id} />
+                <button type="submit" className={btn}>
+                  Convert to active
+                </button>
+              </form>
+            </div>
+          </Panel>
+        </>
+      ) : null}
+
+      {tenant.status !== 'churned' ? (
+        <>
+          <SectionHeader title="Offboard" right={<span className="text-[12px] text-slate">irreversible</span>} />
+          <Panel>
+            <form action={offboard} className="flex flex-col gap-2 p-1">
+              <input type="hidden" name="tenantId" value={tenant.id} />
+              <p className="text-[12px] text-slate">
+                Revokes every connection and permanently deletes this merchant&rsquo;s data. Type the
+                slug <code>{tenant.slug}</code> to confirm.
+              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  name="confirm"
+                  placeholder={tenant.slug}
+                  className="rounded border border-hairline bg-panel px-2 py-1 text-[13px] outline-none focus:border-slate"
+                />
+                <button type="submit" className="rounded border border-attn-line bg-attn-soft px-2.5 py-1 text-[13px] text-attn hover:opacity-80">
+                  Offboard
+                </button>
+              </div>
+            </form>
+          </Panel>
+        </>
+      ) : null}
+
       <SectionHeader title="Facts" />
       <Panel>
         <Table>
