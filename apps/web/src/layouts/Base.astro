@@ -2,9 +2,23 @@
 interface Props {
   title: string;
   description?: string;
+  /** Wider content column for pages with cards/tiers (home, pricing). */
+  wide?: boolean;
+  path?: string;
 }
-const { title, description = 'Monthly revenue and ad spend reporting for Shopify DTC brands.' } =
-  Astro.props;
+const {
+  title,
+  description = 'Monthly revenue and ad spend reporting for Shopify DTC brands.',
+  wide = false,
+  path = '',
+} = Astro.props;
+const site = 'https://getgrossline.com';
+const canonical = `${site}${path}`;
+const nav = [
+  { href: '/what-it-does', label: 'What it does' },
+  { href: '/the-report', label: 'The report' },
+  { href: '/pricing', label: 'Pricing' },
+];
 ---
 
 <html lang="en">
@@ -12,78 +26,101 @@ const { title, description = 'Monthly revenue and ad spend reporting for Shopify
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Grossline" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <title>{title}</title>
-    <style>
+    <style is:global>
       :root {
         color-scheme: light;
         --ink: #16181d;
         --muted: #5b6472;
         --accent: #0f6f5c;
+        --accent-soft: #e8f2ef;
         --rule: #e5e8ec;
         --bg: #fbfaf8;
+        --panel: #ffffff;
+        --warn: #b4531a;
       }
-      * {
-        box-sizing: border-box;
-      }
+      * { box-sizing: border-box; }
       body {
         margin: 0;
         background: var(--bg);
         color: var(--ink);
-        font: 17px/1.65 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-          sans-serif;
+        font: 17px/1.65 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-variant-numeric: tabular-nums;
       }
-      .wrap {
-        max-width: 40rem;
-        margin: 0 auto;
-        padding: 4rem 1.5rem 3rem;
+      .wrap { max-width: 40rem; margin: 0 auto; padding: 0 1.5rem; }
+      .wrap.wide { max-width: 60rem; }
+      nav.site {
+        display: flex; align-items: center; gap: 1.5rem;
+        padding: 1.25rem 0; border-bottom: 1px solid var(--rule);
       }
-      header.site a {
-        color: var(--ink);
-        text-decoration: none;
-        font-weight: 650;
-        letter-spacing: -0.01em;
-      }
-      main h1 {
-        font-size: 2.1rem;
-        line-height: 1.2;
-        letter-spacing: -0.02em;
-        margin: 2.5rem 0 0.75rem;
-      }
-      main h2 {
-        font-size: 1.15rem;
-        margin-top: 2.2rem;
-      }
-      .lede {
-        font-size: 1.2rem;
-        color: var(--muted);
-        margin: 0 0 1.75rem;
-      }
-      a {
-        color: var(--accent);
-      }
-      footer {
-        margin-top: 4rem;
-        padding-top: 1.25rem;
-        border-top: 1px solid var(--rule);
-        font-size: 0.9rem;
-        color: var(--muted);
-        display: flex;
-        gap: 1.25rem;
-        flex-wrap: wrap;
-      }
-      footer a {
-        color: var(--muted);
+      nav.site .brand { font-weight: 700; letter-spacing: -0.01em; margin-right: auto; color: var(--ink); text-decoration: none; }
+      nav.site a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+      nav.site a.cta { color: var(--accent); font-weight: 600; }
+      nav.site a:hover { color: var(--ink); }
+      main { padding: 2.5rem 0 1rem; }
+      main h1 { font-size: 2.4rem; line-height: 1.12; letter-spacing: -0.025em; margin: 1rem 0 0.75rem; }
+      main h2 { font-size: 1.5rem; letter-spacing: -0.015em; margin: 2.4rem 0 0.75rem; }
+      main h3 { font-size: 1.1rem; margin: 0 0 0.5rem; }
+      .lede { font-size: 1.2rem; color: var(--muted); margin: 0 0 1.75rem; max-width: 46ch; }
+      a { color: var(--accent); }
+
+      /* shared marketing components (target: docs/design/marketing-mockup.html) */
+      .claimgap { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
+        border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; max-width: 40rem; margin: 1.5rem 0 0.5rem; }
+      .claimgap .cell { background: var(--panel); padding: 1.4rem 1.6rem; }
+      .claimgap .k { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+      .claimgap .v { font-size: 2.3rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.2; }
+      .claimgap .cell.store .v { color: var(--accent); }
+      .claimgap .note { grid-column: 1 / -1; background: var(--accent-soft); color: var(--accent); padding: 0.7rem 1.6rem; font-size: 0.95rem; }
+      .demo-note { font-size: 0.85rem; color: var(--muted); }
+      .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 1.25rem 0; }
+      .cols.two { grid-template-columns: repeat(2, 1fr); }
+      .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 1.4rem; }
+      .card p { margin: 0; color: var(--muted); font-size: 0.98rem; }
+      .flat { display: inline-block; background: var(--accent-soft); color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+      .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 1.25rem 0; }
+      .tier { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 1.6rem; }
+      .tier.mid { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+      .tier .who { color: var(--muted); font-size: 0.92rem; margin: 0 0 1rem; }
+      .tier ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.95rem; }
+      .tier li { margin: 0.2rem 0; }
+      .quote-slot { border: 1px dashed var(--rule); border-radius: 10px; padding: 2rem; text-align: center; color: var(--muted); font-size: 0.95rem; }
+      .btn { display: inline-block; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; padding: 0.7rem 1.3rem; border-radius: 8px; }
+      .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+      footer.site { border-top: 1px solid var(--rule); margin-top: 3.5rem; padding: 1.75rem 0; color: var(--muted); font-size: 0.9rem; display: flex; gap: 1.25rem; flex-wrap: wrap; }
+      footer.site a { color: var(--muted); }
+      @media (max-width: 40rem) {
+        .cols, .cols.two, .tiers, .claimgap { grid-template-columns: 1fr; }
+        main h1 { font-size: 1.9rem; }
+        nav.site { gap: 1rem; flex-wrap: wrap; }
       }
     </style>
   </head>
   <body>
-    <div class="wrap">
-      <header class="site"><a href="/">Grossline</a></header>
+    <div class={wide ? 'wrap wide' : 'wrap'}>
+      <nav class="site">
+        <a href="/" class="brand">Grossline</a>
+        {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        <a href="/contact" class="cta">Free first report →</a>
+      </nav>
       <main>
         <slot />
       </main>
-      <footer>
+      <footer class="site">
         <span>© {new Date().getFullYear()} Grossline</span>
+        <a href="/what-it-does">What it does</a>
+        <a href="/pricing">Pricing</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>

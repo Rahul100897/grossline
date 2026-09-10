@@ -1038,6 +1038,30 @@ Dashboard apps — the 60-day warning will stand even after scopes land.
   spend, up on last month", with payback (waste) + spend headroom (growth) +
   claim gap (measurement).
 
+## 2026-09-10 — Task 5.C1: Marketing pages
+
+- **No `frontend-design` skill exists** (searched; only an unrelated match) — same
+  as Phase 3. The design is applied directly from the authored
+  `docs/design/marketing-mockup.html` (committed as the visual target, per the
+  Phase 3 admin-mockup precedent) and the existing editorial style.
+- **The hero is the claim gap**, with the demo tenant's real August figures: Meta
+  reports 195 conversions, the store recorded 124 — a 36% gap, shown side by side.
+  The page says plainly the figures are from a demo tenant, not a real merchant.
+- **Shared marketing CSS is `is:global`** in `Base.astro`. Astro scopes component
+  styles per-file, so classes used in child pages (`.claimgap`, `.cols`, `.tier`)
+  would not match Base's scoped rules; global is the simplest fix for a small
+  static site.
+- **Pricing shows three tiers — Advisory, Growth, Partner — not Insight** (that
+  tier needs the merchant portal + self-serve billing, both Part 2). Stated flat,
+  based on ad spend, never a percentage of revenue.
+- **No invented dollar amounts.** Rahul sets prices; the page differentiates the
+  tiers by what's included and routes to a quote ("tell us your spend"), rather
+  than fabricating numbers. No fake proof anywhere: the client-quote slot is left
+  visibly empty until a real one exists.
+- **The four skipping rules are not promised.** Findings are described by their two
+  real families (waste / growth) and the working categories, never by naming
+  dead-campaign / branded-search / search-term / refund-outlier as delivered.
+
 ## 2026-09-10 — Task 5.B7: Trial status + free first report
 
 - **`trial` added to `tenant_status`** (migration `ALTER TYPE … ADD VALUE`, clean
