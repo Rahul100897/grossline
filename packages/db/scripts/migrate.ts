@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import pg from 'pg';
 import { loadRootEnv } from '@grossline/core';
+import { adminDatabaseUrl } from '../src/client';
 
 loadRootEnv();
 
@@ -16,8 +17,10 @@ async function main() {
     console.log('migrate: no migrations yet, nothing to do');
     return;
   }
-  const url = process.env.DATABASE_URL;
-  if (!url) throw new Error('DATABASE_URL is not set');
+  // Same resolution as every other DB entry point: the dev docker-compose
+  // fallback locally so a fresh clone can migrate before writing a .env, and a
+  // hard refusal in production where DATABASE_URL must be set explicitly.
+  const url = adminDatabaseUrl();
   const pool = new pg.Pool({ connectionString: url, max: 1 });
   try {
     await migrate(drizzle(pool), { migrationsFolder });
