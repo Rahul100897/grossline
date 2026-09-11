@@ -57,4 +57,27 @@ export default tseslint.config(
       'no-restricted-imports': 'off',
     },
   },
+  // Design-port lock-in (docs/design): the admin console must not use Tailwind
+  // arbitrary values (e.g. text-[13px], p-[13px], rounded-[14px]). Every design
+  // value comes from a --gl-* token, an @theme utility, or a gl-* primitive
+  // class. A hyphen immediately before `[` is the Tailwind arbitrary-value
+  // syntax; match it in both plain and template-literal class strings.
+  {
+    files: ['apps/admin/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/-\\[[^\\]]+\\]/]',
+          message:
+            'No Tailwind arbitrary values. Add a token to design-tokens.css/@theme or use a gl-* primitive.',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/-\\[[^\\]]+\\]/]',
+          message:
+            'No Tailwind arbitrary values. Add a token to design-tokens.css/@theme or use a gl-* primitive.',
+        },
+      ],
+    },
+  },
 );

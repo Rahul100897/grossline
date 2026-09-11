@@ -1425,3 +1425,18 @@ is in `app/primitives.css` (`.gl-shell/.gl-side/.gl-logo/.gl-mark/.gl-navgrp/
 - Verified against the mockup at 1440px and 390px via a Playwright harness (real
   tokens + primitives, self-hosted fonts) — one-to-one at desktop; at ≤900px the
   sidebar goes off-canvas and the toggle appears.
+
+### 2026-09-12 — Design port: Step D (ESLint lock-in)
+
+The design-port hard rule "no Tailwind arbitrary values" is now enforced by
+ESLint (`packages/config/eslint.mjs`). Two `no-restricted-syntax` selectors,
+scoped to `apps/admin/**`, fail the build on any class string containing the
+Tailwind arbitrary-value syntax (a hyphen immediately before `[`, e.g.
+`text-[13px]`, `p-[13px]`, `rounded-[14px]`), in both plain string and
+template-literal class attributes. Verified: the current tree passes with zero
+violations, and a probe file with `text-[13px]`/`p-[13px]` is caught.
+
+Scoped to the admin app because that is the only Tailwind surface — the marketing
+site (Astro) uses hand-written CSS, and the worker/report render CSS as template
+strings that legitimately contain no Tailwind classes. Every design value in the
+admin now comes from a `--gl-*` token, an `@theme` utility, or a `gl-*` primitive.
