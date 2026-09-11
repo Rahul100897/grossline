@@ -1299,3 +1299,53 @@ A tokens/fonts, B primitives, C report, D merchant dashboard + admin console.
   error-level rule in Step A would fail CI on code Step B/D will replace. It is
   self-enforced through B–D and added (proving zero violations) once the tree is
   clean.
+
+### 2026-09-11 — Design port: Step B (primitives)
+
+`apps/admin/app/primitives.css` is a verbatim port of the component CSS in
+`docs/design/admin.html` and `merchant.html`: every padding, radius, type size
+and colour is copied unchanged. The only translations are mechanical — the
+mockups' own `var(--x)` become the canonical `--gl-*` tokens, inline hexes
+(`#FCFBF6`→`--gl-cream-3`, `#CFC7B0`→`--gl-chart-neutral`) become tokens, and
+class names gain a `gl-` prefix so they never collide with Tailwind utilities.
+`apps/admin/components/ui.tsx` now emits only these classes; no page styles its
+own table, tag or panel. Component APIs were kept stable so the 29 existing
+pages render unchanged. No hex and no Tailwind arbitrary value is introduced.
+
+Where the mockups differ by ~1px (e.g. `.phead` padding 14px 19px in admin vs
+15px 20px in merchant, `td` 13px vs 12px), the **admin** values are used across
+the console, since this is the admin surface. Recorded here rather than picked
+silently.
+
+Values the mockups don't cover, derived from existing tokens (never invented):
+
+- **`.gl-h1` / `.gl-sub`** — copied from admin.html's top-bar `header h1`/`.sub`
+  (Instrument Serif 24px / 13px slate). The app renders the page title in the
+  body, not a sticky bar, so the same values apply.
+- **`.gl-section`** — 13px/600 label. The mockups group with panels and have no
+  standalone section label; the app's `SectionHeader` predates the port, so the
+  size is derived from the body scale.
+- **`.gl-tablewrap`** — `overflow-x:auto` around each table so wide tables scroll
+  inside the panel while the panel keeps `overflow:hidden` for its rounded
+  corners (the mockup's mobile rule `table{min-width:700px}` is carried over and
+  pairs with this).
+- **`.gl-stat .gl-v.good`** (green figure) and **`.gl-sdot.n`** (neutral/never-
+  synced dot, `--gl-slate-2`) — the mockups define only `.v.warn` and ok/warn/bad
+  dots; the green figure reuses `--gl-green` and the neutral dot reuses
+  `--gl-slate-2`, both existing tokens.
+- **`.gl-empty` / `.gl-error`** — every page needs an empty and error state
+  (definition of done). No dedicated mockup element: empty reuses the panel shell
+  (border/radius/white), error reuses the rust `.tag.bad` palette
+  (`--gl-rust` on `--gl-rust-soft`). Padding derived from the panel scale.
+- **`.gl-strip.n1/.n2/.n3`** — the mockup strip is always 4-up; these count
+  modifiers let a page render a 3- or 2-stat strip (e.g. Billing) without an
+  empty cell. The mockup's mobile reflow (`≤1180px`→2-up, `≤560px`→1-up) is
+  copied verbatim and kept as classes (not inline style) so the `@media` rules
+  still win. `NumberStrip` sets the modifier from its item count.
+
+New primitive React components added for Steps C/D (each a thin wrapper over an
+existing mockup class): `PanelHeader` (`.phead`), `PanelFoot` (`.foot`),
+`Button` (`.btn`/`.ghost`/`.sm`), `ListRow` (`.li`), `MiniRow` (`.mini`),
+`IssueRow` (`.issue`), `SettingsRow` (`.srow`), `ProgressTrack`
+(`.track`/`.fill`/`.be`). `Badge` gained a `warn` tone (`.tag.warn`, gold) to
+cover the mockup's fourth tag colour.
