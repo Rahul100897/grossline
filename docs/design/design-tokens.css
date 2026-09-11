@@ -45,6 +45,27 @@
   --gl-gold-display: #c08a2e; /* caution — large display figures only */
   --gl-gold-soft: #fbf3e3;
 
+  /* ---- marketing site (home.html) — dark-green sections, muted text on them,
+     the image-placeholder hatch. Kept here so the landing page authors no hex. */
+  --gl-green-night: #072e27; /* dark marketing sections + footer */
+  --gl-green-tier: #0d3a31; /* pricing tier card on dark */
+  --gl-green-line-2: #1b3b34; /* borders inside marketing dark grids */
+  --gl-green-fog: #e8efec; /* body text on dark marketing sections */
+  --gl-green-muted-2: #9db3ac; /* muted text on dark marketing sections */
+  --gl-green-list: #b9ccc6; /* list text on dark tiers */
+  --gl-green-numeral: #4e8f7f; /* problem-card numerals, list bullets */
+  --gl-green-pale: #c6e4db; /* lede on the green close band */
+  --gl-green-pale-2: #a9d5c7; /* microcopy on the green close band */
+  --gl-green-foot: #8fa9a1; /* footer body text */
+  --gl-line-2: #d3cbb5; /* ghost-button hover border */
+  --gl-rust-text: #6b3a2a; /* verdict paragraph text */
+  --gl-rust-line: #f0dcd4; /* verdict top border */
+  --gl-gold-text: #3a2705; /* text on the gold pricing tag */
+  --gl-ph-border: #c6bca2; /* image-placeholder dashed border */
+  --gl-ph-stripe: #ede8d9; /* image-placeholder hatch stripe */
+  --gl-ph-text: #8a7f63; /* image-placeholder body text */
+  --gl-ph-name: #6e6448; /* image-placeholder filename */
+
   /* ---- chart ---- */
   --gl-chart-primary: #0f6f5c; /* revenue */
   --gl-chart-neutral: #cfc7b0; /* ad spend */

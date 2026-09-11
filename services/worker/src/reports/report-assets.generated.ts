@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 /** The :root token block copied verbatim from docs/design/design-tokens.css. */
-export const DESIGN_TOKENS_CSS = ":root{--gl-green: #0f6f5c;--gl-green-deep: #0a4a3e;--gl-green-dark: #0b3a31;--gl-green-darker: #072922;--gl-green-soft: #e7f0ec;--gl-green-line: #1b4a3f;--gl-green-accent: #7fd3bc;--gl-green-muted: #9dc4b8;--gl-green-dim: #5c7d74;--gl-green-nav: #a8c4bb;--gl-green-nav-hi: #d5e5df;--gl-cream: #f8f5ed;--gl-cream-2: #f1ede1;--gl-cream-3: #fcfbf6;--gl-white: #ffffff;--gl-paper-report: #fdfcf8;--gl-line: #e2dccc;--gl-line-soft: #ede8da;--gl-ink: #131a18;--gl-slate: #5e6b66;--gl-slate-2: #8a948f;--gl-rust: #b4472b;--gl-rust-soft: #faf0ec;--gl-rust-dark: #5a2418;--gl-rust-pale: #f3b3a0;--gl-gold: #9a6b12;--gl-gold-display: #c08a2e;--gl-gold-soft: #fbf3e3;--gl-chart-primary: #0f6f5c;--gl-chart-neutral: #cfc7b0;--gl-cohort-0: #fcfbf6;--gl-cohort-1: #eff6f3;--gl-cohort-2: #e1efe9;--gl-cohort-3: #cfe5dc;--gl-cohort-4: #b8d9cc;--gl-font-display: 'Instrument Serif', Georgia, serif;--gl-font-body: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--gl-radius-sm: 6px;--gl-radius-md: 8px;--gl-radius-lg: 14px;--gl-radius-xl: 16px;--gl-shadow-card: 0 24px 60px -30px rgba(7, 46, 39, 0.28);--gl-shadow-image: 0 30px 70px -34px rgba(7, 46, 39, 0.45);--gl-shadow-page: 0 20px 50px -26px rgba(11, 58, 49, 0.4);--gl-shadow-nav: 0 8px 44px rgba(0, 0, 0, 0.3);}";
+export const DESIGN_TOKENS_CSS = ":root{--gl-green: #0f6f5c;--gl-green-deep: #0a4a3e;--gl-green-dark: #0b3a31;--gl-green-darker: #072922;--gl-green-soft: #e7f0ec;--gl-green-line: #1b4a3f;--gl-green-accent: #7fd3bc;--gl-green-muted: #9dc4b8;--gl-green-dim: #5c7d74;--gl-green-nav: #a8c4bb;--gl-green-nav-hi: #d5e5df;--gl-cream: #f8f5ed;--gl-cream-2: #f1ede1;--gl-cream-3: #fcfbf6;--gl-white: #ffffff;--gl-paper-report: #fdfcf8;--gl-line: #e2dccc;--gl-line-soft: #ede8da;--gl-ink: #131a18;--gl-slate: #5e6b66;--gl-slate-2: #8a948f;--gl-rust: #b4472b;--gl-rust-soft: #faf0ec;--gl-rust-dark: #5a2418;--gl-rust-pale: #f3b3a0;--gl-gold: #9a6b12;--gl-gold-display: #c08a2e;--gl-gold-soft: #fbf3e3;--gl-green-night: #072e27;--gl-green-tier: #0d3a31;--gl-green-line-2: #1b3b34;--gl-green-fog: #e8efec;--gl-green-muted-2: #9db3ac;--gl-green-list: #b9ccc6;--gl-green-numeral: #4e8f7f;--gl-green-pale: #c6e4db;--gl-green-pale-2: #a9d5c7;--gl-green-foot: #8fa9a1;--gl-line-2: #d3cbb5;--gl-rust-text: #6b3a2a;--gl-rust-line: #f0dcd4;--gl-gold-text: #3a2705;--gl-ph-border: #c6bca2;--gl-ph-stripe: #ede8d9;--gl-ph-text: #8a7f63;--gl-ph-name: #6e6448;--gl-chart-primary: #0f6f5c;--gl-chart-neutral: #cfc7b0;--gl-cohort-0: #fcfbf6;--gl-cohort-1: #eff6f3;--gl-cohort-2: #e1efe9;--gl-cohort-3: #cfe5dc;--gl-cohort-4: #b8d9cc;--gl-font-display: 'Instrument Serif', Georgia, serif;--gl-font-body: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--gl-radius-sm: 6px;--gl-radius-md: 8px;--gl-radius-lg: 14px;--gl-radius-xl: 16px;--gl-shadow-card: 0 24px 60px -30px rgba(7, 46, 39, 0.28);--gl-shadow-image: 0 30px 70px -34px rgba(7, 46, 39, 0.45);--gl-shadow-page: 0 20px 50px -26px rgba(11, 58, 49, 0.4);--gl-shadow-nav: 0 8px 44px rgba(0, 0, 0, 0.3);}";
 
 /** Parsed token values (name → value), for the few literals that can't use a var. */
 export const GL: Readonly<Record<string, string>> = {
@@ -36,6 +36,24 @@ export const GL: Readonly<Record<string, string>> = {
   "--gl-gold": "#9a6b12",
   "--gl-gold-display": "#c08a2e",
   "--gl-gold-soft": "#fbf3e3",
+  "--gl-green-night": "#072e27",
+  "--gl-green-tier": "#0d3a31",
+  "--gl-green-line-2": "#1b3b34",
+  "--gl-green-fog": "#e8efec",
+  "--gl-green-muted-2": "#9db3ac",
+  "--gl-green-list": "#b9ccc6",
+  "--gl-green-numeral": "#4e8f7f",
+  "--gl-green-pale": "#c6e4db",
+  "--gl-green-pale-2": "#a9d5c7",
+  "--gl-green-foot": "#8fa9a1",
+  "--gl-line-2": "#d3cbb5",
+  "--gl-rust-text": "#6b3a2a",
+  "--gl-rust-line": "#f0dcd4",
+  "--gl-gold-text": "#3a2705",
+  "--gl-ph-border": "#c6bca2",
+  "--gl-ph-stripe": "#ede8d9",
+  "--gl-ph-text": "#8a7f63",
+  "--gl-ph-name": "#6e6448",
   "--gl-chart-primary": "#0f6f5c",
   "--gl-chart-neutral": "#cfc7b0",
   "--gl-cohort-0": "#fcfbf6",
