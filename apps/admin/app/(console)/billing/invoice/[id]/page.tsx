@@ -73,18 +73,13 @@ export default async function InvoiceDetailPage({
   return (
     <>
       <div className="mb-3 flex flex-wrap items-baseline gap-3">
-        <h1 className="text-[15px] font-semibold tracking-tight">{invoice.number}</h1>
+        <h1 className="text-title font-semibold tracking-tight">{invoice.number}</h1>
         <Badge tone={statusTone(invoice.status)}>{invoice.status}</Badge>
-        <span className="text-[12px] text-slate">{tenantName}</span>
-        <a
-          href={pdfHref}
-          target="_blank"
-          rel="noreferrer"
-          className="text-[13px] text-ink underline"
-        >
+        <span className="text-meta text-slate">{tenantName}</span>
+        <a href={pdfHref} target="_blank" rel="noreferrer" className="text-body text-ink underline">
           view / download PDF
         </a>
-        <Link href="/billing" className="text-[13px] text-slate hover:text-ink">
+        <Link href="/billing" className="text-body text-slate hover:text-ink">
           ← billing
         </Link>
       </div>
@@ -140,7 +135,7 @@ export default async function InvoiceDetailPage({
             name="status"
             value={s}
             disabled={s === invoice!.status}
-            className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover disabled:opacity-40"
+            className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover disabled:opacity-40"
           >
             mark {s}
           </button>
@@ -242,7 +237,7 @@ export default async function InvoiceDetailPage({
           hint="Xflow's effective rate"
         />
         <Field label="Reference" name="reference" hint="UTR / Xflow id" />
-        <label className="flex items-center gap-2 self-end text-[13px]">
+        <label className="flex items-center gap-2 self-end text-body">
           <input type="checkbox" name="markPaid" defaultChecked />
           mark invoice paid
         </label>

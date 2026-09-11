@@ -13,8 +13,8 @@ function EvidenceTable({ evidence }: { evidence: Record<string, unknown> }) {
   if (entries.length === 0) return null;
   return (
     <details className="mt-2">
-      <summary className="cursor-pointer text-[12px] text-slate">evidence</summary>
-      <table className="mt-1 border-collapse text-[12px]">
+      <summary className="cursor-pointer text-meta text-slate">evidence</summary>
+      <table className="mt-1 border-collapse text-meta">
         <tbody>
           {entries.map(([k, v]) => (
             <tr key={k}>
@@ -60,8 +60,8 @@ export function FindingCard({
       }`}
     >
       <div className="flex flex-wrap items-baseline gap-2">
-        <span className="text-[13px] font-semibold">{ruleTitle(finding.ruleId)}</span>
-        <span className="text-[12px] text-slate">{finding.entityLabel}</span>
+        <span className="text-body font-semibold">{ruleTitle(finding.ruleId)}</span>
+        <span className="text-meta text-slate">{finding.entityLabel}</span>
         <Badge tone={statusTone(finding)}>{statusLabel(finding)}</Badge>
         {/* Family, not severity: a growth finding must never read like a waste
             finding at a glance (task 5.A5). */}
@@ -69,17 +69,17 @@ export function FindingCard({
         {isMeasurement ? <Badge>measurement risk</Badge> : null}
         {approved ? <Badge tone="good">approved</Badge> : null}
         <span
-          className={`ml-auto text-[13px] font-semibold tabular-nums ${isGrowth ? 'text-good' : ''}`}
+          className={`ml-auto text-body font-semibold tabular-nums ${isGrowth ? 'text-good' : ''}`}
         >
           {isGrowth ? (
             finding.opportunityValueMinor !== null ? (
               `+${formatMinor(finding.opportunityValueMinor, finding.currency ?? 'USD')} opportunity`
             ) : (
-              <span className="text-[12px] font-normal italic text-slate">opportunity</span>
+              <span className="text-meta font-normal italic text-slate">opportunity</span>
             )
           ) : (
             (impact ?? (
-              <span className="text-[12px] font-normal italic text-slate">no money at stake</span>
+              <span className="text-meta font-normal italic text-slate">no money at stake</span>
             ))
           )}
         </span>
@@ -90,23 +90,23 @@ export function FindingCard({
       {!dismissed ? (
         <form action={saveText} className="mt-2">
           {hidden}
-          <div className="mb-1 text-[12px] text-slate">text · {draftSource}</div>
+          <div className="mb-1 text-meta text-slate">text · {draftSource}</div>
           <textarea
             name="finalText"
             defaultValue={draft}
             rows={5}
             placeholder="The four-part note that reaches the client: what happened, what's at stake, what to do, what we check next month."
-            className="w-full rounded border border-hairline bg-panel px-2 py-1.5 text-[13px] outline-none focus:border-slate"
+            className="w-full rounded border border-hairline bg-panel px-2 py-1.5 text-body outline-none focus:border-slate"
           />
           <div className="mt-1 flex items-center gap-2">
             <button
               type="submit"
-              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+              className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
             >
               Save text
             </button>
             {finding.editedAt ? (
-              <span className="text-[12px] text-slate">edited {formatDate(finding.editedAt)}</span>
+              <span className="text-meta text-slate">edited {formatDate(finding.editedAt)}</span>
             ) : null}
           </div>
         </form>
@@ -118,7 +118,7 @@ export function FindingCard({
             {hidden}
             <button
               type="submit"
-              className="rounded border border-ink bg-ink px-2.5 py-1 text-[13px] text-paper hover:bg-slate"
+              className="rounded border border-ink bg-ink px-2.5 py-1 text-body text-paper hover:bg-slate"
             >
               Approve
             </button>
@@ -129,7 +129,7 @@ export function FindingCard({
             {hidden}
             <button
               type="submit"
-              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+              className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
             >
               Unapprove
             </button>
@@ -138,12 +138,12 @@ export function FindingCard({
         {dismissed ? (
           <form action={reopen} className="flex items-center gap-2">
             {hidden}
-            <span className="text-[12px] text-slate">
+            <span className="text-meta text-slate">
               dismissed{finding.dismissedReason ? ` — ${finding.dismissedReason}` : ''}
             </span>
             <button
               type="submit"
-              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+              className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
             >
               Reopen
             </button>
@@ -154,15 +154,15 @@ export function FindingCard({
             <input
               name="reason"
               placeholder="reason (optional)"
-              className="rounded border border-hairline bg-panel px-2 py-1 text-[12px] outline-none focus:border-slate"
+              className="rounded border border-hairline bg-panel px-2 py-1 text-meta outline-none focus:border-slate"
             />
-            <label className="flex items-center gap-1 text-[12px] text-slate">
+            <label className="flex items-center gap-1 text-meta text-slate">
               <input type="checkbox" name="deliberate" />
               deliberate
             </label>
             <button
               type="submit"
-              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+              className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
             >
               Dismiss
             </button>

@@ -9,7 +9,7 @@ import { savePlans } from '../actions';
 export const dynamic = 'force-dynamic';
 
 const cell =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 function feeDecimal(minor: number, currency: string): string {
   const exp = minorUnitExponent(currency);

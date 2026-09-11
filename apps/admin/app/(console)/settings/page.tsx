@@ -39,8 +39,8 @@ export default async function SettingsPage() {
           <Link key={s.href} href={s.href} className="block">
             <Panel>
               <div className="p-3">
-                <div className="text-[13px] font-semibold">{s.title}</div>
-                <div className="mt-1 text-[12px] text-slate">{s.blurb}</div>
+                <div className="text-body font-semibold">{s.title}</div>
+                <div className="mt-1 text-meta text-slate">{s.blurb}</div>
               </div>
             </Panel>
           </Link>

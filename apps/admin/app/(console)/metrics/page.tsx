@@ -33,7 +33,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 const pickerInput =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 function isPlatformReported(meta: Record<string, unknown>): boolean {
   return (
@@ -207,7 +207,7 @@ export default async function MetricsExplorerPage({
         </select>
         <button
           type="submit"
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           Show
         </button>
@@ -228,7 +228,7 @@ export default async function MetricsExplorerPage({
                 right={
                   <Link
                     href={`/metrics?tenant=${tenantId}&period=${period}`}
-                    className="text-[12px] text-slate hover:text-ink"
+                    className="text-meta text-slate hover:text-ink"
                   >
                     close drill
                   </Link>
@@ -239,7 +239,7 @@ export default async function MetricsExplorerPage({
                   {breakdown.some((r) =>
                     isPlatformReported((r.meta ?? {}) as Record<string, unknown>),
                   ) ? (
-                    <p className="mb-2 text-[12px] text-attn">
+                    <p className="mb-2 text-meta text-attn">
                       Platform-reported figures — each platform&apos;s own claim. Not blended, and
                       not additive across platforms.
                     </p>

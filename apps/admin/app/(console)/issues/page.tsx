@@ -28,7 +28,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 const filterInput =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 const ISSUE_TYPES = [
   'connection',
@@ -105,12 +105,12 @@ export default async function IssuesPage({
         </select>
         <button
           type="submit"
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           Filter
         </button>
         {filtering ? (
-          <Link href="/issues" className="text-[13px] text-slate hover:text-ink">
+          <Link href="/issues" className="text-body text-slate hover:text-ink">
             clear
           </Link>
         ) : null}
@@ -151,7 +151,7 @@ export default async function IssuesPage({
                   </Td>
                   <Td>{issue.summary}</Td>
                   <Td quiet>
-                    <span className="block max-w-[380px] truncate" title={issue.action}>
+                    <span className="block truncate" style={{ maxWidth: 380 }} title={issue.action}>
                       {issue.action}
                     </span>
                   </Td>
@@ -167,7 +167,7 @@ export default async function IssuesPage({
 
       <SectionHeader
         title="Recently resolved"
-        right={<span className="text-[12px] text-slate">last 90 days</span>}
+        right={<span className="text-meta text-slate">last 90 days</span>}
       />
       {resolved.length === 0 ? (
         <EmptyState>Nothing has resolved in the last 90 days.</EmptyState>

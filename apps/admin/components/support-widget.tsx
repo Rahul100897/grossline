@@ -35,7 +35,7 @@ export function SupportWidget() {
       {open ? (
         <div className="w-80 rounded border border-hairline bg-panel p-3 shadow-lg">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-[13px] font-semibold">Report a bug / feedback</span>
+            <span className="text-body font-semibold">Report a bug / feedback</span>
             <button
               type="button"
               onClick={() => {
@@ -49,13 +49,13 @@ export function SupportWidget() {
             </button>
           </div>
           {state === 'done' ? (
-            <div className="py-4 text-[13px] text-good">
+            <div className="py-4 text-body text-good">
               Logged. It&apos;s in the support inbox.
               <div className="mt-3">
                 <button
                   type="button"
                   onClick={() => setState('idle')}
-                  className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+                  className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
                 >
                   Log another
                 </button>
@@ -66,7 +66,7 @@ export function SupportWidget() {
               <select
                 name="type"
                 defaultValue="bug"
-                className="rounded border border-hairline bg-panel px-2 py-1 text-[13px]"
+                className="rounded border border-hairline bg-panel px-2 py-1 text-body"
               >
                 {['bug', 'question', 'feedback', 'feature'].map((t) => (
                   <option key={t} value={t}>
@@ -78,20 +78,20 @@ export function SupportWidget() {
                 name="subject"
                 required
                 placeholder="Subject"
-                className="rounded border border-hairline bg-panel px-2 py-1 text-[13px]"
+                className="rounded border border-hairline bg-panel px-2 py-1 text-body"
               />
               <textarea
                 name="body"
                 required
                 rows={4}
                 placeholder="What happened?"
-                className="rounded border border-hairline bg-panel px-2 py-1 text-[13px]"
+                className="rounded border border-hairline bg-panel px-2 py-1 text-body"
               />
-              {error ? <p className="text-[12px] text-attn">{error}</p> : null}
+              {error ? <p className="text-meta text-attn">{error}</p> : null}
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded border border-ink bg-ink px-3 py-1.5 text-[13px] text-paper hover:bg-slate disabled:opacity-50"
+                className="rounded border border-ink bg-ink px-3 py-1.5 text-body text-paper hover:bg-slate disabled:opacity-50"
               >
                 {pending ? 'Sending…' : 'Submit'}
               </button>
@@ -102,7 +102,7 @@ export function SupportWidget() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-full border border-hairline bg-panel px-3 py-2 text-[13px] shadow hover:bg-hover"
+          className="rounded-full border border-hairline bg-panel px-3 py-2 text-body shadow hover:bg-hover"
         >
           Feedback
         </button>

@@ -55,7 +55,7 @@ async function RecommendationHistory({
     <>
       <SectionHeader
         title="Recommendation history"
-        right={<span className="text-[12px] text-slate">approved findings, tracked forward</span>}
+        right={<span className="text-meta text-slate">approved findings, tracked forward</span>}
       />
       <Panel>
         <Table>
@@ -100,7 +100,7 @@ async function RecommendationHistory({
 export const dynamic = 'force-dynamic';
 
 const pickerInput =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 function Section({
   title,
@@ -199,7 +199,7 @@ export default async function FindingsPage({
         </select>
         <button
           type="submit"
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           Show
         </button>
@@ -215,7 +215,7 @@ export default async function FindingsPage({
               name="period"
               value={new Date().toISOString().slice(0, 8) + '01'}
             />
-            <span className="text-[12px] text-slate">
+            <span className="text-meta text-slate">
               Compute after metrics exist:{' '}
               <code>
                 pnpm --filter @grossline/worker findings:compute {tenantId} &lt;YYYY-MM&gt;
@@ -252,13 +252,13 @@ export default async function FindingsPage({
               <input type="hidden" name="period" value={period} />
               <button
                 type="submit"
-                className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+                className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
               >
                 Recompute this month
               </button>
             </form>
             {query.error ? (
-              <span className="text-[12px] text-attn">{decodeURIComponent(query.error)}</span>
+              <span className="text-meta text-attn">{decodeURIComponent(query.error)}</span>
             ) : null}
           </div>
 
@@ -294,7 +294,7 @@ export default async function FindingsPage({
             findings={groups.suppressed}
             tenantId={tenantId}
             period={period}
-            right={<span className="text-[12px] text-slate">recorded, not sent</span>}
+            right={<span className="text-meta text-slate">recorded, not sent</span>}
           />
           <Section
             title="Dismissed"
@@ -305,7 +305,7 @@ export default async function FindingsPage({
 
           {groups.needsReview.length === 0 &&
           (groups.approved.length > 0 || groups.resolved.length > 0) ? (
-            <p className="mt-4 text-[12px] text-good">
+            <p className="mt-4 text-meta text-good">
               Every finding this month has been reviewed. The approved set is ready to send.
             </p>
           ) : null}

@@ -49,7 +49,7 @@ export default async function ThresholdsPage({
             <input type="hidden" name="tenantId" value={tenant.id} />
             <button
               type="submit"
-              className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+              className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
             >
               Recalibrate from history
             </button>
@@ -57,7 +57,7 @@ export default async function ThresholdsPage({
         </EmptyState>
       ) : (
         <>
-          <div className="mb-4 flex flex-wrap items-center gap-3 text-[12px] text-slate">
+          <div className="mb-4 flex flex-wrap items-center gap-3 text-meta text-slate">
             <span>
               {cal.edited ? (
                 <Badge tone="attn">hand-edited</Badge>
@@ -158,14 +158,14 @@ export default async function ThresholdsPage({
           </form>
 
           <SectionHeader title="Why these numbers" />
-          <p className="max-w-2xl text-[12px] text-slate">
+          <p className="max-w-2xl text-meta text-slate">
             Break-even MER comes from this merchant&apos;s contribution margin rate, the CAC ceiling
             from its own historical variance, and the claim-gap tolerance from what the account
             normally runs at — never a global default. A blank means the input data is absent, in
             which case the rules that depend on it stay quiet rather than firing on nothing.
           </p>
           {cal.thresholds.breakEvenMer === null ? (
-            <p className="mt-2 max-w-2xl text-[12px]">
+            <p className="mt-2 max-w-2xl text-meta">
               <Absent reason="break-even MER unavailable — no cost inputs, so contribution margin can't be computed" />
             </p>
           ) : null}

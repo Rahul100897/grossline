@@ -38,26 +38,26 @@ export default async function MerchantBillingPage({
     <>
       <div className="mb-4 flex flex-wrap items-baseline gap-x-9 gap-y-3">
         <div>
-          <div className="text-[21px] font-semibold tracking-tight">
+          <div className="text-fig font-semibold tracking-tight">
             {totals.billedMinor > 0 ? (
               formatMinor(totals.billedMinor, totalsCurrency)
             ) : (
               <Absent reason="no invoices yet" />
             )}
           </div>
-          <div className="text-[12px] text-slate">billed to date</div>
+          <div className="text-meta text-slate">billed to date</div>
         </div>
         <div>
-          <div className="text-[21px] font-semibold tracking-tight">
+          <div className="text-fig font-semibold tracking-tight">
             {totals.collectedGrossMinor > 0 ? (
               formatMinor(totals.collectedGrossMinor, totalsCurrency)
             ) : (
               <Absent reason="no payments yet" />
             )}
           </div>
-          <div className="text-[12px] text-slate">collected (gross)</div>
+          <div className="text-meta text-slate">collected (gross)</div>
         </div>
-        <Link href="/billing/new" className="self-center text-[13px] text-ink underline">
+        <Link href="/billing/new" className="self-center text-body text-ink underline">
           new invoice
         </Link>
       </div>

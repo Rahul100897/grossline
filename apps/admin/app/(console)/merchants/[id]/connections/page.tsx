@@ -107,7 +107,8 @@ export default async function MerchantConnectionsPage({
                   <Td quiet>
                     {connection.lastError ? (
                       <span
-                        className="inline-block max-w-[360px] truncate align-bottom"
+                        className="inline-block truncate align-bottom"
+                        style={{ maxWidth: 360 }}
                         title={connection.lastError}
                       >
                         {connection.lastError}
@@ -126,12 +127,12 @@ export default async function MerchantConnectionsPage({
       <SectionHeader title="Connect a store" />
       <FormNotice saved={saved} error={error} />
       {saved && warning ? (
-        <p className="mb-3 rounded border border-attn-line bg-attn-soft px-3 py-2 text-[13px] text-attn">
+        <p className="mb-3 rounded border border-attn-line bg-attn-soft px-3 py-2 text-body text-attn">
           Connected with a warning: {decodeURIComponent(warning)}
         </p>
       ) : null}
       {installUrl ? (
-        <p className="mb-3 rounded border border-hairline bg-panel px-3 py-2 text-[13px]">
+        <p className="mb-3 rounded border border-hairline bg-panel px-3 py-2 text-body">
           Send this install link to the store owner (valid about an hour):{' '}
           <a
             href={decodeURIComponent(installUrl)}
@@ -188,7 +189,7 @@ export default async function MerchantConnectionsPage({
           <SubmitButton>Connect store</SubmitButton>
         </div>
       </form>
-      <p className="mt-3 max-w-xl text-[12px] text-slate">
+      <p className="mt-3 max-w-xl text-meta text-slate">
         Meta and Google Ads still connect from the CLI (<code>pnpm connect:meta</code>,{' '}
         <code>pnpm connect:google</code>) — their credentials are org-level, not per-store. After
         connecting, run the backfill: <code>pnpm worker:sync {id} backfill</code>.

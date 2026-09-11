@@ -31,7 +31,7 @@ export default async function AlertsPage({
       />
       <FormNotice saved={saved} error={error} />
       <form action={saveAlerts} className="flex max-w-xl flex-col gap-3">
-        <label className="flex items-center gap-2 text-[13px]">
+        <label className="flex items-center gap-2 text-body">
           <input
             type="checkbox"
             name="emailOnNewTicket"
@@ -39,7 +39,7 @@ export default async function AlertsPage({
           />
           Email me when a support ticket arrives
         </label>
-        <label className="flex items-center gap-2 text-[13px]">
+        <label className="flex items-center gap-2 text-body">
           <input
             type="checkbox"
             name="emailOnBlockingIssue"

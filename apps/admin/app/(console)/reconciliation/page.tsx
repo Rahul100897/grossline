@@ -31,7 +31,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const pickerInput =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 /** Recent YYYY-MM labels for the picker (last 12 months). */
 function recentMonths(now = new Date(), count = 12): string[] {
@@ -140,7 +140,7 @@ export default async function ReconciliationPage({
         </select>
         <button
           type="submit"
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           Run
         </button>
@@ -156,7 +156,7 @@ export default async function ReconciliationPage({
             ) : (
               <Badge tone="attn">unexplained variance outside tolerance</Badge>
             )}
-            <span className="text-[12px] text-slate">
+            <span className="text-meta text-slate">
               {tenant.name} · {report.month} · {report.currency}
             </span>
           </div>
@@ -197,7 +197,9 @@ export default async function ReconciliationPage({
                     <Td>{statusBadge(row.status)}</Td>
                     <Td quiet>
                       {row.note ? (
-                        <span className="block max-w-[320px] whitespace-normal">{row.note}</span>
+                        <span className="block whitespace-normal" style={{ maxWidth: 320 }}>
+                          {row.note}
+                        </span>
                       ) : (
                         ''
                       )}
@@ -212,7 +214,7 @@ export default async function ReconciliationPage({
             <>
               <SectionHeader title="Structural notes" />
               <Panel>
-                <ul className="list-disc p-3 pl-7 text-[13px]">
+                <ul className="list-disc p-3 pl-7 text-body">
                   {report.structuralNotes.map((note, i) => (
                     <li key={i} className="my-1">
                       {note}
@@ -224,14 +226,14 @@ export default async function ReconciliationPage({
           ) : null}
 
           {!hadExpectedFile ? (
-            <p className="mt-3 max-w-2xl text-[12px] text-attn">
+            <p className="mt-3 max-w-2xl text-meta text-attn">
               No expected-values file for <code>{tenant.slug}</code>. Record the platform UI figures
               in <code>docs/reconciliation/expected/{tenant.slug}.json</code> (see
               docs/reconciliation.md) to compare against a platform figure — for now only our totals
               are shown.
             </p>
           ) : null}
-          <p className="mt-2 text-[12px] text-slate">Run at {formatDate(new Date())}.</p>
+          <p className="mt-2 text-meta text-slate">Run at {formatDate(new Date())}.</p>
         </>
       ) : null}
     </>

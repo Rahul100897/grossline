@@ -19,7 +19,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 const filterInput =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 function HealthCell({ row }: { row: MerchantRow }) {
   switch (row.health.kind) {
@@ -101,12 +101,12 @@ export default async function MerchantsPage({
         </select>
         <button
           type="submit"
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           Filter
         </button>
         {filtering ? (
-          <Link href="/merchants" className="text-[13px] text-slate hover:text-ink">
+          <Link href="/merchants" className="text-body text-slate hover:text-ink">
             clear
           </Link>
         ) : null}

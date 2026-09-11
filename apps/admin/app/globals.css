@@ -83,6 +83,14 @@
   --text-d-mer: 19px;
   --text-d-mer--line-height: 1;
 
+  /* body text scale — the page-level sizes the mockups use (body face, not the
+     display scale above). Named so pages never need a text-body arbitrary. */
+  --text-mini: 11px;
+  --text-meta: 12px;
+  --text-body: 13px;
+  --text-title: 15px;
+  --text-fig: 21px;
+
   /* radii */
   --radius-tag: var(--gl-radius-sm);
   --radius-ctrl: var(--gl-radius-md);

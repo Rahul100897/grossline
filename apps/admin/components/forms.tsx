@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 
 const inputClass =
-  'rounded border border-hairline bg-panel px-2 py-1.5 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1.5 text-body text-ink outline-none focus:border-slate';
 
 export function Field({
   label,
@@ -28,7 +28,7 @@ export function Field({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[12px] text-slate">{label}</span>
+      <span className="text-meta text-slate">{label}</span>
       <input
         name={name}
         type={type}
@@ -39,7 +39,7 @@ export function Field({
         maxLength={maxLength}
         className={inputClass}
       />
-      {hint ? <span className="text-[11px] text-slate">{hint}</span> : null}
+      {hint ? <span className="text-mini text-slate">{hint}</span> : null}
     </label>
   );
 }
@@ -57,7 +57,7 @@ export function SelectField({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[12px] text-slate">{label}</span>
+      <span className="text-meta text-slate">{label}</span>
       <select name={name} defaultValue={defaultValue} className={inputClass}>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -82,7 +82,7 @@ export function TextAreaField({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[12px] text-slate">{label}</span>
+      <span className="text-meta text-slate">{label}</span>
       <textarea name={name} defaultValue={defaultValue} rows={rows} className={inputClass} />
     </label>
   );
@@ -92,7 +92,7 @@ export function SubmitButton({ children }: { children: ReactNode }) {
   return (
     <button
       type="submit"
-      className="rounded border border-ink bg-ink px-3 py-1.5 text-[13px] text-paper hover:bg-slate hover:border-slate"
+      className="rounded border border-ink bg-ink px-3 py-1.5 text-body text-paper hover:bg-slate hover:border-slate"
     >
       {children}
     </button>
@@ -103,14 +103,14 @@ export function SubmitButton({ children }: { children: ReactNode }) {
 export function FormNotice({ saved, error }: { saved?: string; error?: string }) {
   if (error) {
     return (
-      <p className="mb-3 rounded border border-attn-line bg-attn-soft px-3 py-2 text-[13px] text-attn">
+      <p className="mb-3 rounded border border-attn-line bg-attn-soft px-3 py-2 text-body text-attn">
         {decodeURIComponent(error)}
       </p>
     );
   }
   if (saved) {
     return (
-      <p className="mb-3 rounded border border-good-line bg-good-soft px-3 py-2 text-[13px] text-good">
+      <p className="mb-3 rounded border border-good-line bg-good-soft px-3 py-2 text-body text-good">
         Saved.
       </p>
     );

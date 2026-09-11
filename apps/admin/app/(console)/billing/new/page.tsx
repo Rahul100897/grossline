@@ -13,7 +13,7 @@ import { createInvoiceAction } from './actions';
 export const dynamic = 'force-dynamic';
 
 const input =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
 
 function feeDecimal(minor: number | null, currency: string): string {
   if (minor === null) return '';
@@ -72,7 +72,7 @@ export default async function NewInvoicePage({
         </select>
         <button
           type="submit"
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           Reset lines
         </button>
@@ -104,7 +104,8 @@ export default async function NewInvoicePage({
                     <input
                       name={`line_${i}_description`}
                       defaultValue={`Analytics & reporting — ${m.label}`}
-                      className={`${input} w-full min-w-[220px]`}
+                      className={`${input} w-full`}
+                      style={{ minWidth: 220 }}
                     />
                   </Td>
                   <Td>
@@ -138,7 +139,7 @@ export default async function NewInvoicePage({
           </Table>
         </Panel>
         {tenant.monthlyFeeMinor === null ? (
-          <p className="mt-2 text-[12px] text-attn">
+          <p className="mt-2 text-meta text-attn">
             This merchant has no monthly fee set — the line amounts are blank. Set a fee on the
             merchant&apos;s Billing tab, or type amounts here.
           </p>
@@ -146,7 +147,7 @@ export default async function NewInvoicePage({
 
         <div className="mt-4 max-w-xl">
           <label className="flex flex-col gap-1">
-            <span className="text-[12px] text-slate">Notes (optional)</span>
+            <span className="text-meta text-slate">Notes (optional)</span>
             <textarea name="notes" rows={3} className={`${input} w-full`} />
           </label>
         </div>

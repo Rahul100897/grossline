@@ -14,7 +14,7 @@ export function TabNav({ items }: { items: { href: string; label: string; exact?
           <Link
             key={item.href}
             href={item.href}
-            className={`-mb-px whitespace-nowrap border-b-2 px-2.5 py-1.5 text-[13px] ${
+            className={`-mb-px whitespace-nowrap border-b-2 px-2.5 py-1.5 text-body ${
               active
                 ? 'border-ink font-medium text-ink'
                 : 'border-transparent text-slate hover:text-ink'

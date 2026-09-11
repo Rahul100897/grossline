@@ -53,7 +53,7 @@ function BackfillCell({
 }) {
   if (isDemoConnection(connection)) {
     // Seeded data bypasses sync cursors — a progress figure would be fiction.
-    return <span className="text-[12px] text-slate">seeded</span>;
+    return <span className="text-meta text-slate">seeded</span>;
   }
   const pct = Math.round(progress.overall * 100);
   const complete = connection.backfillCompletedAt !== null;
@@ -66,7 +66,7 @@ function BackfillCell({
           style={{ width: `${complete ? 100 : pct}%` }}
         />
       </span>
-      <span className="text-[12px] text-slate">{complete ? 'complete' : `${pct}% (partial)`}</span>
+      <span className="text-meta text-slate">{complete ? 'complete' : `${pct}% (partial)`}</span>
     </span>
   );
 }
@@ -132,7 +132,8 @@ export default async function ConnectionsPage() {
                   <Td quiet>
                     {connection.lastError ? (
                       <span
-                        className="inline-block max-w-[360px] truncate align-bottom"
+                        className="inline-block truncate align-bottom"
+                        style={{ maxWidth: 360 }}
                         title={connection.lastError}
                       >
                         {connection.lastError}
