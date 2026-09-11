@@ -1,0 +1,634 @@
+/* Shared primitives (Step B) — ported verbatim from docs/design/admin.html and
+   merchant.html. Values (padding, type sizes) are copied exactly; the mockups'
+   own var(--x) are translated to the canonical --gl-* tokens and inline hexes
+   (#FCFBF6, #CFC7B0, cohort tints) to their tokens. Class names are prefixed
+   `gl-` to avoid colliding with Tailwind utilities. Every page uses these.
+   Where admin.html and merchant.html differ by ~1px (phead/td padding) the
+   admin values are used across the console (recorded in docs/decisions.md). */
+
+/* ---- panel ---- */
+.gl-panel {
+  border: 1px solid var(--gl-line);
+  border-radius: 14px;
+  background: var(--gl-white);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.gl-phead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 19px;
+  border-bottom: 1px solid var(--gl-line);
+  gap: 12px;
+}
+.gl-phead h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.gl-phead .gl-meta,
+.gl-phead a {
+  font-size: 12.5px;
+  color: var(--gl-slate);
+}
+.gl-foot {
+  padding: 12px 19px;
+  border-top: 1px solid var(--gl-line);
+  font-size: 12.5px;
+  color: var(--gl-slate);
+  background: var(--gl-cream-3);
+  line-height: 1.6;
+}
+
+/* ---- page + section headers (app structure) ----
+   header h1/.sub are copied verbatim from admin.html's top bar; the app renders
+   the page title in the body rather than a sticky bar, so the same values apply.
+   .gl-section has no direct mockup analogue (the mockups group with panels) —
+   derived from tokens: 13px/600 label. Recorded in docs/decisions.md. */
+.gl-h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.gl-sub {
+  font-size: 13px;
+  color: var(--gl-slate);
+}
+.gl-section {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ---- table ---- */
+/* Wide tables scroll horizontally inside the panel (panel keeps overflow:hidden
+   for its rounded corners). Derived; recorded in docs/decisions.md. */
+.gl-tablewrap {
+  overflow-x: auto;
+}
+.gl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.gl-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--gl-slate);
+  padding: 11px 19px;
+  border-bottom: 1px solid var(--gl-line);
+  background: var(--gl-cream-3);
+}
+.gl-table td {
+  padding: 13px 19px;
+  border-bottom: 1px solid var(--gl-line-soft);
+  font-size: 14px;
+}
+.gl-table tr:last-child td {
+  border-bottom: 0;
+}
+.gl-table tbody tr:hover td {
+  background: var(--gl-cream-3);
+}
+.gl-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.gl-quiet {
+  color: var(--gl-slate);
+}
+/* Absent value — words, never a zero (docs/phase-3 task 3.1). Derived from tokens. */
+.gl-absent {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--gl-slate);
+}
+.gl-strong {
+  font-weight: 600;
+  font-size: 14.5px;
+}
+.gl-strong small {
+  display: block;
+  font-weight: 400;
+  color: var(--gl-slate);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* ---- tag ---- */
+.gl-tag {
+  display: inline-block;
+  font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.gl-tag.ok {
+  background: var(--gl-green-soft);
+  color: var(--gl-green);
+}
+.gl-tag.warn {
+  background: var(--gl-gold-soft);
+  color: var(--gl-gold);
+}
+.gl-tag.bad {
+  background: var(--gl-rust-soft);
+  color: var(--gl-rust);
+}
+.gl-tag.n {
+  background: var(--gl-cream-2);
+  color: var(--gl-slate);
+}
+
+/* ---- status dot ---- */
+.gl-sdot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  flex: none;
+}
+.gl-sdot.ok {
+  background: var(--gl-green);
+}
+.gl-sdot.warn {
+  background: var(--gl-gold);
+}
+.gl-sdot.bad {
+  background: var(--gl-rust);
+}
+/* neutral dot (never-synced / unknown) — derived, recorded in docs/decisions.md. */
+.gl-sdot.n {
+  background: var(--gl-slate-2);
+}
+
+/* ---- stat strip ---- */
+.gl-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--gl-line);
+  border: 1px solid var(--gl-line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+/* The mockup strip is always 4-up; these count modifiers let a page render a
+   3- or 2-stat strip without an empty cell (derived; docs/decisions.md). */
+.gl-strip.n1 {
+  grid-template-columns: 1fr;
+}
+.gl-strip.n2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.gl-strip.n3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.gl-stat {
+  background: var(--gl-white);
+  padding: 18px 20px;
+}
+.gl-stat .gl-k {
+  font-size: 12.5px;
+  color: var(--gl-slate);
+}
+.gl-stat .gl-v {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 32px;
+  line-height: 1;
+  margin-top: 8px;
+}
+.gl-stat .gl-v.warn {
+  color: var(--gl-rust);
+}
+/* 'good' figure tint — mockup defines only .v.warn; green derived per Rule 4
+   (recorded in docs/decisions.md). */
+.gl-stat .gl-v.good {
+  color: var(--gl-green);
+}
+.gl-stat .gl-d {
+  font-size: 12px;
+  color: var(--gl-slate-2);
+  margin-top: 7px;
+}
+
+/* ---- list / mini rows ---- */
+.gl-li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 19px;
+  border-bottom: 1px solid var(--gl-line-soft);
+  font-size: 14px;
+}
+.gl-li:last-child {
+  border-bottom: 0;
+}
+.gl-li .gl-r {
+  font-size: 12.5px;
+  color: var(--gl-slate);
+}
+.gl-li b {
+  font-weight: 500;
+}
+.gl-mini {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 19px;
+  border-bottom: 1px solid var(--gl-line-soft);
+  font-size: 14px;
+}
+.gl-mini:last-child {
+  border-bottom: 0;
+}
+.gl-mini .gl-v {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.gl-mini.big .gl-v {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+/* ---- issue / ticket rows ---- */
+.gl-issue {
+  padding: 16px 19px;
+  border-bottom: 1px solid var(--gl-line-soft);
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+.gl-issue:last-child {
+  border-bottom: 0;
+}
+.gl-issue .gl-body {
+  flex: 1;
+}
+.gl-issue h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.gl-issue p {
+  font-size: 13px;
+  color: var(--gl-slate);
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.gl-issue .gl-m {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.gl-issue .gl-act {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+/* ---- settings row ---- */
+.gl-srow {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 30px;
+  padding: 19px;
+  border-bottom: 1px solid var(--gl-line-soft);
+  align-items: start;
+}
+.gl-srow:last-child {
+  border-bottom: 0;
+}
+.gl-srow h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.gl-srow .gl-d {
+  font-size: 12.5px;
+  color: var(--gl-slate);
+  margin-top: 4px;
+  line-height: 1.55;
+}
+.gl-srow .gl-c {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--gl-slate);
+}
+.gl-srow .gl-c b {
+  color: var(--gl-ink);
+  font-weight: 500;
+}
+
+/* ---- progress track + break-even marker ---- */
+.gl-track {
+  position: relative;
+  width: 110px;
+  height: 7px;
+  background: var(--gl-cream-2);
+  border-radius: 4px;
+  flex: none;
+}
+.gl-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  background: var(--gl-green);
+}
+.gl-fill.bad {
+  background: var(--gl-rust);
+}
+.gl-be {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--gl-ink);
+  opacity: 0.55;
+}
+.gl-merwrap {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  justify-content: flex-end;
+}
+.gl-mernum {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 19px;
+  min-width: 52px;
+  text-align: right;
+}
+.gl-mernum.ok {
+  color: var(--gl-green);
+}
+.gl-mernum.bad {
+  color: var(--gl-rust);
+}
+
+/* ---- buttons ---- */
+.gl-btn {
+  background: var(--gl-green);
+  color: var(--gl-white);
+  border: 1px solid var(--gl-green);
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+}
+.gl-btn.ghost {
+  background: var(--gl-white);
+  color: var(--gl-ink);
+  border-color: var(--gl-line);
+}
+.gl-btn.sm {
+  padding: 6px 11px;
+  font-size: 12.5px;
+}
+.gl-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.gl-input,
+.gl-sel {
+  border: 1px solid var(--gl-line);
+  background: var(--gl-white);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--gl-ink);
+}
+.gl-link {
+  text-decoration: underline;
+  text-decoration-color: var(--gl-line);
+  cursor: pointer;
+}
+.gl-note {
+  font-size: 12px;
+  color: var(--gl-slate);
+  line-height: 1.6;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gl-line);
+}
+
+/* ---- finding (merchant.html / report.html) ---- */
+.gl-finding {
+  padding: 20px;
+  border-bottom: 1px solid var(--gl-line-soft);
+}
+.gl-finding:last-of-type {
+  border-bottom: 0;
+}
+.gl-frow {
+  display: flex;
+  gap: 15px;
+}
+.gl-fhead {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+.gl-finding h3 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 21px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.gl-finding p {
+  font-size: 14px;
+  line-height: 1.68;
+  color: var(--gl-slate);
+  margin-top: 8px;
+}
+.gl-fline {
+  margin-top: 9px;
+  font-size: 14px;
+  line-height: 1.68;
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 10px;
+}
+.gl-fline .l {
+  font-weight: 600;
+}
+.gl-fline .t {
+  color: var(--gl-slate);
+}
+.gl-stake {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 23px;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: right;
+}
+.gl-stake small {
+  display: block;
+  font-family: Inter, sans-serif;
+  font-size: 10.5px;
+  color: var(--gl-slate);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 5px;
+  font-weight: 600;
+}
+.gl-fmeta {
+  display: flex;
+  gap: 8px;
+  margin-top: 13px;
+  flex-wrap: wrap;
+}
+.gl-fbar {
+  width: 3px;
+  border-radius: 3px;
+  flex: none;
+  align-self: stretch;
+}
+.gl-fbar.bad {
+  background: var(--gl-rust);
+}
+.gl-fbar.warn {
+  background: var(--gl-gold);
+}
+.gl-fbar.ok {
+  background: var(--gl-green);
+}
+
+/* ---- chart bars (merchant.html) ---- */
+.gl-chart {
+  padding: 22px 20px 12px;
+}
+.gl-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 170px;
+}
+.gl-bcol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+.gl-bpair {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+.gl-b {
+  width: 14px;
+  border-radius: 3px 3px 0 0;
+}
+.gl-b.rev {
+  background: var(--gl-chart-primary);
+}
+.gl-b.spend {
+  background: var(--gl-chart-neutral);
+}
+.gl-bcol .lb {
+  font-size: 11px;
+  color: var(--gl-slate-2);
+}
+.gl-legend {
+  display: flex;
+  gap: 18px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--gl-line);
+  font-size: 12.5px;
+  color: var(--gl-slate);
+  background: var(--gl-cream-3);
+  flex-wrap: wrap;
+}
+.gl-key {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.gl-sq {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.gl-sq.rev {
+  background: var(--gl-chart-primary);
+}
+.gl-sq.spend {
+  background: var(--gl-chart-neutral);
+}
+
+/* ---- empty / error states (every page needs both — definition of done) ----
+   No dedicated mockup element; empty reuses the panel shell, error reuses the
+   rust (.tag.bad) palette. Padding derived from panel scale (docs/decisions.md). */
+.gl-empty {
+  border: 1px solid var(--gl-line);
+  border-radius: 14px;
+  background: var(--gl-white);
+  padding: 24px 19px;
+  color: var(--gl-slate);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.gl-error {
+  border: 1px solid var(--gl-rust);
+  border-radius: 14px;
+  background: var(--gl-rust-soft);
+  padding: 14px 19px;
+  color: var(--gl-rust);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* ---- responsive (breakpoints + reflow copied verbatim from admin.html) ----
+   Only the primitives owned here are included; page/layout structures (.cols,
+   sidebar, header) live with the console shell (Step D). */
+@media (max-width: 1180px) {
+  .gl-strip,
+  .gl-strip.n3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .gl-phead {
+    flex-wrap: wrap;
+  }
+  /* wide tables scroll inside .gl-tablewrap rather than crushing columns */
+  .gl-table {
+    min-width: 700px;
+  }
+  .gl-issue {
+    flex-wrap: wrap;
+  }
+  .gl-issue .gl-act {
+    width: 100%;
+  }
+  .gl-srow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+@media (max-width: 560px) {
+  .gl-strip,
+  .gl-strip.n2,
+  .gl-strip.n3 {
+    grid-template-columns: 1fr;
+  }
+}
