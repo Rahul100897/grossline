@@ -27,13 +27,13 @@ export function CopyBlock({ text, label = 'Copy' }: { text: string; label?: stri
         readOnly
         value={text}
         rows={Math.min(8, text.split('\n').length + 1)}
-        className="w-full resize-none rounded border border-hairline bg-panel px-2 py-1.5 font-mono text-[12px] text-ink outline-none"
+        className="w-full resize-none rounded border border-hairline bg-panel px-2 py-1.5 font-mono text-meta text-ink outline-none"
       />
       <div>
         <button
           type="button"
           onClick={copy}
-          className="rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover"
+          className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
         >
           {copied ? 'Copied' : label}
         </button>

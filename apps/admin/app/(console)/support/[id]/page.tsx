@@ -42,15 +42,15 @@ export default async function TicketDetailPage({
   return (
     <>
       <div className="mb-3 flex flex-wrap items-baseline gap-3">
-        <h1 className="text-[15px] font-semibold tracking-tight">{ticket.subject}</h1>
+        <h1 className="text-title font-semibold tracking-tight">{ticket.subject}</h1>
         <Badge>{ticket.type}</Badge>
         <Badge tone={statusTone(ticket.status)}>{ticket.status.replace('_', ' ')}</Badge>
         <Badge tone={ticket.priority === 'high' ? 'attn' : 'neutral'}>{ticket.priority}</Badge>
-        <Link href="/support" className="text-[13px] text-slate hover:text-ink">
+        <Link href="/support" className="text-body text-slate hover:text-ink">
           ← inbox
         </Link>
       </div>
-      <p className="mb-4 text-[12px] text-slate">
+      <p className="mb-4 text-meta text-slate">
         {ticket.source === 'in_app' ? 'in-app widget' : 'marketing site'} ·{' '}
         {ticket.submitterName ?? <Absent reason="anonymous" />}
         {ticket.submitterEmail ? ` · ${ticket.submitterEmail}` : ''}
@@ -61,10 +61,10 @@ export default async function TicketDetailPage({
 
       <Panel>
         <div className="p-3">
-          <div className="mb-1 text-[12px] text-slate">
+          <div className="mb-1 text-meta text-slate">
             {ticket.submitterName ?? 'Submitter'} · {formatDate(ticket.createdAt)}
           </div>
-          <div className="whitespace-pre-wrap text-[13px]">{ticket.body}</div>
+          <div className="whitespace-pre-wrap text-body">{ticket.body}</div>
         </div>
       </Panel>
 
@@ -79,12 +79,12 @@ export default async function TicketDetailPage({
                   m.author === 'admin' ? 'border-hairline bg-panel' : 'border-hairline bg-hover'
                 }`}
               >
-                <div className="mb-1 text-[12px] text-slate">
+                <div className="mb-1 text-meta text-slate">
                   {m.author === 'admin' ? 'You' : (ticket.submitterName ?? 'Submitter')} ·{' '}
                   {formatDate(m.createdAt)}
                   {m.author === 'admin' ? (m.emailed ? ' · emailed' : ' · not emailed') : ''}
                 </div>
-                <div className="whitespace-pre-wrap text-[13px]">{m.body}</div>
+                <div className="whitespace-pre-wrap text-body">{m.body}</div>
               </div>
             ))}
           </div>
@@ -103,7 +103,7 @@ export default async function TicketDetailPage({
           name="body"
           rows={6}
         />
-        <label className="flex items-center gap-2 text-[13px]">
+        <label className="flex items-center gap-2 text-body">
           <input type="checkbox" name="close" defaultChecked />
           close the ticket after replying
         </label>

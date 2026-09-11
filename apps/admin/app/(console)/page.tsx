@@ -112,7 +112,7 @@ export default async function OverviewPage() {
       <SectionHeader
         title="Needs your attention"
         right={
-          <span className="text-[12px] text-slate">blocking first, then by cost to you today</span>
+          <span className="text-meta text-slate">blocking first, then by cost to you today</span>
         }
       />
       {issues.length === 0 ? (
@@ -140,7 +140,7 @@ export default async function OverviewPage() {
                   <Td>{issue.tenant}</Td>
                   <Td>{issue.summary}</Td>
                   <Td quiet>
-                    <span className="block max-w-[420px] truncate" title={issue.action}>
+                    <span className="block truncate" style={{ maxWidth: 420 }} title={issue.action}>
                       {issue.action}
                     </span>
                   </Td>

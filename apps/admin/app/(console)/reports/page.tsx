@@ -33,10 +33,10 @@ import { approveReport, buildReport, sendReport } from './actions';
 export const dynamic = 'force-dynamic';
 
 const pickerInput =
-  'rounded border border-hairline bg-panel px-2 py-1 text-[13px] text-ink outline-none focus:border-slate';
-const btn = 'rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover';
+  'rounded border border-hairline bg-panel px-2 py-1 text-body text-ink outline-none focus:border-slate';
+const btn = 'rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover';
 const btnPrimary =
-  'rounded border border-ink bg-ink px-2.5 py-1 text-[13px] text-paper hover:bg-slate';
+  'rounded border border-ink bg-ink px-2.5 py-1 text-body text-paper hover:bg-slate';
 
 function statusTone(status: Report['status']): 'good' | 'attn' | 'neutral' {
   if (status === 'sent') return 'good';
@@ -124,12 +124,12 @@ export default async function ReportsPage({
       </form>
 
       {query.saved ? (
-        <p className="mb-3 text-[12px] text-good">
+        <p className="mb-3 text-meta text-good">
           {decodeURIComponent(query.saved) === '1' ? 'Saved.' : decodeURIComponent(query.saved)}
         </p>
       ) : null}
       {query.error ? (
-        <p className="mb-3 text-[12px] text-attn">{decodeURIComponent(query.error)}</p>
+        <p className="mb-3 text-meta text-attn">{decodeURIComponent(query.error)}</p>
       ) : null}
 
       {!period ? (
@@ -144,7 +144,7 @@ export default async function ReportsPage({
               report ? (
                 <Badge tone={statusTone(report.status)}>{report.status}</Badge>
               ) : (
-                <span className="text-[12px] text-slate">not built</span>
+                <span className="text-meta text-slate">not built</span>
               )
             }
           />
@@ -175,13 +175,13 @@ export default async function ReportsPage({
                   </form>
                 ) : null}
                 {report ? (
-                  <span className="text-[12px] text-slate">built {formatDate(report.builtAt)}</span>
+                  <span className="text-meta text-slate">built {formatDate(report.builtAt)}</span>
                 ) : null}
               </div>
 
               {/* Send gate */}
               {gate && !gate.canSend ? (
-                <div className="rounded border border-attn-line bg-attn-soft px-3 py-2 text-[12px] text-attn">
+                <div className="rounded border border-attn-line bg-attn-soft px-3 py-2 text-meta text-attn">
                   <div className="font-semibold">Send is blocked:</div>
                   <ul className="ml-4 list-disc">
                     {gate.reasons.map((r) => (
@@ -190,14 +190,14 @@ export default async function ReportsPage({
                   </ul>
                 </div>
               ) : gate ? (
-                <div className="text-[12px] text-good">
+                <div className="text-meta text-good">
                   Findings reviewed and reconciliation run — ready to send.
                 </div>
               ) : null}
 
               {/* Send */}
               {sent ? (
-                <div className="text-[12px] text-good">
+                <div className="text-meta text-good">
                   Sent {report?.sentAt ? formatDate(report.sentAt) : ''} to{' '}
                   {Array.isArray(report?.recipients)
                     ? (report!.recipients as string[]).join(', ')
@@ -211,7 +211,8 @@ export default async function ReportsPage({
                   <input
                     name="recipients"
                     placeholder="recipient@merchant.com, …"
-                    className={`${pickerInput} min-w-[260px]`}
+                    className={pickerInput}
+                    style={{ minWidth: 260 }}
                   />
                   <button
                     type="submit"
@@ -221,7 +222,7 @@ export default async function ReportsPage({
                     Send
                   </button>
                   {!report ? (
-                    <span className="text-[12px] text-slate">build the report first</span>
+                    <span className="text-meta text-slate">build the report first</span>
                   ) : null}
                 </form>
               )}
@@ -233,7 +234,7 @@ export default async function ReportsPage({
               <SectionHeader
                 title="WhatsApp summary"
                 right={
-                  <span className="text-[12px] text-slate">
+                  <span className="text-meta text-slate">
                     paste into a chat on the day it lands
                   </span>
                 }
@@ -249,7 +250,7 @@ export default async function ReportsPage({
 
           <SectionHeader
             title="Archive"
-            right={<span className="text-[12px] text-slate">what was built and sent</span>}
+            right={<span className="text-meta text-slate">what was built and sent</span>}
           />
           {archive.length === 0 ? (
             <EmptyState>No reports built yet.</EmptyState>

@@ -51,7 +51,7 @@ export default async function AccountPage() {
           </Table>
         </Panel>
       )}
-      <p className="mt-3 max-w-xl text-[12px] text-slate">
+      <p className="mt-3 max-w-xl text-meta text-slate">
         Changing your password or authenticator secret touches credential storage — a deliberate,
         CLI-only operation. Rotate them with <code>pnpm --filter @grossline/worker</code> admin
         tooling rather than from the browser.

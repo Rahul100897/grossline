@@ -254,7 +254,7 @@ export default async function BillingPage() {
         <div>
           <SectionHeader
             title="Upcoming renewals"
-            right={<span className="text-[12px] text-slate">next 90 days</span>}
+            right={<span className="text-meta text-slate">next 90 days</span>}
           />
           {renewals.length === 0 ? (
             <EmptyState>No design-partner rates expiring in the next 90 days.</EmptyState>

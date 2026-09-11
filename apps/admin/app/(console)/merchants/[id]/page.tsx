@@ -83,12 +83,12 @@ export default async function MerchantOverviewPage({
     },
   ];
 
-  const btn = 'rounded border border-hairline px-2.5 py-1 text-[13px] hover:bg-hover';
+  const btn = 'rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover';
 
   return (
     <>
       {query.saved ? (
-        <p className="mb-3 text-[12px] text-good">
+        <p className="mb-3 text-meta text-good">
           {query.saved === 'converted'
             ? 'Converted to an active merchant.'
             : query.saved === 'offboarded'
@@ -96,14 +96,14 @@ export default async function MerchantOverviewPage({
               : 'Saved.'}
         </p>
       ) : null}
-      {query.error ? <p className="mb-3 text-[12px] text-attn">{query.error}</p> : null}
+      {query.error ? <p className="mb-3 text-meta text-attn">{query.error}</p> : null}
 
       {tenant.status === 'trial' ? (
         <>
           <SectionHeader title="Trial decision" right={<Badge tone="attn">trial</Badge>} />
           <Panel>
             <div className="flex flex-col gap-3 p-1">
-              <p className="text-[12px] text-slate">
+              <p className="text-meta text-slate">
                 This merchant is on the free first report. Record a decision: convert them to a
                 paying plan, or offboard them.
               </p>
@@ -122,12 +122,12 @@ export default async function MerchantOverviewPage({
         <>
           <SectionHeader
             title="Offboard"
-            right={<span className="text-[12px] text-slate">irreversible</span>}
+            right={<span className="text-meta text-slate">irreversible</span>}
           />
           <Panel>
             <form action={offboard} className="flex flex-col gap-2 p-1">
               <input type="hidden" name="tenantId" value={tenant.id} />
-              <p className="text-[12px] text-slate">
+              <p className="text-meta text-slate">
                 Revokes every connection and permanently deletes this merchant&rsquo;s data. Type
                 the slug <code>{tenant.slug}</code> to confirm.
               </p>
@@ -135,11 +135,11 @@ export default async function MerchantOverviewPage({
                 <input
                   name="confirm"
                   placeholder={tenant.slug}
-                  className="rounded border border-hairline bg-panel px-2 py-1 text-[13px] outline-none focus:border-slate"
+                  className="rounded border border-hairline bg-panel px-2 py-1 text-body outline-none focus:border-slate"
                 />
                 <button
                   type="submit"
-                  className="rounded border border-attn-line bg-attn-soft px-2.5 py-1 text-[13px] text-attn hover:opacity-80"
+                  className="rounded border border-attn-line bg-attn-soft px-2.5 py-1 text-body text-attn hover:opacity-80"
                 >
                   Offboard
                 </button>

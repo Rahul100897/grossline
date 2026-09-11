@@ -23,9 +23,9 @@ export default async function MerchantLayout({
   return (
     <>
       <div className="mb-3 flex items-baseline gap-2">
-        <h1 className="text-[15px] font-semibold tracking-tight">{tenant.name}</h1>
+        <h1 className="text-title font-semibold tracking-tight">{tenant.name}</h1>
         {tenant.isDemo ? <Badge>demo</Badge> : null}
-        <span className="text-[12px] text-slate">{tenant.status}</span>
+        <span className="text-meta text-slate">{tenant.status}</span>
       </div>
       <TabNav
         items={[

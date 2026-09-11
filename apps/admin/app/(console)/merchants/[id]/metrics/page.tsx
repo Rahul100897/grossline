@@ -89,7 +89,7 @@ export default async function MerchantMetricsPage({
       <SectionHeader
         title={`Month of ${period.slice(0, 7)}`}
         right={
-          <span className="flex gap-2 text-[12px]">
+          <span className="flex gap-2 text-meta">
             {months.slice(0, 12).map((m) => (
               <Link
                 key={m}
