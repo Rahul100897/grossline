@@ -1440,3 +1440,37 @@ Scoped to the admin app because that is the only Tailwind surface — the market
 site (Astro) uses hand-written CSS, and the worker/report render CSS as template
 strings that legitimately contain no Tailwind classes. Every design value in the
 admin now comes from a `--gl-*` token, an `@theme` utility, or a `gl-*` primitive.
+
+### 2026-09-12 — Design port: Step D (marketing homepage)
+
+`apps/web/src/pages/index.astro` is a direct port of `docs/design/home.html` — a
+standalone landing page (its own sticky nav + footer, distinct from `Base.astro`)
+with the mockup's new copy carried over verbatim: hero + claim-gap proof card,
+the read-only/flat-price/double-checked strip, the dark "why this exists" problem
+grid, the four "what you get" rows, the report showcase (real `report-cover.png`),
+the three how-it-works steps, the "what makes this different" grid, the analyst
+quote, the three-tier pricing block, the FAQ, the green closing CTA and the
+footer. Every padding/size copied verbatim; every colour is a `--gl-*` token.
+
+- **Marketing palette added to `design-tokens.css`.** The landing page uses dark-
+  green section surfaces and muted-on-dark text the app palette didn't have:
+  `--gl-green-night #072E27`, `--gl-green-tier #0D3A31`, `--gl-green-line-2
+#1B3B34`, `--gl-green-fog #E8EFEC`, `--gl-green-muted-2 #9DB3AC`, `--gl-green-list
+#B9CCC6`, `--gl-green-numeral #4E8F7F`, `--gl-green-pale #C6E4DB`,
+  `--gl-green-pale-2 #A9D5C7`, `--gl-green-foot #8FA9A1`, `--gl-line-2 #D3CBB5`,
+  `--gl-rust-text #6B3A2A`, `--gl-rust-line #F0DCD4`, `--gl-gold-text #3A2705`, and
+  the four image-placeholder tints (`--gl-ph-*`). Report token block regenerated.
+  No hex is authored in the `.astro` file; translucent whites/creams (nav blur,
+  outline-light border) stay as `rgba()` — functional tints, not palette colours.
+- **CTAs wired to real pages.** The mockup's in-page anchors are kept for section
+  nav (#problem/#report/#how/#pricing), but the conversion buttons point to the
+  real routes (`/free-report`, `/the-report`, `/contact`) rather than the mockup's
+  placeholder `#start`. Copy is otherwise unchanged.
+- **Image placeholders kept** for the dashboard screenshot and analyst portrait
+  (the mockup ships them as placeholders); the report cover uses the real
+  `report-cover.png` copied into `apps/web/public/`.
+- Verified against the mockup at 1440px and 390px on the running dev server (real
+  self-hosted fonts, no console errors) — one-to-one; mobile collapses nav to the
+  CTA, stacks the hero, strip, grids and tiers.
+- The other marketing pages keep `Base.astro` (already token-aligned in Step A);
+  only the homepage had a dedicated mockup (`home.html`).
