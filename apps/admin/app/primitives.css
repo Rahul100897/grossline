@@ -6,6 +6,179 @@
    Where admin.html and merchant.html differ by ~1px (phead/td padding) the
    admin values are used across the console (recorded in docs/decisions.md). */
 
+/* ---- app shell: sidebar + header (ported verbatim from admin.html) ---- */
+.gl-shell {
+  display: flex;
+  min-height: 100vh;
+}
+.gl-side {
+  width: 224px;
+  flex: none;
+  background: var(--gl-green-darker);
+  color: var(--gl-green-nav);
+  display: flex;
+  flex-direction: column;
+}
+.gl-logo {
+  padding: 19px 20px 17px;
+  border-bottom: 1px solid var(--gl-green-line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--gl-white);
+  letter-spacing: -0.02em;
+}
+.gl-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  flex: none;
+}
+.gl-navgrp {
+  padding: 16px 10px 2px;
+}
+.gl-navgrp .gl-lbl {
+  font-size: 10.5px;
+  color: var(--gl-green-dim);
+  padding: 0 10px 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.gl-navitem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--gl-green-nav);
+  margin-bottom: 1px;
+  text-decoration: none;
+}
+.gl-navitem:hover {
+  background: var(--gl-green-dark);
+  color: var(--gl-green-nav-hi);
+}
+.gl-navitem.on {
+  background: var(--gl-green);
+  color: var(--gl-white);
+  font-weight: 500;
+}
+.gl-pill {
+  background: var(--gl-green-line);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: var(--gl-green-nav);
+}
+.gl-navitem.on .gl-pill {
+  /* translucent white overlay — a functional tint, not a palette colour */
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--gl-white);
+}
+.gl-pill.alert {
+  background: var(--gl-rust-dark);
+  color: var(--gl-rust-pale);
+}
+.gl-sidefoot {
+  margin-top: auto;
+  padding: 15px 20px;
+  border-top: 1px solid var(--gl-green-line);
+  font-size: 13px;
+  color: var(--gl-green-dim);
+}
+.gl-sidefoot b {
+  display: block;
+  color: var(--gl-green-nav-hi);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.gl-signout {
+  margin-top: 10px;
+}
+.gl-signout button {
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--gl-green-nav);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--gl-green-line);
+}
+.gl-signout button:hover {
+  color: var(--gl-green-nav-hi);
+}
+
+/* main content column */
+.gl-main {
+  min-width: 0;
+  flex: 1;
+}
+.gl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  background: var(--gl-cream);
+  z-index: 5;
+  gap: 14px;
+}
+.gl-header .gl-htitle {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.gl-header .gl-sub {
+  font-size: 13px;
+  color: var(--gl-slate);
+}
+.gl-hactions {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.gl-pad {
+  padding: 22px 26px 42px;
+}
+
+/* mobile nav toggle + scrim (admin.html) */
+.gl-mobnav {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 40;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: 1px solid var(--gl-green-line);
+  background: var(--gl-green-darker);
+  color: var(--gl-white);
+  font-size: 17px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.gl-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 41, 34, 0.5);
+  z-index: 29;
+}
+.gl-scrim.on {
+  display: block;
+}
+
 /* ---- panel ---- */
 .gl-panel {
   border: 1px solid var(--gl-line);
@@ -607,6 +780,33 @@
   }
 }
 @media (max-width: 900px) {
+  /* sidebar goes off-canvas; a toggle + scrim reveal it (admin.html) */
+  .gl-side {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 30;
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+  }
+  .gl-side.open {
+    transform: none;
+    box-shadow: var(--gl-shadow-nav);
+  }
+  .gl-mobnav {
+    display: flex;
+  }
+  .gl-header {
+    position: static;
+    height: auto;
+    padding: 12px 16px 14px 62px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .gl-pad {
+    padding: 16px 14px 40px;
+  }
   .gl-phead {
     flex-wrap: wrap;
   }

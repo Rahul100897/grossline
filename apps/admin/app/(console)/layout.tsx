@@ -8,9 +8,7 @@ export default function ConsoleLayout({ children }: { children: ReactNode }) {
     <Shell
       signOut={
         <form action={logout}>
-          <button type="submit" className="text-[12px] text-slate hover:text-ink">
-            Sign out
-          </button>
+          <button type="submit">Sign out</button>
         </form>
       }
     >

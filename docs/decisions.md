@@ -1392,3 +1392,36 @@ admin preview/PDF routes and the snapshot immutability guarantee are untouched.
   contribution) is a rendering derivation. The stake figure shows the model's whole
   `valueLabel` (the model has no number/caption split) coloured by family. The
   claim-gap tag tone uses `≥25%→bad, ≥12%→warn, else ok` from the token palette.
+
+### 2026-09-12 — Design port: Step D (console shell)
+
+The admin console chrome is ported from `docs/design/admin.html`: the dark-green
+sidebar (logo + brand mark, grouped nav with uppercase group labels, active item,
+count pills, sidefoot) and the off-canvas drawer + scrim below 900px. All styling
+is in `app/primitives.css` (`.gl-shell/.gl-side/.gl-logo/.gl-mark/.gl-navgrp/
+.gl-lbl/.gl-navitem/.gl-pill/.gl-sidefoot/.gl-main/.gl-header/.gl-hactions/.gl-pad/
+.gl-mobnav/.gl-scrim`), copied verbatim; `chrome.tsx` only composes the classes.
+
+- **Four sidebar colours added to `design-tokens.css`** (the mockup sidebar uses
+  values the palette didn't have): `--gl-green-nav #A8C4BB` (nav item text),
+  `--gl-green-nav-hi #D5E5DF` (nav hover text + sidefoot name),
+  `--gl-rust-dark #5A2418` (alert pill background), `--gl-rust-pale #F3B3A0`
+  (alert pill text). The active-pill overlay stays `rgba(255,255,255,.18)` — a
+  functional white tint, not a palette colour. Report assets were regenerated so
+  the inlined token block stays in sync (`pnpm --filter @grossline/worker assets:gen`).
+- **Nav grouped, no page added or removed.** `lib/nav.ts` now exports `NAV_GROUPS`
+  (Run the business / Keep it healthy / Setup); the console's extra routes
+  (Connections, Reconciliation, Metrics) are sorted into "Keep it healthy". The
+  flat `NAV_ITEMS` is kept for any other consumer.
+- **Count pills are not wired yet.** The mockup shows live counts (Merchants 9,
+  Findings 4, …); wiring them needs per-group data in the shell, which is feature
+  work, not a visual port. The nav renders without pills for now — omitting data
+  rather than inventing it. (The `.gl-pill`/`.gl-pill.alert` styles exist and are
+  used by the harness; pages can pass counts in a later PR.)
+- **Sidefoot identity is static** ("Rahul · Admin · only user"), matching the
+  mockup and the single-application-user model (CLAUDE.md). Sign-out is styled for
+  the dark sidebar via `.gl-signout` (was a light `text-[12px]` link that wouldn't
+  read on dark green).
+- Verified against the mockup at 1440px and 390px via a Playwright harness (real
+  tokens + primitives, self-hosted fonts) — one-to-one at desktop; at ≤900px the
+  sidebar goes off-canvas and the toggle appears.
