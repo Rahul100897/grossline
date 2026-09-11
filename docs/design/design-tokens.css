@@ -6,65 +6,69 @@
    record why in docs/decisions.md.
    ========================================================= */
 
-:root{
+:root {
   /* ---- brand green ---- */
-  --gl-green:          #0F6F5C;  /* primary actions, positive numbers, active nav */
-  --gl-green-deep:     #0A4A3E;  /* button hover, report header band */
-  --gl-green-dark:     #0B3A31;  /* dark section backgrounds, merchant top bar */
-  --gl-green-darker:   #072922;  /* admin sidebar */
-  --gl-green-soft:     #E7F0EC;  /* success tag background */
-  --gl-green-line:     #1B4A3F;  /* borders inside dark green areas */
-  --gl-green-accent:   #7FD3BC;  /* emphasis text on dark green */
-  --gl-green-muted:    #9DC4B8;  /* secondary text on dark green */
-  --gl-green-dim:      #5C7D74;  /* tertiary text on dark green */
+  --gl-green: #0f6f5c; /* primary actions, positive numbers, active nav */
+  --gl-green-deep: #0a4a3e; /* button hover, report header band */
+  --gl-green-dark: #0b3a31; /* dark section backgrounds, merchant top bar */
+  --gl-green-darker: #072922; /* admin sidebar */
+  --gl-green-soft: #e7f0ec; /* success tag background */
+  --gl-green-line: #1b4a3f; /* borders inside dark green areas */
+  --gl-green-accent: #7fd3bc; /* emphasis text on dark green */
+  --gl-green-muted: #9dc4b8; /* secondary text on dark green */
+  --gl-green-dim: #5c7d74; /* tertiary text on dark green (nav group labels) */
+  --gl-green-nav: #a8c4bb; /* sidebar nav item text */
+  --gl-green-nav-hi: #d5e5df; /* sidebar nav hover text, sidefoot name */
 
   /* ---- paper ---- */
-  --gl-cream:          #F8F5ED;  /* page background */
-  --gl-cream-2:        #F1EDE1;  /* recessed panels, neutral tag background */
-  --gl-cream-3:        #FCFBF6;  /* table header, panel footer, row hover */
-  --gl-white:          #FFFFFF;  /* panels and cards */
-  --gl-paper-report:   #FDFCF8;  /* report page only */
+  --gl-cream: #f8f5ed; /* page background */
+  --gl-cream-2: #f1ede1; /* recessed panels, neutral tag background */
+  --gl-cream-3: #fcfbf6; /* table header, panel footer, row hover */
+  --gl-white: #ffffff; /* panels and cards */
+  --gl-paper-report: #fdfcf8; /* report page only */
 
   /* ---- lines ---- */
-  --gl-line:           #E2DCCC;  /* panel borders, section dividers */
-  --gl-line-soft:      #EDE8DA;  /* table row separators */
+  --gl-line: #e2dccc; /* panel borders, section dividers */
+  --gl-line-soft: #ede8da; /* table row separators */
 
   /* ---- text ---- */
-  --gl-ink:            #131A18;  /* primary */
-  --gl-slate:          #5E6B66;  /* secondary */
-  --gl-slate-2:        #8A948F;  /* tertiary, axis labels */
+  --gl-ink: #131a18; /* primary */
+  --gl-slate: #5e6b66; /* secondary */
+  --gl-slate-2: #8a948f; /* tertiary, axis labels */
 
   /* ---- signal ---- */
-  --gl-rust:           #B4472B;  /* negative, blocking, over-threshold */
-  --gl-rust-soft:      #FAF0EC;
-  --gl-gold:           #9A6B12;  /* caution — text and icons */
-  --gl-gold-display:   #C08A2E;  /* caution — large display figures only */
-  --gl-gold-soft:      #FBF3E3;
+  --gl-rust: #b4472b; /* negative, blocking, over-threshold */
+  --gl-rust-soft: #faf0ec;
+  --gl-rust-dark: #5a2418; /* alert pill background on the dark sidebar */
+  --gl-rust-pale: #f3b3a0; /* alert pill text on the dark sidebar */
+  --gl-gold: #9a6b12; /* caution — text and icons */
+  --gl-gold-display: #c08a2e; /* caution — large display figures only */
+  --gl-gold-soft: #fbf3e3;
 
   /* ---- chart ---- */
-  --gl-chart-primary:  #0F6F5C;  /* revenue */
-  --gl-chart-neutral:  #CFC7B0;  /* ad spend */
-  --gl-cohort-0:       #FCFBF6;
-  --gl-cohort-1:       #EFF6F3;
-  --gl-cohort-2:       #E1EFE9;
-  --gl-cohort-3:       #CFE5DC;
-  --gl-cohort-4:       #B8D9CC;
+  --gl-chart-primary: #0f6f5c; /* revenue */
+  --gl-chart-neutral: #cfc7b0; /* ad spend */
+  --gl-cohort-0: #fcfbf6;
+  --gl-cohort-1: #eff6f3;
+  --gl-cohort-2: #e1efe9;
+  --gl-cohort-3: #cfe5dc;
+  --gl-cohort-4: #b8d9cc;
 
   /* ---- type ---- */
-  --gl-font-display: "Instrument Serif", Georgia, serif;
-  --gl-font-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --gl-font-display: 'Instrument Serif', Georgia, serif;
+  --gl-font-body: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* ---- radius ---- */
-  --gl-radius-sm:  6px;   /* tags */
-  --gl-radius-md:  8px;   /* buttons, inputs, nav items */
-  --gl-radius-lg:  14px;  /* panels, cards */
-  --gl-radius-xl:  16px;  /* marketing cards */
+  --gl-radius-sm: 6px; /* tags */
+  --gl-radius-md: 8px; /* buttons, inputs, nav items */
+  --gl-radius-lg: 14px; /* panels, cards */
+  --gl-radius-xl: 16px; /* marketing cards */
 
   /* ---- shadow ---- */
-  --gl-shadow-card:  0 24px 60px -30px rgba(7,46,39,.28);
-  --gl-shadow-image: 0 30px 70px -34px rgba(7,46,39,.45);
-  --gl-shadow-page:  0 20px 50px -26px rgba(11,58,49,.40);
-  --gl-shadow-nav:   0 8px 44px rgba(0,0,0,.30);
+  --gl-shadow-card: 0 24px 60px -30px rgba(7, 46, 39, 0.28);
+  --gl-shadow-image: 0 30px 70px -34px rgba(7, 46, 39, 0.45);
+  --gl-shadow-page: 0 20px 50px -26px rgba(11, 58, 49, 0.4);
+  --gl-shadow-nav: 0 8px 44px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================================

@@ -1,30 +1,48 @@
 'use client';
 
-// App chrome: sidebar navigation, off-canvas below the `desk` breakpoint.
+// App chrome: the dark-green sidebar + off-canvas drawer, ported from
+// docs/design/admin.html (design port, Step D). All styling lives in the gl-*
+// classes in app/primitives.css; this component only composes them.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
-import { NAV_ITEMS } from '../lib/nav';
+import { NAV_GROUPS } from '../lib/nav';
 
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+function Mark() {
+  // Brand mark from the mockup. Fills use tokens (no hex in the SVG).
+  return (
+    <svg className="gl-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <rect width="64" height="64" rx="14" style={{ fill: 'var(--gl-green)' }} />
+      <path
+        d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z"
+        style={{ fill: 'var(--gl-white)' }}
+      />
+    </svg>
+  );
+}
+
+function Nav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
     <>
-      {NAV_ITEMS.map((item) => {
-        const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            className={`block px-4 py-[5px] ${
-              active ? 'bg-navactive font-semibold text-ink' : 'text-slate hover:text-ink'
-            }`}
-          >
-            {item.label}
-          </Link>
-        );
-      })}
+      {NAV_GROUPS.map((group) => (
+        <div className="gl-navgrp" key={group.label}>
+          <div className="gl-lbl">{group.label}</div>
+          {group.items.map((item) => {
+            const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavigate}
+                className={`gl-navitem${active ? ' on' : ''}`}
+              >
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      ))}
     </>
   );
 }
@@ -32,48 +50,29 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 export function Shell({ children, signOut }: { children: ReactNode; signOut: ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="flex min-h-screen">
-      {/* Desktop sidebar */}
-      <nav className="hidden w-44 flex-none border-r border-hairline py-3.5 desk:block">
-        <div className="px-4 pb-3.5 font-semibold tracking-tight">Grossline</div>
-        <NavLinks />
-        <div className="mt-6 px-4">{signOut}</div>
-      </nav>
+    <div className="gl-shell">
+      {/* Mobile: a floating toggle reveals the off-canvas sidebar (admin.html). */}
+      <button type="button" className="gl-mobnav" aria-label="Menu" onClick={() => setOpen(true)}>
+        ☰
+      </button>
+      <div className={`gl-scrim${open ? ' on' : ''}`} onClick={() => setOpen(false)} aria-hidden />
 
-      {/* Mobile top bar + off-canvas */}
-      <div className="fixed inset-x-0 top-0 z-20 flex items-center gap-3 border-b border-hairline bg-paper px-3 py-2 desk:hidden">
-        <button
-          type="button"
-          aria-label="Menu"
-          onClick={() => setOpen(true)}
-          className="rounded border border-hairline px-2 py-0.5 text-slate"
-        >
-          ☰
-        </button>
-        <span className="font-semibold tracking-tight">Grossline</span>
-      </div>
-      {open ? (
-        <div className="fixed inset-0 z-30 desk:hidden">
-          <div className="absolute inset-0 bg-ink/30" onClick={() => setOpen(false)} aria-hidden />
-          <nav className="absolute inset-y-0 left-0 w-56 border-r border-hairline bg-paper py-3.5">
-            <div className="flex items-center justify-between px-4 pb-3.5">
-              <span className="font-semibold tracking-tight">Grossline</span>
-              <button
-                type="button"
-                aria-label="Close menu"
-                onClick={() => setOpen(false)}
-                className="text-slate"
-              >
-                ✕
-              </button>
-            </div>
-            <NavLinks onNavigate={() => setOpen(false)} />
-            <div className="mt-6 px-4">{signOut}</div>
-          </nav>
+      <aside className={`gl-side${open ? ' open' : ''}`}>
+        <div className="gl-logo">
+          <Mark />
+          Grossline
         </div>
-      ) : null}
+        <Nav onNavigate={() => setOpen(false)} />
+        <div className="gl-sidefoot">
+          <b>Rahul</b>
+          Admin · only user
+          <div className="gl-signout">{signOut}</div>
+        </div>
+      </aside>
 
-      <main className="min-w-0 flex-1 px-4 pb-10 pt-12 desk:px-6 desk:pt-4">{children}</main>
+      <main className="gl-main">
+        <div className="gl-pad">{children}</div>
+      </main>
     </div>
   );
 }
