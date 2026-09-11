@@ -1,0 +1,7 @@
+# Generated files — authored by scripts, not formatted by hand.
+**/*.generated.ts
+
+# Build output and deps
+**/dist/**
+**/.next/**
+**/node_modules/**

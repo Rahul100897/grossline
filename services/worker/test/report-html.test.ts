@@ -106,18 +106,21 @@ function model(over: Partial<ReportModel> = {}): ReportModel {
 }
 
 describe('report template (task 5.B1)', () => {
-  it('renders the seven fixed sections in order', () => {
+  it('renders the fixed sections in order, verdict first', () => {
     const html = renderReportHtml(model());
+    // The verdict opens the report, ahead of the first section heading.
+    const verdictIdx = html.indexOf('class="verdict"');
+    expect(verdictIdx).toBeGreaterThan(-1);
+    // Merchant-facing section headings (ported from docs/design/report.html).
     const sections = [
-      'Headline',
-      'Blended efficiency',
-      'Margin',
-      'Channel &amp; claim gap',
-      'What changed',
-      'Findings',
-      'What we check next month',
+      'Did the ads pay for themselves',
+      'Where the money went',
+      'What each platform claims, and what your store recorded',
+      'What changed since July', // prev month of 2026-08
+      "What's worth changing this month",
+      "What we'll check next month",
     ];
-    let last = -1;
+    let last = verdictIdx;
     for (const s of sections) {
       const idx = html.indexOf(`>${s}<`);
       expect(idx, `section "${s}" present`).toBeGreaterThan(-1);
@@ -126,12 +129,12 @@ describe('report template (task 5.B1)', () => {
     }
   });
 
-  it('carries the honesty markers with the report', () => {
+  it('carries the honesty markers in the footer band', () => {
     const html = renderReportHtml(model());
-    expect(html).toContain('Currency USD');
-    expect(html).toContain('Timezone America/New_York');
-    expect(html).toContain('Last reconciled');
-    expect(html).toContain('Cost completeness 98%');
+    expect(html).toContain('Reported in <b>USD</b>');
+    expect(html).toContain('America/New_York');
+    expect(html).toContain('Checked against Shopify, Google and Meta');
+    expect(html).toContain('Cost of goods covers <b>98%</b>');
     expect(html).toContain('merchant upload + Shopify');
   });
 
@@ -142,6 +145,21 @@ describe('report template (task 5.B1)', () => {
     expect(html).toContain('class="finding growth"');
     expect(html).toContain('USD 558.96 at stake');
     expect(html).toContain('class="finding measurement"');
+  });
+
+  it('embeds the fonts so the PDF renders offline (no network request)', () => {
+    const html = renderReportHtml(model());
+    expect(html).toContain("font-family:'Instrument Serif'");
+    expect(html).toContain('data:font/woff2;base64,');
+    expect(html).not.toContain('fonts.googleapis.com');
+    expect(html).not.toContain('fonts.gstatic.com');
+  });
+
+  it('authors no colour hex in the renderer — only --gl-* tokens (bar the inlined token block)', () => {
+    const html = renderReportHtml(model());
+    // Strip the one legitimate hex source: the inlined :root token block.
+    const withoutTokens = html.replace(/:root\{[\s\S]*?\}/, '');
+    expect(withoutTokens).not.toMatch(/#[0-9a-fA-F]{6}\b/);
   });
 
   it('renders the margin waterfall with a negative discount and a contribution total', () => {
@@ -188,7 +206,7 @@ describe('report template (task 5.B1)', () => {
     expect(html).toContain('@media print');
     expect(html).toContain('thead { display: table-header-group; }');
     expect(html).toContain('tr { break-inside: avoid; }');
-    expect(html).toContain('.block, .finding, .card { break-inside: avoid; }');
+    expect(html).toContain('.finding, .stat, .gaprow, .crow, .ch { break-inside: avoid; }');
   });
 
   it('report PDF options set per-page margins and a page-number footer', () => {
