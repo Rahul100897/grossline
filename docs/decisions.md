@@ -1349,3 +1349,46 @@ existing mockup class): `PanelHeader` (`.phead`), `PanelFoot` (`.foot`),
 `IssueRow` (`.issue`), `SettingsRow` (`.srow`), `ProgressTrack`
 (`.track`/`.fill`/`.be`). `Badge` gained a `warn` tone (`.tag.warn`, gold) to
 cover the mockup's fourth tag colour.
+
+### 2026-09-11 — Design port: Step C (report template)
+
+`services/worker/src/reports/report-html.ts` is ported from `docs/design/report.html`
+(cover band, verdict, the two efficiency stat cards with break-even markers, the
+money waterfall, the claim-gap box, the 4-up "what changed" grid, finding cards
+with serif headings and coloured stakes, the "what we'll check" list, and the dark
+footer band). Every padding/size/radius is copied verbatim; every colour is a
+`--gl-*` token. The `ReportModel` contract is unchanged, so `build-model.ts`, the
+admin preview/PDF routes and the snapshot immutability guarantee are untouched.
+
+- **Offline, single-source assets.** `report-assets.generated.ts` (built by
+  `pnpm --filter @grossline/worker assets:gen` from `docs/design/design-tokens.css`
+  and `apps/admin/public/fonts/*.woff2`) inlines the `:root` token block verbatim
+  and embeds Inter + Instrument Serif as base64. The report HTML therefore makes
+  **no network request** — the PDF (Playwright `setContent` → `networkidle`)
+  renders identically offline, which a Google-Fonts `<link>` (as in the mockup)
+  could not guarantee. No colour hex is authored in the renderer; a test asserts it.
+  The one literal that can't use a CSS var — Chromium's footer template, which
+  renders outside the page — takes its colour from the parsed token map.
+- **Merchant-facing section copy adopted from the mockup** (jargon-free, per the
+  brief): "Did the ads pay for themselves", "Where the money went", "What each
+  platform claims, and what your store recorded", "What changed since {prev month}",
+  "What's worth changing this month", "What we'll check next month". The report
+  golden tests were updated to these headings and to the new footer honesty strings;
+  the metric-value assertions (waterfall signs, family classes, free-report footer)
+  are unchanged.
+- **`@media` scoped to `screen`.** The mockup's `max-width:820px` mobile rules would
+  otherwise fire inside the A4 PDF (printable width ≈ 688px), collapsing the two
+  efficiency cards and hiding the gap-box header. Scoping the block to
+  `screen and (max-width:820px)` keeps the web preview responsive while the PDF
+  always renders the desktop layout. Verified: 4-page A4 PDF, cards side-by-side,
+  gap-box header present, no orphaned table headers, each card/row kept whole.
+- **Print break rules keep atomic units whole but let sections flow.**
+  `break-inside:avoid` on `.finding/.stat/.gaprow/.crow/.ch` (not on the whole
+  `.sec`, which forced tall sections onto one page and left big whitespace);
+  `thead{display:table-header-group}` repeats any table header;
+  `h2{break-after:avoid}` keeps a heading with its first content.
+- **Values the model doesn't structure, derived and documented.** The efficiency
+  track scale (MER: `(target||value)×1.25|1.35`; CAC: break-even at the first-order
+  contribution) is a rendering derivation. The stake figure shows the model's whole
+  `valueLabel` (the model has no number/caption split) coloured by family. The
+  claim-gap tag tone uses `≥25%→bad, ≥12%→warn, else ok` from the token palette.
