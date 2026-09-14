@@ -4,6 +4,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import pg from 'pg';
 import { loadRootEnv } from '@grossline/core';
+import { ensureDatabase } from '../src/migrate';
 
 export default async function setup(): Promise<void> {
   loadRootEnv();
@@ -11,6 +12,10 @@ export default async function setup(): Promise<void> {
     process.env.TEST_DATABASE_URL ??
     process.env.DATABASE_URL ??
     'postgres://grossline:grossline@localhost:5433/grossline_test';
+
+  // Create the test database if it doesn't exist yet (replaces the docker initdb
+  // script, dropped with the host bind mount — see docs/decisions.md).
+  await ensureDatabase(url);
 
   const migrationsFolder = join(dirname(fileURLToPath(import.meta.url)), '..', 'drizzle');
   const pool = new pg.Pool({ connectionString: url, max: 1 });

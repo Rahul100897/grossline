@@ -24,6 +24,13 @@ pnpm dev
 
 Admin console runs at `localhost:3000`. Marketing site at `localhost:4321`.
 
+Postgres and Redis persist to Docker **named volumes** (`grossline_pgdata`,
+`grossline_redisdata`), not host bind mounts — a bind mount under `~/Documents`
+wedged twice on macOS file sharing (see `docs/decisions.md`). The test database
+`grossline_test` is created automatically by the test runner, so no init script
+or bind mount is needed. All local data is regenerable: to start clean, run
+`docker compose down -v` (removes the volumes) then repeat the setup steps above.
+
 ## Commands
 
 | Command                       | What it does                                        |
