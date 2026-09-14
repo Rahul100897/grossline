@@ -1,4 +1,5 @@
 import { sql } from 'drizzle-orm';
+import type { FindingParts } from '@grossline/core';
 import {
   bigint,
   boolean,
@@ -644,9 +645,17 @@ export const findings = pgTable(
     dismissedReason: text('dismissed_reason'),
     /** money_impact captured at dismissal, to detect a material later change. */
     dismissedImpactMinor: integer('dismissed_impact_minor'),
-    /** Commentary (task 4.6): model draft, then the analyst's edited final. */
+    /** Commentary (task 4.6): model draft, then the analyst's edited final.
+     *  Legacy single-blob columns — kept (not dropped) for existing rows; new
+     *  edits use the per-part columns below. */
     draftText: text('draft_text'),
     finalText: text('final_text'),
+    /** The four commentary parts, stored separately so the report can render the
+     *  analyst's part where it exists and fall back to the template part by part
+     *  (docs/design report.html). `draft_parts` holds the model's guard-passed
+     *  parts (prefill); `final_parts` holds the analyst's edits (rendered). */
+    draftParts: jsonb('draft_parts').$type<FindingParts>(),
+    finalParts: jsonb('final_parts').$type<FindingParts>(),
     editedAt: timestamp('edited_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },

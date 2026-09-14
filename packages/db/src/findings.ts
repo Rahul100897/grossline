@@ -3,9 +3,11 @@
 // come out of Postgres numeric columns as strings — the mappers convert to the
 // core types the state machine and rules expect.
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+import { FINDING_PART_KEYS } from '@grossline/core';
 import type {
   FindingEntity,
   FindingFamily,
+  FindingParts,
   FindingStatus,
   PriorFinding,
   ReconciledFinding,
@@ -326,27 +328,43 @@ export async function reopenFinding(tenantId: string, id: string): Promise<void>
   );
 }
 
-/** Save the analyst-edited final text and stamp edited_at. */
-export async function saveFindingText(
+/** Normalise: drop blank parts so a cleared field falls back to the template. */
+function pruneParts(parts: FindingParts): FindingParts | null {
+  const out: FindingParts = {};
+  for (const k of FINDING_PART_KEYS) {
+    const v = parts[k];
+    if (typeof v === 'string' && v.trim() !== '') out[k] = v.trim();
+  }
+  return Object.keys(out).length === 0 ? null : out;
+}
+
+/** Save the analyst-edited final parts and stamp edited_at (task 4.6). Each part
+ *  is stored separately; a blank part is dropped and the report uses the template
+ *  part for it. */
+export async function saveFindingParts(
   tenantId: string,
   id: string,
-  finalText: string,
+  parts: FindingParts,
 ): Promise<void> {
   await withTenant(tenantId, (tx) =>
     tx
       .update(findings)
-      .set({ finalText: finalText.trim() === '' ? null : finalText, editedAt: new Date() })
+      .set({ finalParts: pruneParts(parts), editedAt: new Date() })
       .where(eq(findings.id, id)),
   );
 }
 
-/** Save a model draft (task 4.6). Never overwrites an analyst's final edit. */
-export async function saveFindingDraft(
+/** Save the model's guard-passed draft parts (task 4.6) — used to prefill the
+ *  review editor. Never overwrites the analyst's final parts. */
+export async function saveFindingDraftParts(
   tenantId: string,
   id: string,
-  draftText: string,
+  parts: FindingParts,
 ): Promise<void> {
   await withTenant(tenantId, (tx) =>
-    tx.update(findings).set({ draftText }).where(eq(findings.id, id)),
+    tx
+      .update(findings)
+      .set({ draftParts: pruneParts(parts) })
+      .where(eq(findings.id, id)),
   );
 }

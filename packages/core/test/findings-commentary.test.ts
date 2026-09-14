@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   renderTemplate,
+  resolveParts,
   foreignFigures,
   hasNoForeignFigures,
   type CommentaryFinding,
@@ -38,6 +39,27 @@ describe('deterministic templates (tier 1)', () => {
     expect(t.whatWeCheck).toContain('blended CAC against first-order contribution');
     // Four parts joined.
     expect(t.text).toBe(`${t.whatHappened} ${t.atStake} ${t.whatToDo} ${t.whatWeCheck}`);
+  });
+
+  it('resolves each part to the analyst edit where it exists, else the template', () => {
+    const t = renderTemplate(payback);
+    // A half-edited finding: only two parts edited; the rest fall back.
+    const resolved = resolveParts(t, {
+      whatHappened: 'Meta over-counted again this month.',
+      whatToDo: 'Set the budget from store-recorded orders.',
+    });
+    expect(resolved.whatHappened).toBe('Meta over-counted again this month.');
+    expect(resolved.whatToDo).toBe('Set the budget from store-recorded orders.');
+    // Untouched parts keep the deterministic template text.
+    expect(resolved.atStake).toBe(t.atStake);
+    expect(resolved.whatWeCheck).toBe(t.whatWeCheck);
+    // No edits at all → the full template, part for part.
+    expect(resolveParts(t, null)).toEqual({
+      whatHappened: t.whatHappened,
+      atStake: t.atStake,
+      whatToDo: t.whatToDo,
+      whatWeCheck: t.whatWeCheck,
+    });
   });
 
   it('every template passes its own figure guard (uses only record figures)', () => {

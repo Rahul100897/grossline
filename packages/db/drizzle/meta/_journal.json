@@ -239,6 +239,13 @@
       "when": 1789008570438,
       "tag": "0033_ticket_free_report",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1789369395449,
+      "tag": "0034_slow_the_watchers",
+      "breakpoints": true
     }
   ]
 }

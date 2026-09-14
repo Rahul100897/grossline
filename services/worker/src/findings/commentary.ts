@@ -5,8 +5,16 @@
 // never introduce a number that is not already in the finding record. Any
 // failure (no API key, API error, a foreign figure) falls back to the
 // deterministic template, which is always safe. No SDK dependency — plain fetch.
-import { foreignFigures, renderTemplate, logger, type CommentaryFinding } from '@grossline/core';
-import { getTenant, listFindings, saveFindingDraft, type Finding } from '@grossline/db';
+import {
+  foreignFigures,
+  renderTemplate,
+  logger,
+  FINDING_PART_KEYS,
+  type CommentaryFinding,
+  type FindingParts,
+  type FourPart,
+} from '@grossline/core';
+import { getTenant, listFindings, saveFindingDraftParts, type Finding } from '@grossline/db';
 
 const ANTHROPIC_ENDPOINT = 'https://api.anthropic.com/v1/messages';
 
@@ -28,14 +36,25 @@ export function toCommentary(f: Finding): CommentaryFinding {
   };
 }
 
-export type DraftResult = { text: string; source: 'model' | 'template'; note?: string };
+export type DraftResult = { parts: FindingParts; source: 'model' | 'template'; note?: string };
 
-async function callModel(commentary: CommentaryFinding, template: string): Promise<string | null> {
+/** Strip a ```json … ``` fence the model may wrap the object in. */
+function stripFence(text: string): string {
+  const m = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  return (m?.[1] ?? text).trim();
+}
+
+/** Ask the model to rewrite the four parts. Returns the parts it produced (each
+ *  still unguarded), or null on any failure. */
+async function callModel(
+  commentary: CommentaryFinding,
+  template: FourPart,
+): Promise<FindingParts | null> {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) return null;
   const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-5';
   const system =
-    'You are an analyst writing one finding for a monthly ecommerce report. Rewrite the draft into a natural, client-ready note in four short parts: what happened (with the numbers), what is at stake (a figure), what to do (specific), and what we check next month (name the metric). CRITICAL: use ONLY numbers that appear in the provided record or draft. Never invent, estimate, or compute any figure. Keep it to a few sentences. Return only the note.';
+    'You are an analyst writing one finding for a monthly ecommerce report. Rewrite the draft into a natural, client-ready note in four short parts. Return ONLY a JSON object with string keys "whatHappened" (what happened, with the numbers), "atStake" (what is at stake, a figure), "whatToDo" (what to do, specific), and "whatWeCheck" (what we check next month, name the metric). CRITICAL: use ONLY numbers that appear in the provided record or draft. Never invent, estimate, or compute any figure. Keep each part to a sentence or two.';
   const user = JSON.stringify({ record: commentary, draft: template });
   try {
     const response = await fetch(ANTHROPIC_ENDPOINT, {
@@ -47,7 +66,7 @@ async function callModel(commentary: CommentaryFinding, template: string): Promi
       },
       body: JSON.stringify({
         model,
-        max_tokens: 400,
+        max_tokens: 600,
         system,
         messages: [{ role: 'user', content: user }],
       }),
@@ -58,7 +77,15 @@ async function callModel(commentary: CommentaryFinding, template: string): Promi
     }
     const data = (await response.json()) as { content?: { type: string; text?: string }[] };
     const text = data.content?.find((b) => b.type === 'text')?.text?.trim();
-    return text && text.length > 0 ? text : null;
+    if (!text) return null;
+    const parsed = JSON.parse(stripFence(text)) as Record<string, unknown>;
+    const parts: FindingParts = {};
+    for (const k of FINDING_PART_KEYS) {
+      if (typeof parsed[k] === 'string' && (parsed[k] as string).trim() !== '') {
+        parts[k] = (parsed[k] as string).trim();
+      }
+    }
+    return parts;
   } catch (error) {
     logger.warn('commentary model call errored', {
       error: error instanceof Error ? error.message : 'unknown',
@@ -67,28 +94,44 @@ async function callModel(commentary: CommentaryFinding, template: string): Promi
   }
 }
 
-/** Draft one finding: model narrative if it passes the figure guard, else template. */
+/**
+ * Draft one finding as four parts. Each model part must pass the figure guard on
+ * its own; a part that fails (or that the model didn't return) is left out, so
+ * the review editor prefills the template part for it. Returns only the parts the
+ * model produced that cleared the guard.
+ */
 export async function draftFor(finding: Finding): Promise<DraftResult> {
   const commentary = toCommentary(finding);
-  const template = renderTemplate(commentary).text;
-  const modelText = await callModel(commentary, template);
-  if (modelText === null) return { text: template, source: 'template' };
-  const foreign = foreignFigures(modelText, commentary);
-  if (foreign.length > 0) {
-    logger.warn('model draft rejected — foreign figures', { findingId: finding.id, foreign });
-    return {
-      text: template,
-      source: 'template',
-      note: `model draft rejected: ${foreign.join(', ')}`,
-    };
+  const template = renderTemplate(commentary);
+  const modelParts = await callModel(commentary, template);
+  if (modelParts === null) return { parts: {}, source: 'template' };
+
+  const kept: FindingParts = {};
+  const rejected: string[] = [];
+  for (const k of FINDING_PART_KEYS) {
+    const value = modelParts[k];
+    if (!value) continue;
+    const foreign = foreignFigures(value, commentary);
+    if (foreign.length === 0) kept[k] = value;
+    else rejected.push(`${k}: ${foreign.join(', ')}`);
   }
-  return { text: modelText, source: 'model' };
+  if (rejected.length > 0) {
+    logger.warn('model draft parts rejected — foreign figures', {
+      findingId: finding.id,
+      rejected,
+    });
+  }
+  return {
+    parts: kept,
+    source: Object.keys(kept).length > 0 ? 'model' : 'template',
+    note: rejected.length > 0 ? `rejected: ${rejected.join('; ')}` : undefined,
+  };
 }
 
 /**
- * Generate and store drafts for a period's findings. Skips dismissed findings
- * and never overwrites an analyst's final edit (saveFindingDraft only touches
- * draft_text). Returns a per-finding summary.
+ * Generate and store draft parts for a period's findings. Skips dismissed
+ * findings and never overwrites an analyst's final parts (saveFindingDraftParts
+ * only touches draft_parts). Returns a per-finding summary.
  */
 export async function generateDraftsForPeriod(
   tenantId: string,
@@ -101,7 +144,7 @@ export async function generateDraftsForPeriod(
   for (const finding of findings) {
     if (finding.status === 'dismissed') continue;
     const draft = await draftFor(finding);
-    await saveFindingDraft(tenantId, finding.id, draft.text);
+    await saveFindingDraftParts(tenantId, finding.id, draft.parts);
     results.push({ id: finding.id, ruleId: finding.ruleId, source: draft.source });
   }
   logger.info('drafts generated', {

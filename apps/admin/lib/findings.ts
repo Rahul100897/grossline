@@ -1,12 +1,12 @@
 // Presentation helpers for findings in the console (docs/phase-4.md tasks
 // 4.5–4.8). These format the numbers already in the finding record — they never
 // compute a new figure. Prose lives in draft_text/final_text.
-import { renderTemplate, type CommentaryFinding } from '@grossline/core';
+import { renderTemplate, type CommentaryFinding, type FourPart } from '@grossline/core';
 import type { Finding } from '@grossline/db';
 import { formatMinor } from './format';
 
 /** The deterministic four-part template for a finding, rendered from the record. */
-export function templateText(f: Finding): string {
+export function templateParts(f: Finding): FourPart {
   const commentary: CommentaryFinding = {
     ruleId: f.ruleId,
     entityLabel: f.entityLabel,
@@ -22,7 +22,7 @@ export function templateText(f: Finding): string {
     family: f.family as CommentaryFinding['family'],
     opportunityValueMinor: f.opportunityValueMinor,
   };
-  return renderTemplate(commentary).text;
+  return renderTemplate(commentary);
 }
 
 export const RULE_TITLES: Record<string, string> = {

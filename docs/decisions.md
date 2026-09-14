@@ -1497,3 +1497,32 @@ and how the next report closes the loop, so they are structure, not decoration.
   direction are toned segments that render as green/rust spans (mockup), while
   `headline.sentence` stays as the flattened string the CLI log, the `<title>`
   and the WhatsApp summary use.
+
+### 2026-09-14 — Findings: four-field review editor, stored per part
+
+The findings review card now has four fields — what happened, what's at stake,
+what to do, what we'll check — instead of one textarea, and each part is stored
+separately on the finding so the analyst's wording reaches the client.
+
+- **Schema (migration 0034, forward-only):** two nullable jsonb columns on
+  `findings` — `draft_parts` (the model's guard-passed parts, for prefill) and
+  `final_parts` (the analyst's edits, rendered). The legacy `draft_text` /
+  `final_text` columns are **kept, not dropped** (non-destructive; nothing reads
+  them now). Existing single-blob edits are not migrated — since the report
+  already stopped rendering `final_text` (2026-09-14 entry above), leaving them is
+  a no-op for the client; an analyst re-enters anything they want shown via the
+  four fields.
+- **Prefill order, per field:** the analyst's saved part → the model's
+  guard-passed draft part → the deterministic template part. Shown in the card as
+  a per-field `· final|draft|template` source tag.
+- **Report fallback, per part:** `build-model` resolves each part as the
+  analyst's `final_parts` value where present, else the template part
+  (`resolveParts` in `@grossline/core`), so a half-edited finding still renders a
+  full note.
+- **The figure guard is per part, unchanged.** Draft generation now asks the model
+  for the four parts as JSON and runs `foreignFigures` on **each** part; a part
+  that fails (or that the model didn't return) is dropped, so its field prefills
+  from the template. Analyst edits are trusted and not guarded (as before).
+- `saveFindingText`/`saveFindingDraft` → `saveFindingParts`/`saveFindingDraftParts`;
+  `templateText` → `templateParts` (returns the `FourPart`). Untouched columns are
+  preserved across a recompute by the existing `onConflictDoUpdate` set.

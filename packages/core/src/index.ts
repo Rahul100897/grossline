@@ -92,8 +92,15 @@ export {
   allowedFigures,
   foreignFigures,
   hasNoForeignFigures,
+  resolveParts,
+  FINDING_PART_KEYS,
 } from './findings/commentary';
-export type { CommentaryFinding, FourPart } from './findings/commentary';
+export type {
+  CommentaryFinding,
+  FourPart,
+  FindingPartKey,
+  FindingParts,
+} from './findings/commentary';
 export { classifyRecommendation } from './findings/recommendations';
 export type {
   RecStatus,
