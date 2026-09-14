@@ -1610,3 +1610,30 @@ Architecture decisions taken up front (restrictive-by-default per the spec):
   resolves only to member tenants, switching is bounded to memberships, and revoke /
   disable / membership-removal kill a live session on the next request. This is the
   seed of the §8.9 suite.
+
+### 2026-09-15 — Phase 8.3/8.4: invites, reset, auth hardening
+
+- **Single-use tokens** (`merchant_tokens`, migration 0036): invite (72h) and reset
+  (1h). Only the SHA-256 hash is stored; the raw token lives only in the link.
+  Consuming a token is an atomic `update … where used_at is null returning` so it
+  can be claimed once; consuming sets the password (activating the user),
+  invalidates the user's other tokens, and **revokes all sessions** (a password
+  change ends old sessions). Issuing a new token invalidates the prior unused one.
+- **Reset reveals nothing** — `requestReset` always lands on the same confirmation,
+  whether or not the account exists; invites are admin-initiated so the console may
+  confirm the address.
+- **Rate limiting + lockout** (`merchant_login_attempts`): ≥5 failed logins per
+  email or ≥20 per IP in 15 minutes locks further attempts; the login action
+  refuses before checking the password, with the same generic error. Successful
+  logins don't count.
+- **Audit**: `merchant.login`, `login_failed`, `login_locked`, `invite_accepted`,
+  `password_reset`, `reset_requested`, and the admin `merchant.invited` /
+  `invite_resent` / `role_changed` / `access_revoked` / `user_disabled` all land in
+  the audit log.
+- **Invites are issued from the admin console** (merchant → Access tab): find-or-
+  create the user (invited), grant membership, issue the invite link, email it via
+  the worker's `sendEmail`. With no `RESEND_API_KEY` the link is also logged to the
+  server console (dev affordance) so the cycle is usable without a mailbox;
+  `PORTAL_BASE_URL` sets the link host.
+- Proof: `packages/db/test/merchant-auth.test.ts` — single-use, expiry, previous-
+  token invalidation, session-kill on reset, and per-email / per-IP lockout.

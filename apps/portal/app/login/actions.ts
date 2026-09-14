@@ -1,6 +1,6 @@
 'use server';
 
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createSessionToken, verifySessionToken } from '@grossline/core/auth/session';
@@ -8,6 +8,8 @@ import {
   verifyMerchantLogin,
   createMerchantSession,
   revokeMerchantSession,
+  recordLoginAttempt,
+  isLoginLocked,
   writeAuditLog,
 } from '@grossline/db';
 import { PORTAL_SESSION_COOKIE, PORTAL_SESSION_TTL_MS } from '../../lib/constants';
@@ -18,6 +20,14 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+async function clientIp(): Promise<string> {
+  const h = await headers();
+  return (h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown').slice(
+    0,
+    64,
+  );
+}
+
 export async function login(formData: FormData): Promise<void> {
   const parsed = loginSchema.safeParse({
     email: formData.get('email'),
@@ -25,14 +35,24 @@ export async function login(formData: FormData): Promise<void> {
   });
   if (!parsed.success) redirect('/login?error=1');
   const { email, password } = parsed.data;
+  const ip = await clientIp();
+
+  // Rate limit: once an email or IP has too many recent failures, refuse without
+  // even checking the password. Same generic error so it reveals nothing.
+  if (await isLoginLocked(email, ip)) {
+    await writeAuditLog({ actor: email, action: 'merchant.login_locked', metadata: { ip } });
+    redirect('/login?error=1');
+  }
 
   const user = await verifyMerchantLogin(email, password);
   if (!user) {
     // One generic failure path; reveal nothing about which factor or whether the
     // account exists.
-    await writeAuditLog({ actor: email, action: 'merchant.login_failed' });
+    await recordLoginAttempt(email, ip, false);
+    await writeAuditLog({ actor: email, action: 'merchant.login_failed', metadata: { ip } });
     redirect('/login?error=1');
   }
+  await recordLoginAttempt(email, ip, true);
 
   // Rotate: kill any session the presented cookie still points at, so an old
   // identifier stops working the moment a new one is issued.

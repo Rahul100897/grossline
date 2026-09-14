@@ -124,6 +124,46 @@ async function membershipsForUser(
   return rows.map((r) => ({ tenantId: r.tenantId, tenantName: r.tenantName, role: r.role }));
 }
 
+export type TenantMerchantUser = {
+  userId: string;
+  email: string;
+  name: string;
+  status: 'invited' | 'active' | 'disabled';
+  role: MerchantRole;
+  isDemo: boolean;
+  lastLoginAt: Date | null;
+};
+
+/** The portal users with access to one tenant — for the admin Access panel. */
+export async function listTenantMerchantUsers(tenantId: string): Promise<TenantMerchantUser[]> {
+  const rows = await adminDb()
+    .select({
+      userId: merchantUsers.id,
+      email: merchantUsers.email,
+      name: merchantUsers.name,
+      status: merchantUsers.status,
+      role: merchantMemberships.role,
+      isDemo: merchantUsers.isDemo,
+      lastLoginAt: merchantUsers.lastLoginAt,
+    })
+    .from(merchantMemberships)
+    .innerJoin(merchantUsers, eq(merchantUsers.id, merchantMemberships.userId))
+    .where(eq(merchantMemberships.tenantId, tenantId));
+  return rows.map((r) => ({ ...r, status: r.status as TenantMerchantUser['status'] }));
+}
+
+/** Change a user's role on a tenant (owner/viewer). */
+export async function setMembershipRole(
+  userId: string,
+  tenantId: string,
+  role: MerchantRole,
+): Promise<void> {
+  await adminDb()
+    .update(merchantMemberships)
+    .set({ role })
+    .where(and(eq(merchantMemberships.userId, userId), eq(merchantMemberships.tenantId, tenantId)));
+}
+
 /** Remove all of a user's access to a tenant and kill affected sessions. Used by
  *  admin revoke and by tenant deletion (§8.10). */
 export async function removeMembership(userId: string, tenantId: string): Promise<void> {
