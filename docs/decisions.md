@@ -1526,3 +1526,29 @@ separately on the finding so the analyst's wording reaches the client.
 - `saveFindingText`/`saveFindingDraft` → `saveFindingParts`/`saveFindingDraftParts`;
   `templateText` → `templateParts` (returns the `FourPart`). Untouched columns are
   preserved across a recompute by the existing `onConflictDoUpdate` set.
+
+### 2026-09-14 — Local Postgres/Redis use named volumes, not bind mounts
+
+`docker-compose.yml` now persists Postgres and Redis to Docker **named volumes**
+(`grossline_pgdata`, `grossline_redisdata`) instead of host bind mounts
+(`./pgdata`, `./redisdata`).
+
+**Why.** The `./pgdata` bind mount lived under `~/Documents`, and macOS file
+sharing wedged it twice: the Postgres entrypoint could not `chmod` the data dir
+("Operation not permitted"), so the container exited on start and the directory
+became unreadable to any container (even directory traversal failed). A Docker
+restart didn't help — it's a file-sharing/TCC-class fault, not a Docker daemon
+one. Named volumes live inside the Docker VM (ext4) and sidestep macOS file
+sharing entirely, so this can't recur. The wedged `./pgdata` couldn't even be
+copied out (container reads of the dir returned "Operation not permitted"); the
+local data was regenerable (demo seed + a re-syncable dev store), so we started
+the named volume fresh.
+
+**The docker `initdb` bind mount is gone too.** Its only job was to create the
+`grossline_test` database. That now happens in code: `ensureDatabase(url)`
+(`packages/db`) creates the target database if missing, called from both test
+`global-setup`s before migrating. So a fresh clone needs no bind mount and no
+init script — `docker compose up -d` then `pnpm db:migrate` (+ the test runner
+auto-creates `grossline_test`). README updated.
+
+`docker compose down -v` wipes the volumes for a clean slate.

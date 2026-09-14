@@ -1,5 +1,13 @@
 # Local development services. Host ports are non-standard (5433/6380) because
 # this machine runs other Postgres/Redis instances on the defaults.
+#
+# Postgres and Redis persist to Docker *named volumes*, not host bind mounts.
+# A bind mount under ~/Documents wedged twice on macOS file sharing — the
+# Postgres entrypoint could not chmod the data dir ("Operation not permitted"),
+# so the container exited on start and the data became unreadable. Named volumes
+# live inside the Docker VM (ext4) and sidestep macOS file sharing entirely.
+# See docs/decisions.md (2026-09-14). Data here is regenerable: `pnpm db:migrate`
+# then `pnpm seed:demo` / `pnpm seed:admin`, and the dev store re-syncs.
 services:
   postgres:
     image: postgres:16
@@ -10,8 +18,7 @@ services:
     ports:
       - '5433:5432'
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
-      - ./docker/initdb:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U grossline']
       interval: 5s
@@ -23,9 +30,13 @@ services:
     ports:
       - '6380:6379'
     volumes:
-      - ./redisdata:/data
+      - redisdata:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 5s
       retries: 10
+
+volumes:
+  pgdata:
+  redisdata:

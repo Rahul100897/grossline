@@ -48,7 +48,7 @@ export {
 } from './connections';
 export { getBackfillProgress, type BackfillProgress } from './backfill-progress';
 export { closeDbPools } from './client';
-export { runMigrations } from './migrate';
+export { runMigrations, ensureDatabase } from './migrate';
 export {
   latestSyncRun,
   latestCostCompleteness,
