@@ -123,8 +123,8 @@ export {
   unapproveFinding,
   dismissFinding,
   reopenFinding,
-  saveFindingText,
-  saveFindingDraft,
+  saveFindingParts,
+  saveFindingDraftParts,
   type Finding,
   type FindingFilter,
 } from './findings';

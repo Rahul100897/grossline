@@ -5,6 +5,7 @@
 // render time.
 import {
   renderTemplate,
+  resolveParts,
   classifyRecommendation,
   minorUnitExponent,
   type CommentaryFinding,
@@ -326,12 +327,11 @@ export async function buildReportModel(
       (f.status === 'new' || f.status === 'recurring'),
   );
   // The four-part structure is the finding: what happened is the paragraph;
-  // at stake / what to do / we'll check are the rows a client acts on. Taken from
-  // the deterministic commentary template (always correct); the model/analyst
-  // prose polish (draftText/finalText) is a flowing single blob and can't be
-  // split into rows, so it isn't used for the structured report.
+  // at stake / what to do / we'll check are the rows a client acts on. Each part
+  // is the analyst's edit where it exists, falling back to the deterministic
+  // template part — by part, so a half-edited finding still renders fully.
   const findings: ReportFinding[] = sendable.map((f) => {
-    const parts = renderTemplate(toCommentary(f));
+    const parts = resolveParts(renderTemplate(toCommentary(f)), f.finalParts);
     return {
       title: RULE_TITLES[f.ruleId] ?? f.ruleId,
       entityLabel: f.entityLabel,

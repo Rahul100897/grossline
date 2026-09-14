@@ -34,6 +34,30 @@ export type FourPart = {
   text: string;
 };
 
+/** The four commentary parts, in report order. */
+export const FINDING_PART_KEYS = ['whatHappened', 'atStake', 'whatToDo', 'whatWeCheck'] as const;
+export type FindingPartKey = (typeof FINDING_PART_KEYS)[number];
+
+/** Per-part commentary an analyst edits or a model drafts. A missing/blank part
+ *  falls back to the deterministic template part when rendered. */
+export type FindingParts = Partial<Record<FindingPartKey, string>>;
+
+/** The four parts a report renders: the analyst's edit for each where it exists,
+ *  else the template part — resolved per part, so a half-edited finding still
+ *  renders fully. */
+export function resolveParts(
+  template: FourPart,
+  edited: FindingParts | null | undefined,
+): Record<FindingPartKey, string> {
+  const e = edited ?? {};
+  return {
+    whatHappened: e.whatHappened ?? template.whatHappened,
+    atStake: e.atStake ?? template.atStake,
+    whatToDo: e.whatToDo ?? template.whatToDo,
+    whatWeCheck: e.whatWeCheck ?? template.whatWeCheck,
+  };
+}
+
 const num = (e: Evidence, k: string): number | null =>
   typeof e[k] === 'number' ? (e[k] as number) : null;
 

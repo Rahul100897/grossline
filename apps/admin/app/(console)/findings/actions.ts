@@ -7,10 +7,11 @@ import {
   dismissFinding,
   getFinding,
   reopenFinding,
-  saveFindingText,
+  saveFindingParts,
   unapproveFinding,
   writeAuditLog,
 } from '@grossline/db';
+import { FINDING_PART_KEYS, type FindingParts } from '@grossline/core';
 import { runFindings } from '@grossline/worker/findings-pipeline';
 import { requireSession } from '../../../lib/auth';
 
@@ -70,16 +71,19 @@ export async function reopen(formData: FormData): Promise<void> {
   redirect(back(tenantId, period));
 }
 
-export async function saveText(formData: FormData): Promise<void> {
+export async function saveParts(formData: FormData): Promise<void> {
   const session = await requireSession();
   const { tenantId, period, id } = await tenantPeriodFrom(formData);
-  const finalText = z
-    .string()
-    .max(20_000)
-    .parse(formData.get('finalText') ?? '');
+  const partSchema = z.string().max(5_000);
+  const parts: FindingParts = {};
+  for (const key of FINDING_PART_KEYS) {
+    parts[key] = partSchema.parse(formData.get(key) ?? '');
+  }
   const finding = await getFinding(tenantId, id);
   if (!finding) redirect(back(tenantId, period));
-  await saveFindingText(tenantId, id, finalText);
+  // A blank part is dropped (saveFindingParts prunes), so the report falls back
+  // to the template for it. The figure guard is not applied to analyst edits.
+  await saveFindingParts(tenantId, id, parts);
   await writeAuditLog({ actor: session.sub, action: 'finding.edit', tenantId, subject: id });
   redirect(back(tenantId, period, '&saved=1'));
 }

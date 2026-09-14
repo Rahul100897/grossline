@@ -2,11 +2,20 @@
 // structured record and its evidence, the (model-drafted, analyst-editable)
 // text, and the review actions. Numbers come from the record; nothing here
 // computes a figure.
+import type { FindingPartKey } from '@grossline/core';
 import type { Finding } from '@grossline/db';
-import { impactText, ruleTitle, statusLabel, statusTone, templateText } from '../lib/findings';
+import { impactText, ruleTitle, statusLabel, statusTone, templateParts } from '../lib/findings';
 import { formatDate, formatMinor } from '../lib/format';
 import { Badge } from './ui';
-import { approve, dismiss, reopen, saveText, unapprove } from '../app/(console)/findings/actions';
+import { approve, dismiss, reopen, saveParts, unapprove } from '../app/(console)/findings/actions';
+
+// The four review fields, in report order.
+const PART_FIELDS: { key: FindingPartKey; label: string; rows: number }[] = [
+  { key: 'whatHappened', label: 'What happened', rows: 3 },
+  { key: 'atStake', label: "What's at stake", rows: 2 },
+  { key: 'whatToDo', label: 'What to do', rows: 2 },
+  { key: 'whatWeCheck', label: "What we'll check", rows: 2 },
+];
 
 function EvidenceTable({ evidence }: { evidence: Record<string, unknown> }) {
   const entries = Object.entries(evidence).filter(([k]) => k !== 'resolved');
@@ -42,9 +51,15 @@ export function FindingCard({
   const isMeasurement = finding.family === 'measurement';
   const approved = finding.approvedAt !== null;
   const dismissed = finding.status === 'dismissed';
-  // final edit wins; else the model draft; else the deterministic template.
-  const draft = finding.finalText ?? finding.draftText ?? templateText(finding);
-  const draftSource = finding.finalText ? 'final' : finding.draftText ? 'draft' : 'template';
+  // Prefill each field: the analyst's saved part wins, then the model's
+  // guard-passed draft part, then the deterministic template part. Tracked per
+  // part so a half-edited finding still shows a full note.
+  const template = templateParts(finding);
+  const finalParts = finding.finalParts ?? {};
+  const draftParts = finding.draftParts ?? {};
+  const partValue = (k: FindingPartKey): string => finalParts[k] ?? draftParts[k] ?? template[k];
+  const partSource = (k: FindingPartKey): 'final' | 'draft' | 'template' =>
+    finalParts[k] !== undefined ? 'final' : draftParts[k] !== undefined ? 'draft' : 'template';
   const hidden = (
     <>
       <input type="hidden" name="tenantId" value={tenantId} />
@@ -88,26 +103,33 @@ export function FindingCard({
       <EvidenceTable evidence={(finding.evidence ?? {}) as Record<string, unknown>} />
 
       {!dismissed ? (
-        <form action={saveText} className="mt-2">
+        <form action={saveParts} className="mt-2 flex flex-col gap-2">
           {hidden}
-          <div className="mb-1 text-meta text-slate">text · {draftSource}</div>
-          <textarea
-            name="finalText"
-            defaultValue={draft}
-            rows={5}
-            placeholder="The four-part note that reaches the client: what happened, what's at stake, what to do, what we check next month."
-            className="w-full rounded border border-hairline bg-panel px-2 py-1.5 text-body outline-none focus:border-slate"
-          />
-          <div className="mt-1 flex items-center gap-2">
+          {PART_FIELDS.map(({ key, label, rows }) => (
+            <div key={key}>
+              <div className="mb-1 flex items-baseline gap-2">
+                <span className="text-meta font-medium">{label}</span>
+                <span className="text-meta text-slate">· {partSource(key)}</span>
+              </div>
+              <textarea
+                name={key}
+                defaultValue={partValue(key)}
+                rows={rows}
+                className="w-full rounded border border-hairline bg-panel px-2 py-1.5 text-body outline-none focus:border-slate"
+              />
+            </div>
+          ))}
+          <div className="flex items-center gap-2">
             <button
               type="submit"
               className="rounded border border-hairline px-2.5 py-1 text-body hover:bg-hover"
             >
-              Save text
+              Save note
             </button>
             {finding.editedAt ? (
               <span className="text-meta text-slate">edited {formatDate(finding.editedAt)}</span>
             ) : null}
+            <span className="text-meta text-slate">A blank field falls back to the template.</span>
           </div>
         </form>
       ) : null}
