@@ -1582,3 +1582,31 @@ Architecture decisions taken up front (restrictive-by-default per the spec):
   server-side session id that is looked up, checked for revocation, and re-scoped
   from memberships on every request. Same hashing (`scrypt`, `hashPassword`) and
   no new auth dependency.
+
+### 2026-09-15 — Phase 8.1/8.2: portal foundation + demo login
+
+- **`apps/portal`** (Next.js, port 3002) is the merchant app. It reuses the design
+  system by importing the shared tokens (`docs/design/design-tokens.css`) and the
+  admin's `primitives.css` directly (single source, no duplication); it has its own
+  `globals.css`, fonts and cookie (`grossline_portal_session`).
+- **Identity tables** `merchant_users`, `merchant_memberships`, `merchant_sessions`
+  (migration 0035) live in `packages/db` and use the admin pool, like `admin_users`
+  — they are access-control tables keyed by user, not tenant data, so they are not
+  under tenant RLS. The portal's _data_ queries (metrics, reports) are tenant-scoped
+  through `withTenant(activeTenantId)`, where the active tenant is resolved server-
+  side from memberships (`resolveMerchantSession`). A tenant id is never read from
+  the client.
+- **Demo login (§8.1):** `demo@getgrossline.com` / `explore-grossline` (override via
+  `DEMO_PORTAL_PASSWORD`), `is_demo`, `active`, viewer membership on `demo-brand`.
+  `pnpm seed:demo-portal` creates it; `pnpm demo:reset` re-seeds the deterministic
+  demo tenant, resets the password, and drops all demo sessions.
+  - Restrictive choice recorded: `resetDemo` (in `packages/db`) restores **identity +
+    the tenant seed** but does not compute metric_values (that needs the worker
+    pipeline). The full nightly job = `pnpm demo:reset` **and** a worker
+    `metrics:recompute` of the demo tenant; it is wired as a scheduled job in 8.10.
+    Until then the demo's figures are populated once via the standard pipeline.
+- **Sessions are server-side** for immediate revocation/rotation; the seven-case
+  isolation test (`packages/db/test/merchant-identity.test.ts`) proves a session
+  resolves only to member tenants, switching is bounded to memberships, and revoke /
+  disable / membership-removal kill a live session on the next request. This is the
+  seed of the §8.9 suite.

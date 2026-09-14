@@ -14,7 +14,9 @@
     "studio": "drizzle-kit studio",
     "check": "drizzle-kit check && tsx scripts/check-migrations.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
-    "seed:demo": "tsx scripts/seed-demo.ts"
+    "seed:demo": "tsx scripts/seed-demo.ts",
+    "seed:demo-portal": "tsx scripts/seed-demo-portal.ts",
+    "demo:reset": "tsx scripts/demo-reset.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",

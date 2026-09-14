@@ -187,3 +187,25 @@ export {
   type RecordPaymentInput,
   type PlanRevenue,
 } from './billing';
+
+export {
+  getMerchantUserByEmail,
+  getMerchantUserById,
+  createMerchantUser,
+  setMerchantPassword,
+  disableMerchantUser,
+  createMembership,
+  removeMembership,
+  createMerchantSession,
+  revokeMerchantSession,
+  revokeAllSessionsForUser,
+  resolveMerchantSession,
+  setActiveTenant,
+  verifyMerchantLogin,
+  purgeExpiredMerchantSessions,
+  type MerchantUser,
+  type MerchantMembership,
+  type MerchantSession,
+  type MerchantRole,
+  type ResolvedMerchantSession,
+} from './merchant';

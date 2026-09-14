@@ -23,7 +23,7 @@ export default async function setup(): Promise<void> {
     await migrate(drizzle(pool), { migrationsFolder });
     // Clean slate for every run. Order-independent thanks to CASCADE.
     await pool.query(
-      'TRUNCATE audit_log, sync_runs, connections, credentials, stores, tenants, admin_users RESTART IDENTITY CASCADE',
+      'TRUNCATE audit_log, sync_runs, connections, credentials, stores, tenants, admin_users, merchant_users RESTART IDENTITY CASCADE',
     );
   } finally {
     await pool.end();

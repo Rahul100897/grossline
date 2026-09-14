@@ -36,7 +36,8 @@ export default tseslint.config(
       '**/*.astro',
       'pgdata/**',
       'redisdata/**',
-      'apps/admin/next-env.d.ts',
+      // Next.js generates next-env.d.ts with a triple-slash reference we don't own.
+      '**/next-env.d.ts',
     ],
   },
   js.configs.recommended,

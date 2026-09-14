@@ -4,14 +4,32 @@
     {
       "name": "admin",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@grossline/admin", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@grossline/admin",
+        "dev"
+      ],
       "port": 3000
     },
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@grossline/web", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@grossline/web",
+        "dev"
+      ],
       "port": 4321
+    },
+    {
+      "name": "portal",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@grossline/portal",
+        "dev"
+      ],
+      "port": 3002
     }
   ]
 }

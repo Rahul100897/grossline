@@ -423,6 +423,67 @@ export const adminUsers = pgTable('admin_users', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// ---- merchant portal identity (Phase 8) ----
+// Identity tables, like admin_users: no tenant_id of their own. A merchant's
+// *access* to a tenant is a membership; a merchant's *session* resolves its
+// tenant from those memberships on every request, never from client input.
+export const merchantUserStatus = pgEnum('merchant_user_status', [
+  'invited',
+  'active',
+  'disabled',
+]);
+export const merchantRole = pgEnum('merchant_role', ['owner', 'viewer']);
+
+export const merchantUsers = pgTable('merchant_users', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: text('email').notNull().unique(),
+  /** Null until an invite is accepted and a password is set. */
+  passwordHash: text('password_hash'),
+  name: text('name').notNull(),
+  status: merchantUserStatus('status').notNull().default('invited'),
+  /** Demo users are read-only, never see real tenants, and reset nightly. */
+  isDemo: boolean('is_demo').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
+});
+
+export const merchantMemberships = pgTable(
+  'merchant_memberships',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => merchantUsers.id, { onDelete: 'cascade' }),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id, { onDelete: 'cascade' }),
+    role: merchantRole('role').notNull().default('viewer'),
+    /** admin_users.id or merchant_users.id of whoever issued the invite. */
+    invitedBy: uuid('invited_by'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('merchant_memberships_uniq').on(t.userId, t.tenantId)],
+);
+
+// Server-side sessions: revocation and rotation must take effect immediately
+// (Phase 8 §8.3/§8.4), which a stateless token cannot do. The cookie carries a
+// signed session id; every request looks the row up, checks it is live, and
+// re-scopes the tenant from memberships.
+export const merchantSessions = pgTable('merchant_sessions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => merchantUsers.id, { onDelete: 'cascade' }),
+  /** The tenant the multi-tenant user is currently viewing; validated against
+   *  the user's memberships on every request. Null → their first membership. */
+  activeTenantId: uuid('active_tenant_id').references(() => tenants.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  /** Set the moment access is revoked / the user logs out; a revoked row is dead. */
+  revokedAt: timestamp('revoked_at', { withTimezone: true }),
+});
+
 // Issues are DERIVED, never authored (admin lib/issues.ts). This table is not
 // the source of truth for what is open — it is the transition log that gives
 // the Issues page a resolved history. Reconciled against the derived set:
