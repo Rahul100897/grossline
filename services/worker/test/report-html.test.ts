@@ -23,6 +23,13 @@ function model(over: Partial<ReportModel> = {}): ReportModel {
       costProvenance: 'merchant upload + Shopify',
     },
     headline: {
+      segments: [
+        { text: 'August 2026 worked — ' },
+        { text: 'USD 12,500.00', tone: 'up' },
+        { text: ' of contribution after ad spend, ' },
+        { text: 'up on last month', tone: 'up' },
+        { text: '.' },
+      ],
       sentence:
         'August 2026 worked — USD 12,500.00 of contribution after ad spend, up on last month.',
       contributionMinor: 1_250_000,
@@ -71,21 +78,32 @@ function model(over: Partial<ReportModel> = {}): ReportModel {
         entityLabel: 'Whole account',
         family: 'waste',
         valueLabel: 'USD 558.96 at stake',
-        text: 'Blended CAC is USD 58.42 while first-order contribution is only USD 54.31.',
+        whatHappened: 'Blended CAC is USD 58.42 while first-order contribution is only USD 54.31.',
+        atStake: 'Across 96 new customers that is a USD 558.96 first-order gap.',
+        whatToDo: 'Lift first-order AOV or trim the weakest prospecting spend so CAC falls.',
+        whatWeCheck: 'Next month we check blended CAC against first-order contribution.',
       },
       {
         title: 'Spend headroom',
         entityLabel: 'Whole account',
         family: 'growth',
         valueLabel: '+USD 4,508.01 opportunity',
-        text: 'At today’s efficiency there is roughly USD 4,508.01 of additional monthly spend that would still clear break-even. Efficiency falls as spend rises.',
+        whatHappened: 'Blended MER is running at 2.82 against a break-even of 1.80.',
+        atStake:
+          'At today’s efficiency there is roughly USD 4,508.01 of additional monthly spend that would still clear break-even.',
+        whatToDo:
+          'Test a bounded increase on the strongest campaigns and hold if efficiency slips.',
+        whatWeCheck: 'Next month we check blended MER against break-even and total orders.',
       },
       {
         title: 'Claim gap',
         entityLabel: 'Meta',
         family: 'measurement',
         valueLabel: 'no money at stake',
-        text: 'Meta claims 120 conversions against 44 store-recorded orders — a measurement risk.',
+        whatHappened: 'Meta claims 120 conversions against 44 store-recorded orders.',
+        atStake: 'This is a measurement risk, not a spend loss.',
+        whatToDo: 'Rely on store-recorded orders for decisions and note the divergence.',
+        whatWeCheck: 'Next month we check the platform-to-store claim gap.',
       },
     ],
     nothingNeedsChanging: false,
@@ -169,6 +187,26 @@ describe('report template (task 5.B1)', () => {
     expect(html).toContain('class="total"');
   });
 
+  it('renders each finding as the four-part structure, not one blob', () => {
+    const html = renderReportHtml(model());
+    // the paragraph (what happened) plus the three structured rows
+    expect(html).toContain(
+      'Blended CAC is USD 58.42 while first-order contribution is only USD 54.31.',
+    );
+    expect(html).toContain(`<span class="l">What's at stake</span>`);
+    expect(html).toContain('Across 96 new customers that is a USD 558.96 first-order gap.');
+    expect(html).toContain('<span class="l">What to do</span>');
+    expect(html).toContain(`<span class="l">We'll check</span>`);
+    expect(html).toContain('Next month we check blended CAC against first-order contribution.');
+  });
+
+  it('renders the verdict with the two carrying numbers as coloured spans', () => {
+    const html = renderReportHtml(model());
+    // contribution kept and the month-on-month direction are toned, not flat text
+    expect(html).toContain('<span class="up">USD 12,500.00</span>');
+    expect(html).toContain('<span class="up">up on last month</span>');
+  });
+
   it('is deterministic — the same model renders the same HTML (both outputs identical)', () => {
     expect(renderReportHtml(model())).toBe(renderReportHtml(model()));
   });
@@ -183,7 +221,10 @@ describe('report template (task 5.B1)', () => {
             entityLabel: 'Meta',
             family: 'measurement',
             valueLabel: 'no money at stake',
-            text: 'A measurement risk to note.',
+            whatHappened: 'A measurement risk to note.',
+            atStake: 'This is a measurement risk, not a spend loss.',
+            whatToDo: 'Rely on store-recorded orders.',
+            whatWeCheck: 'Next month we check the claim gap.',
           },
         ],
         checksThisMonth: [],

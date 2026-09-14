@@ -28,6 +28,10 @@ import {
 
 export type Direction = 'up' | 'down' | 'flat';
 
+/** A segment of the verdict sentence. A `tone` marks a verdict-carrying number
+ *  (green when it went the good way, rust when it didn't). */
+export type VerdictSpan = { text: string; tone?: 'up' | 'down' };
+
 /** Honesty markers that travel with the report, not just the console (B1). */
 export type ReportHonesty = {
   reportingCurrency: string;
@@ -71,8 +75,16 @@ export type ReportFinding = {
   family: ReportFindingKind;
   /** Pre-formatted value line, e.g. "USD 558.96 at stake" / "+USD 4,508.01 opportunity". */
   valueLabel: string;
-  /** The four-part client note (approved final → draft → template). */
-  text: string;
+  /**
+   * The four-part client note, kept as its parts rather than one blob (docs/design
+   * report.html): what happened is the paragraph; at stake / what to do / we'll
+   * check are the structured rows a client acts on. From the finding's commentary
+   * template (packages/core), which is deterministic and always correct.
+   */
+  whatHappened: string;
+  atStake: string;
+  whatToDo: string;
+  whatWeCheck: string;
 };
 
 export type CheckOutcome = { label: string; result: string; status: string };
@@ -87,7 +99,16 @@ export type ReportModel = {
   generatedAt: string; // ISO
   honesty: ReportHonesty;
 
-  headline: { sentence: string; contributionMinor: number | null; direction: Direction | null };
+  headline: {
+    /** The verdict as ordered segments; a toned segment is one of the numbers
+     *  that carries the verdict and renders as a coloured span (docs/design
+     *  report.html). Plain segments have no tone. */
+    segments: VerdictSpan[];
+    /** Flattened verdict — the <title>, the CLI log and the WhatsApp summary. */
+    sentence: string;
+    contributionMinor: number | null;
+    direction: Direction | null;
+  };
 
   efficiency: {
     merValue: number | null;
@@ -245,9 +266,18 @@ function gapTone(gap: number | null): string {
 // ---- section renderers ----
 
 function verdictSection(m: ReportModel): string {
+  const segments = m.headline.segments;
+  const body =
+    segments.length > 0
+      ? segments
+          .map((s) =>
+            s.tone ? `<span class="${s.tone}">${escapeHtml(s.text)}</span>` : escapeHtml(s.text),
+          )
+          .join('')
+      : escapeHtml(m.headline.sentence);
   return `
     <div class="sec">
-      <p class="verdict">${escapeHtml(m.headline.sentence)}</p>
+      <p class="verdict">${body}</p>
     </div>`;
 }
 
@@ -392,6 +422,11 @@ function whatChangedSection(m: ReportModel): string {
     </div>`;
 }
 
+function fline(label: string, text: string): string {
+  if (!text) return '';
+  return `<div class="fline"><span class="l">${label}</span><span class="t">${escapeHtml(text)}</span></div>`;
+}
+
 function findingCard(f: ReportFinding): string {
   const cls = familyFindingClass[f.family];
   return `
@@ -400,7 +435,10 @@ function findingCard(f: ReportFinding): string {
           <h3>${escapeHtml(f.title)}</h3>
           <div class="stake ${familyStakeClass[f.family]}">${escapeHtml(f.valueLabel)}</div>
         </div>
-        <p>${escapeHtml(f.text)}</p>
+        <p>${escapeHtml(f.whatHappened)}</p>
+        ${fline("What's at stake", f.atStake)}
+        ${fline('What to do', f.whatToDo)}
+        ${fline("We'll check", f.whatWeCheck)}
         <div class="fmeta"><span class="tag n">${escapeHtml(f.entityLabel)}</span><span class="tag ${f.family === 'growth' ? 'ok' : f.family === 'measurement' ? 'n' : 'warn'}">${familyBadgeText[f.family]}</span></div>
       </div>`;
 }
@@ -580,6 +618,9 @@ function styles(): string {
   .fhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
   .finding h3{font-family:var(--gl-font-display);font-size:23px;line-height:1.25;letter-spacing:-.01em}
   .finding p{margin-top:11px;font-size:14.5px;line-height:1.7;color:var(--gl-slate)}
+  .fline{margin-top:12px;font-size:14.5px;line-height:1.7;display:grid;grid-template-columns:118px 1fr;gap:12px}
+  .fline .l{font-weight:600;color:var(--gl-ink)}
+  .fline .t{color:var(--gl-slate)}
   .stake{font-family:var(--gl-font-display);font-size:26px;line-height:1.1;text-align:right;max-width:210px}
   .stake.up{color:var(--gl-green)}.stake.down{color:var(--gl-rust)}.stake.n{color:var(--gl-slate)}
   .fmeta{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
@@ -630,7 +671,7 @@ function styles(): string {
     .gaphead{display:none}
     .fhead{flex-direction:column;gap:12px}
     .stake{text-align:left;max-width:none}
-    .crow{grid-template-columns:1fr;gap:3px}
+    .fline,.crow{grid-template-columns:1fr;gap:3px}
     .foot{padding:22px 24px}
     .foot .grid{grid-template-columns:1fr}
   }`;

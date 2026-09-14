@@ -1474,3 +1474,26 @@ footer. Every padding/size copied verbatim; every colour is a `--gl-*` token.
   CTA, stacks the hero, strip, grids and tiers.
 - The other marketing pages keep `Base.astro` (already token-aligned in Step A);
   only the homepage had a dedicated mockup (`home.html`).
+
+### 2026-09-14 — Report findings: structured four parts + toned verdict
+
+The monthly report renders each finding as its four parts — the "what happened"
+paragraph plus the _What's at stake / What to do / We'll check_ rows the mockup
+shows — instead of one flattened blob. `ReportFinding` now carries `whatHappened`,
+`atStake`, `whatToDo`, `whatWeCheck`; `build-model.ts` fills them from the
+finding's commentary template (`renderTemplate`, packages/core), which is
+deterministic and already produces the four parts. The rows are why a client acts
+and how the next report closes the loop, so they are structure, not decoration.
+
+- **The flowing prose polish is not used in the structured report.** `draftText`
+  (model) and `finalText` (analyst) are a single flowing blob covering all four
+  parts and can't be split into rows without guessing, so the report uses the
+  template's parts. The polish stays on the finding for the admin finding-card and
+  any prose channel; the report's figures are still bounded by the same numbers
+  (the template is generated from the finding record). If per-part analyst edits
+  are wanted later, the finding editor would need four fields — noted, not built.
+- **The verdict carries its two numbers as values, not flat text.** `headline`
+  gains `segments: VerdictSpan[]`; the contribution kept and the month-on-month
+  direction are toned segments that render as green/rust spans (mockup), while
+  `headline.sentence` stays as the flattened string the CLI log, the `<title>`
+  and the WhatsApp summary use.
