@@ -203,9 +203,20 @@ export {
   setActiveTenant,
   verifyMerchantLogin,
   purgeExpiredMerchantSessions,
+  listTenantMerchantUsers,
+  setMembershipRole,
+  type TenantMerchantUser,
   type MerchantUser,
   type MerchantMembership,
   type MerchantSession,
   type MerchantRole,
   type ResolvedMerchantSession,
 } from './merchant';
+
+export {
+  issueMerchantToken,
+  peekMerchantToken,
+  consumeTokenAndSetPassword,
+  recordLoginAttempt,
+  isLoginLocked,
+} from './merchant-auth';

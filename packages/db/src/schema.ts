@@ -465,6 +465,30 @@ export const merchantMemberships = pgTable(
   (t) => [uniqueIndex('merchant_memberships_uniq').on(t.userId, t.tenantId)],
 );
 
+// Single-use links for invite acceptance and password reset (§8.3/§8.4). Only a
+// hash of the token is stored; the raw token lives only in the emailed link.
+export const merchantTokenPurpose = pgEnum('merchant_token_purpose', ['invite', 'reset']);
+export const merchantTokens = pgTable('merchant_tokens', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => merchantUsers.id, { onDelete: 'cascade' }),
+  purpose: merchantTokenPurpose('purpose').notNull(),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  usedAt: timestamp('used_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Login attempts, for rate limiting + lockout per email and per IP (§8.4).
+export const merchantLoginAttempts = pgTable('merchant_login_attempts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: text('email').notNull(),
+  ip: text('ip').notNull(),
+  succeeded: boolean('succeeded').notNull(),
+  at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 // Server-side sessions: revocation and rotation must take effect immediately
 // (Phase 8 §8.3/§8.4), which a stateless token cannot do. The cookie carries a
 // signed session id; every request looks the row up, checks it is live, and

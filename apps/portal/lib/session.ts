@@ -5,14 +5,35 @@
 // every request. Nothing here trusts a tenant id from the client.
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { verifySessionToken } from '@grossline/core/auth/session';
-import { resolveMerchantSession, type ResolvedMerchantSession } from '@grossline/db';
-import { PORTAL_SESSION_COOKIE } from './constants';
+import { createSessionToken, verifySessionToken } from '@grossline/core/auth/session';
+import {
+  createMerchantSession,
+  resolveMerchantSession,
+  type ResolvedMerchantSession,
+} from '@grossline/db';
+import { PORTAL_SESSION_COOKIE, PORTAL_SESSION_TTL_MS } from './constants';
 
 export function sessionSecret(): string {
   const secret = process.env.SESSION_SECRET;
   if (!secret) throw new Error('SESSION_SECRET is not set');
   return secret;
+}
+
+/** Create a fresh server-side session for a user and set the signed cookie. Used
+ *  by login and by invite/reset acceptance. */
+export async function establishSession(userId: string): Promise<void> {
+  const sessionId = await createMerchantSession(userId);
+  const token = await createSessionToken(
+    { sub: sessionId, exp: Date.now() + PORTAL_SESSION_TTL_MS },
+    sessionSecret(),
+  );
+  (await cookies()).set(PORTAL_SESSION_COOKIE, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: PORTAL_SESSION_TTL_MS / 1000,
+  });
 }
 
 export async function getPortalSession(): Promise<ResolvedMerchantSession | null> {
