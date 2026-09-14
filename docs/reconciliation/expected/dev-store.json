@@ -1,0 +1,19 @@
+{
+  "_comment": "Dev store — platform-UI figures read by hand per docs/reconciliation.md. Replace each 0 with the number shown in the Shopify Analytics screen for that calendar month in America/New_York (the store timezone). No Meta/Google accounts are connected, so metaSpend/googleCost are omitted. See docs/reconciliation.md §2 for which screen each figure comes from.",
+  "tenant": "dev-store",
+  "currency": "USD",
+  "months": {
+    "2026-03": {
+      "_read": "March 2026, date range in America/New_York",
+      "shopifyNetSales": { "value": 0 },
+      "shopifyOrders": { "value": 0 },
+      "newCustomers": { "value": 0 }
+    },
+    "2026-04": {
+      "_read": "April 2026, date range in America/New_York",
+      "shopifyNetSales": { "value": 0 },
+      "shopifyOrders": { "value": 0 },
+      "newCustomers": { "value": 0 }
+    }
+  }
+}

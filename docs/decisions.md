@@ -1552,3 +1552,33 @@ init script — `docker compose up -d` then `pnpm db:migrate` (+ the test runner
 auto-creates `grossline_test`). README updated.
 
 `docker compose down -v` wipes the volumes for a clean slate.
+
+### 2026-09-15 — Phase 8 kickoff: merchant portal supersedes "admin-only"
+
+CLAUDE.md's "v1 is admin-only / merchants receive a PDF" rule is superseded by
+`docs/phase-8.md`: merchants now log in to a **read-only portal**. Updated the
+"What this is" and "Things you should not do" sections and the phase marker
+(Phase 7 → Phase 8). The guardrails that replace the old rule: invitation-only
+(no self-signup, ever); a session resolves to exactly one tenant from
+memberships, never from client input; merchants can't reach admin routes or edit
+Rahul's data (costs, thresholds, findings, connections); they see only sent
+reports. Out of scope for Phase 8: self-signup, billing, the $179 tier,
+merchant-editable data.
+
+Architecture decisions taken up front (restrictive-by-default per the spec):
+
+- **Separate Next.js app `apps/portal`**, not a route group inside the admin
+  console. A separate app means a separate session cookie, a separate route tree
+  and its own middleware — an admin session can never be mistaken for a merchant
+  session and vice versa, and there is no shared surface to leak across. The spec
+  asks for merchant routes "under their own path or subdomain, separate from the
+  admin console"; a separate app is the strongest reading.
+- **Server-side merchant sessions** (a `merchant_sessions` table), not the admin's
+  stateless HMAC token. 8.3/8.4 require that revoking access kills live sessions,
+  that sessions rotate on login (old identifiers stop working), and that a
+  disabled user's session dies immediately — none of which a stateless
+  exp-only token can do. We keep the _same crypto approach_ as admin auth (the
+  cookie is an HMAC-signed token via `createSessionToken`), but it carries a
+  server-side session id that is looked up, checked for revocation, and re-scoped
+  from memberships on every request. Same hashing (`scrypt`, `hashPassword`) and
+  no new auth dependency.
