@@ -29,6 +29,7 @@ import type {
   ReportFinding,
   ReportFindingKind,
   ReportModel,
+  VerdictSpan,
   WaterfallRow,
 } from './report-html';
 
@@ -159,10 +160,6 @@ function toCommentary(f: Finding): CommentaryFinding {
   };
 }
 
-function findingText(f: Finding): string {
-  return f.finalText ?? f.draftText ?? renderTemplate(toCommentary(f)).text;
-}
-
 function scopeFor(f: Finding): string {
   if (f.entity === 'account') return '';
   if (f.ruleId === 'claim_gap') return `platform:${f.entityKey.split(':')[1] ?? ''}`;
@@ -250,10 +247,26 @@ export async function buildReportModel(
         : direction === 'flat'
           ? 'level with last month'
           : 'with no prior month to compare';
-  const headlineSentence =
+  // The verdict as segments: the contribution kept and the month-on-month
+  // direction are the two numbers that carry it, so they render as coloured spans
+  // rather than being flattened into plain text (docs/design report.html).
+  const dirTone: 'up' | 'down' | undefined =
+    direction === 'up' ? 'up' : direction === 'down' ? 'down' : undefined;
+  const headlineSegments: VerdictSpan[] =
     contribution === null
-      ? `${periodLabel(period)}: contribution after ad spend is not yet computable for this period.`
-      : `${periodLabel(period)} ${worked ? 'worked' : 'was under pressure'} — ${money(contribution, currency)} of contribution after ad spend, ${dirWord}.`;
+      ? [
+          {
+            text: `${periodLabel(period)}: contribution after ad spend is not yet computable for this period.`,
+          },
+        ]
+      : [
+          { text: `${periodLabel(period)} ${worked ? 'worked' : 'was under pressure'} — ` },
+          { text: money(contribution, currency), tone: worked ? 'up' : 'down' },
+          { text: ` of contribution after ad spend, ` },
+          { text: dirWord, tone: dirTone },
+          { text: '.' },
+        ];
+  const headlineSentence = headlineSegments.map((s) => s.text).join('');
 
   // ---- margin waterfall ----
   const neg = (v: number | null): number | null => (v === null ? null : -v);
@@ -312,13 +325,24 @@ export async function buildReportModel(
       (opts.includeUnapproved || f.approvedAt !== null) &&
       (f.status === 'new' || f.status === 'recurring'),
   );
-  const findings: ReportFinding[] = sendable.map((f) => ({
-    title: RULE_TITLES[f.ruleId] ?? f.ruleId,
-    entityLabel: f.entityLabel,
-    family: findingKind(f),
-    valueLabel: findingValueLabel(f, currency),
-    text: findingText(f),
-  }));
+  // The four-part structure is the finding: what happened is the paragraph;
+  // at stake / what to do / we'll check are the rows a client acts on. Taken from
+  // the deterministic commentary template (always correct); the model/analyst
+  // prose polish (draftText/finalText) is a flowing single blob and can't be
+  // split into rows, so it isn't used for the structured report.
+  const findings: ReportFinding[] = sendable.map((f) => {
+    const parts = renderTemplate(toCommentary(f));
+    return {
+      title: RULE_TITLES[f.ruleId] ?? f.ruleId,
+      entityLabel: f.entityLabel,
+      family: findingKind(f),
+      valueLabel: findingValueLabel(f, currency),
+      whatHappened: parts.whatHappened,
+      atStake: parts.atStake,
+      whatToDo: parts.whatToDo,
+      whatWeCheck: parts.whatWeCheck,
+    };
+  });
   const nothingNeedsChanging = findings.every((f) => f.family === 'measurement');
 
   // ---- checks (this month's carried checks + last month's outcomes) ----
@@ -395,7 +419,12 @@ export async function buildReportModel(
       costCompleteness,
       costProvenance: null,
     },
-    headline: { sentence: headlineSentence, contributionMinor: contribution, direction },
+    headline: {
+      segments: headlineSegments,
+      sentence: headlineSentence,
+      contributionMinor: contribution,
+      direction,
+    },
     efficiency: {
       merValue: mer,
       breakEvenMer,
