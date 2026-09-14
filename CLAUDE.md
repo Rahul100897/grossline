@@ -6,9 +6,9 @@ Read this before every task. If anything here conflicts with an instruction in a
 
 Grossline is a reporting product for Shopify DTC brands. It pulls Shopify orders, Google Ads cost and Meta Ads spend for many merchants, computes blended commercial metrics, and produces a monthly PDF report plus an admin console.
 
-The business model is analyst-with-a-tool. Rahul is the only application user in v1. Merchants receive a PDF and, later, a read-only portal.
+The business model is analyst-with-a-tool. Rahul runs the business from the admin console. Merchants receive a monthly PDF and, as of Phase 8, log in to a **read-only merchant portal** to read their own reports and data. Merchants exist only because Rahul created and invited them — there is no self-signup. A merchant session resolves to exactly one tenant, from the session and its memberships only, never from client input; merchants cannot reach admin routes, cannot change data Rahul is responsible for (cost inputs, thresholds, findings, connections), and see only reports Rahul has sent.
 
-**Current phase: Phase 7 — Operations hardening.** Phases 0–5 are complete. See `docs/phase-1-handover.md` (connectors; one real dev store, Meta/Google on fixtures), `docs/phase-2-handover.md` (metric layer, golden-tested, reconciliation-agreed), `docs/phase-3-handover.md` (admin console), `docs/phase-4-handover.md` (findings engine), and `docs/phase-5-handover.md` (growth findings, monthly report delivery, marketing site). The consolidated view is `docs/handover.md`. Phase 6 is intentionally unused — Phase 5 set the next marker directly to Phase 7. Do not build ahead of the current phase; the Phase 7 spec is not written yet. The known gaps Phase 7 inherits are in `docs/phase-5-handover.md` (the four dormant entity-level rules, no scheduled worker jobs for build/digest, no production deploy target, Meta/Google still on fixtures).
+**Current phase: Phase 8 — Merchant portal and marketing site completion.** See `docs/phase-8.md`. Phases 0–5 are complete. See `docs/phase-1-handover.md` (connectors; one real dev store, Meta/Google on fixtures), `docs/phase-2-handover.md` (metric layer, golden-tested, reconciliation-agreed), `docs/phase-3-handover.md` (admin console), `docs/phase-4-handover.md` (findings engine), and `docs/phase-5-handover.md` (growth findings, monthly report delivery, marketing site). The consolidated view is `docs/handover.md`. Phase 6 is intentionally unused — Phase 5 set the next marker directly to Phase 7. Do not build ahead of the current phase; the Phase 7 spec is not written yet. The known gaps Phase 7 inherits are in `docs/phase-5-handover.md` (the four dormant entity-level rules, no scheduled worker jobs for build/digest, no production deploy target, Meta/Google still on fixtures).
 
 ## Stack
 
@@ -88,7 +88,7 @@ Follow this loop for anything non-trivial. Do not skip to implementation.
 ## Things you should not do
 
 - Do not invent metric formulas. If it is not in `docs/metrics.md`, ask.
-- Do not build merchant-facing features yet. v1 is admin-only.
+- The merchant portal (Phase 8) is read-only and invitation-only. Never build self-signup, billing/card payment, the $179 Insight tier, or anything that lets a merchant edit data Rahul is responsible for. A tenant id arriving from a URL, parameter, header or form field is a bug — resolve tenant from the session's memberships instead.
 - Do not add attribution modelling, pixel tracking or forecasting. Explicitly out of scope.
 - Do not use `any`. If a platform response is unknown, model it with Zod and fail loudly.
 - Do not mock platform APIs in a way that hides real shapes. Record real responses as fixtures.
