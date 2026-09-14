@@ -27,7 +27,9 @@
     "costs:import-shopify": "pnpm --filter @grossline/worker run costs:import-shopify",
     "costs:coverage": "pnpm --filter @grossline/worker run costs:coverage",
     "metrics:compute": "pnpm --filter @grossline/worker run metrics:compute",
-    "metrics:recompute": "pnpm --filter @grossline/worker run metrics:recompute"
+    "metrics:recompute": "pnpm --filter @grossline/worker run metrics:recompute",
+    "seed:demo-portal": "pnpm --filter @grossline/db run seed:demo-portal",
+    "demo:reset": "pnpm --filter @grossline/db run demo:reset"
   },
   "devDependencies": {
     "@grossline/config": "workspace:*",
