@@ -53,6 +53,14 @@ site does go up, the Phase 5 pieces need:
   it falls back to `http://localhost:3000` in dev. Without it, live intake would
   POST to localhost and silently fail. (The admin intake route already sends
   permissive CORS for the static site to POST cross-origin.)
+- **`PUBLIC_PORTAL_URL`** (Phase 8) must likewise be set as a Pages build-time
+  variable pointing at the deployed merchant-portal origin (e.g.
+  `https://portal.getgrossline.com`). The "Log in" links in the nav and footer of
+  every page point there; it falls back to `http://localhost:3002` in dev.
+  **Both variables are baked in at build time**, so the marketing site must be
+  rebuilt (a Pages "Retry deployment" or any push to `main`) after the admin and
+  portal origins exist — until then, "Log in" and the forms point at localhost and
+  will not work for a real visitor.
 - **The sample report is a committed static asset** (`apps/web/public/sample-report.pdf`
   and `.png`), generated from the demo tenant by the Part B pipeline — no build
   step renders it. Regenerate and re-commit it when the report definition or the
