@@ -1,0 +1,552 @@
+---
+// Shared marketing layout — the homepage's design system (docs/design/home.html,
+// ported into index.astro) lifted into a reusable shell so every inner page
+// matches the landing page one-to-one: same fonts, tokens, nav and footer.
+// Pages compose their own <section>/<div class="pagehead"> markup in the slot
+// using the class vocabulary defined here globally. Supersedes Base.astro.
+// Every colour is a --gl-* token from design-tokens.css; no hex is authored here.
+import '../../../../docs/design/design-tokens.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Path for canonical + og:url, e.g. "/pricing". */
+  path?: string;
+}
+const {
+  title,
+  description = 'Monthly profit and ad-spend reporting for Shopify brands. Read by a person, not a dashboard.',
+  path = '',
+} = Astro.props;
+const site = 'https://getgrossline.com';
+const canonical = `${site}${path}`;
+// The merchant portal lives on its own origin; "Log in" points there. Falls
+// back to the local portal in dev, mirroring PUBLIC_ADMIN_URL for the forms.
+const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Grossline" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${site}/sample-report.png`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${site}/sample-report.png`} />
+    <meta name="robots" content="index, follow" />
+    <title>{title}</title>
+    <style is:global>
+      /* Self-hosted fonts — no Google Fonts request. */
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/inter.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Instrument Serif';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/instrument-serif.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Instrument Serif';
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/instrument-serif-italic.woff2') format('woff2');
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        -webkit-font-smoothing: antialiased;
+        scroll-behavior: smooth;
+        color-scheme: light;
+      }
+      body {
+        font-family: var(--gl-font-body);
+        background: var(--gl-cream);
+        color: var(--gl-ink);
+        font-feature-settings: 'tnum' 1;
+        line-height: 1.5;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+      .serif {
+        font-family: var(--gl-font-display);
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+
+      /* ---------- buttons ---------- */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 13px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        background: var(--gl-green);
+        color: var(--gl-white);
+        border: 1px solid var(--gl-green);
+        transition: 0.15s;
+      }
+      .btn:hover {
+        background: var(--gl-green-deep);
+        border-color: var(--gl-green-deep);
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--gl-ink);
+        border-color: var(--gl-line);
+      }
+      .btn.ghost:hover {
+        background: var(--gl-cream-2);
+        border-color: var(--gl-line-2);
+      }
+      .btn.light {
+        background: var(--gl-white);
+        color: var(--gl-green-night);
+        border-color: var(--gl-white);
+      }
+      .btn.outline-light {
+        background: transparent;
+        color: var(--gl-white);
+        border-color: rgba(255, 255, 255, 0.32);
+      }
+      .btn.sm {
+        padding: 9px 17px;
+        font-size: 14px;
+      }
+
+      /* ---------- nav ---------- */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(248, 245, 237, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--gl-line);
+      }
+      nav .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 70px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      .mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        flex: none;
+      }
+      .navlinks {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        font-size: 14.5px;
+        color: var(--gl-slate);
+      }
+      .navlinks a:hover {
+        color: var(--gl-ink);
+      }
+
+      /* ---------- generic sections ---------- */
+      section {
+        padding: 96px 0;
+      }
+      .eyebrow {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--gl-green);
+        margin-bottom: 16px;
+      }
+      h2 {
+        font-size: 42px;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        max-width: 700px;
+        font-family: var(--gl-font-display);
+        font-weight: 400;
+      }
+      h2 em {
+        font-style: italic;
+        color: var(--gl-green);
+      }
+      .lede {
+        margin-top: 18px;
+        font-size: 17.5px;
+        line-height: 1.65;
+        color: var(--gl-slate);
+        max-width: 640px;
+      }
+
+      /* ---------- page head (inner-page hero) ---------- */
+      .pagehead {
+        padding: 76px 0 12px;
+      }
+      .pagehead h1 {
+        font-size: 54px;
+        line-height: 1.06;
+        letter-spacing: -0.02em;
+        font-family: var(--gl-font-display);
+        font-weight: 400;
+        max-width: 780px;
+      }
+      .pagehead h1 em {
+        font-style: italic;
+        color: var(--gl-green);
+      }
+      .pagehead .lede {
+        font-size: 18.5px;
+        max-width: 620px;
+      }
+
+      /* ---------- prose (text-heavy pages) ---------- */
+      .prose {
+        max-width: 680px;
+      }
+      .prose h2 {
+        font-size: 27px;
+        margin-top: 44px;
+        line-height: 1.2;
+      }
+      .prose h3 {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-top: 28px;
+      }
+      .prose p {
+        margin-top: 14px;
+        font-size: 16.5px;
+        line-height: 1.7;
+        color: var(--gl-slate);
+      }
+      .prose p b {
+        color: var(--gl-ink);
+        font-weight: 600;
+      }
+      .prose ul {
+        margin-top: 14px;
+        padding-left: 0;
+        list-style: none;
+      }
+      .prose li {
+        position: relative;
+        padding: 8px 0 8px 24px;
+        font-size: 16.5px;
+        line-height: 1.65;
+        color: var(--gl-slate);
+      }
+      .prose li:before {
+        content: '—';
+        position: absolute;
+        left: 0;
+        color: var(--gl-green);
+      }
+      .prose a {
+        color: var(--gl-green);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      .updated {
+        margin-top: 10px;
+        font-size: 14px;
+        color: var(--gl-slate);
+      }
+
+      /* ---------- card grids ---------- */
+      .cols {
+        margin-top: 40px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+      }
+      .cols.two {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .card {
+        background: var(--gl-white);
+        border: 1px solid var(--gl-line);
+        border-radius: 14px;
+        padding: 30px 28px;
+      }
+      .card .idx {
+        font-family: var(--gl-font-display);
+        font-size: 30px;
+        color: var(--gl-green);
+        line-height: 1;
+      }
+      .card h3 {
+        margin-top: 14px;
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .card p {
+        margin-top: 11px;
+        font-size: 15.5px;
+        line-height: 1.65;
+        color: var(--gl-slate);
+      }
+
+      /* ---------- callout / demo note ---------- */
+      .callout {
+        margin-top: 28px;
+        background: var(--gl-green-soft);
+        border-radius: 12px;
+        padding: 18px 22px;
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--gl-green-night);
+        max-width: 680px;
+      }
+      .demo-note {
+        margin-top: 14px;
+        font-size: 13.5px;
+        color: var(--gl-slate);
+      }
+
+      /* ---------- forms ---------- */
+      .formcard {
+        margin-top: 34px;
+        background: var(--gl-white);
+        border: 1px solid var(--gl-line);
+        border-radius: 16px;
+        padding: 32px 30px;
+        max-width: 560px;
+        box-shadow: var(--gl-shadow-card);
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 18px;
+      }
+      .field label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gl-ink);
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        font: inherit;
+        font-size: 15px;
+        color: var(--gl-ink);
+        padding: 11px 13px;
+        border: 1px solid var(--gl-line-2);
+        border-radius: 8px;
+        background: var(--gl-cream);
+      }
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        outline: none;
+        border-color: var(--gl-green);
+        box-shadow: 0 0 0 3px var(--gl-green-soft);
+      }
+      .field textarea {
+        resize: vertical;
+      }
+      .formstatus {
+        margin-top: 4px;
+        font-size: 14.5px;
+      }
+      .formstatus.ok {
+        color: var(--gl-green);
+      }
+      .formstatus.err {
+        color: var(--gl-rust);
+      }
+
+      /* ---------- footer ---------- */
+      footer {
+        background: var(--gl-green-night);
+        color: var(--gl-green-foot);
+        padding: 56px 0 44px;
+        font-size: 14px;
+      }
+      footer .wrap {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+      }
+      footer .brand {
+        color: var(--gl-white);
+        margin-bottom: 14px;
+      }
+      footer p {
+        line-height: 1.7;
+        max-width: 280px;
+      }
+      footer h4 {
+        color: var(--gl-white);
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 14px;
+      }
+      footer li {
+        list-style: none;
+        padding: 6px 0;
+      }
+      footer a:hover {
+        color: var(--gl-white);
+      }
+      .legal {
+        border-top: 1px solid var(--gl-green-line-2);
+        margin-top: 44px;
+        padding-top: 24px;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      /* ---------- responsive ---------- */
+      @media (max-width: 1080px) {
+        .cols,
+        .cols.two {
+          grid-template-columns: 1fr;
+        }
+        footer .wrap {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 720px) {
+        .wrap {
+          padding: 0 20px;
+        }
+        .navlinks a:not(.btn) {
+          display: none;
+        }
+        section {
+          padding: 60px 0;
+        }
+        .pagehead {
+          padding: 44px 0 8px;
+        }
+        .pagehead h1 {
+          font-size: 36px;
+        }
+        h2 {
+          font-size: 30px;
+        }
+        footer .wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a href="/" class="brand">
+          <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="64" height="64" rx="14" style="fill:var(--gl-green)"></rect>
+            <path
+              d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z"
+              style="fill:var(--gl-white)"></path>
+          </svg>
+          Grossline
+        </a>
+        <div class="navlinks">
+          <a href="/what-it-does">What it does</a>
+          <a href="/the-report">The report</a>
+          <a href="/pricing">Pricing</a>
+          <a href={portalUrl}>Log in</a>
+          <a class="btn sm" href="/free-report">Free first report →</a>
+        </div>
+      </div>
+    </nav>
+
+    <slot />
+
+    <footer>
+      <div class="wrap">
+        <div>
+          <div class="brand">
+            <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <rect width="64" height="64" rx="14" style="fill:var(--gl-green)"></rect>
+              <path
+                d="M43 24.5a12 12 0 1 0 1.2 14.5H33v-6.4h18v2.4A19 19 0 1 1 47.7 20z"
+                style="fill:var(--gl-white)"></path>
+            </svg>
+            Grossline
+          </div>
+          <p>
+            Monthly profit and ad-spend reporting for Shopify brands. Read by a person, not a
+            dashboard.
+          </p>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/what-it-does">What it does</a></li>
+            <li><a href="/the-report">The report</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href={portalUrl}>Log in</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/free-report">Free first report</a></li>
+            <li><a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/privacy">Privacy</a></li>
+            <li><a href="/terms">Terms</a></li>
+            <li><a href="/privacy">Data processing</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="legal">
+          <span>&copy; {new Date().getFullYear()} Grossline. Ahmedabad, India.</span>
+          <span>hello@getgrossline.com</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -10,6 +10,8 @@ const title = 'Grossline — Know what your store actually made';
 const description =
   'Grossline reads your Shopify store and your ad accounts together, works out what you actually kept, and sends a short monthly report with two or three things worth changing.';
 const site = 'https://getgrossline.com';
+// The merchant portal lives on its own origin; "Log in" points there.
+const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
 ---
 
 <html lang="en">
@@ -993,6 +995,7 @@ const site = 'https://getgrossline.com';
           <a href="#report">The report</a>
           <a href="#how">How it works</a>
           <a href="#pricing">Pricing</a>
+          <a href={portalUrl}>Log in</a>
           <a class="btn sm" href="/free-report">Get a free report</a>
         </div>
       </div>
@@ -1535,9 +1538,9 @@ const site = 'https://getgrossline.com';
         <div>
           <h4>Company</h4>
           <ul>
-            <li><a href="/what-it-does">About</a></li>
+            <li><a href="/what-it-does">What it does</a></li>
             <li><a href="/contact">Contact</a></li>
-            <li><a href="/the-report">How we calculate</a></li>
+            <li><a href={portalUrl}>Log in</a></li>
           </ul>
         </div>
         <div>
