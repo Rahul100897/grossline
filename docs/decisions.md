@@ -1660,3 +1660,26 @@ Architecture decisions taken up front (restrictive-by-default per the spec):
   the URL can only ever return this tenant's own sent report.
 - The portal now depends on `@grossline/worker` for report render/PDF (playwright
   kept as a `serverExternalPackages` external, as in the admin).
+
+### 2026-09-15 — Phase 8.9: the isolation suite
+
+The point of Part A. Coverage across five files, both nets tested:
+
+- `packages/db/test/rls.test.ts` + `tenant-isolation.test.ts` (pre-existing) — the
+  Postgres RLS second net and the tenant-scoped helpers.
+- `packages/db/test/merchant-identity.test.ts` — session resolves only to member
+  tenants; revoke / disable / membership-removal kill a live session.
+- `packages/db/test/merchant-auth.test.ts` — token single-use/expiry, reset ends
+  sessions, per-email/per-IP lockout.
+- `packages/db/test/portal-isolation.test.ts` — the session→data path the portal
+  actually uses (resolve session → active tenant → scoped helper) proven for all
+  five vectors: direct call, parameter/URL tamper, stale session after membership
+  removal, and multi-tenant switching. Tenant A's session never returns B's report
+  or metrics.
+- `apps/portal/test/route-scope.test.ts` — the **guard that fails if a new route
+  is added without scoping**: every `page`/`route` under `app/(app)` must resolve
+  the session (`scope()` / `requirePortalSession` / `getPortalSession`).
+- `apps/admin/test/portal-session-refused.test.ts` — §8.5: enumerates admin routes
+  and proves each redirects to the admin login for no session and for a portal
+  cookie (the apps have separate cookies, so a merchant session is structurally
+  never an admin session).
