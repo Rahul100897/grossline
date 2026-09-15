@@ -1,40 +1,103 @@
 ---
-import Base from '../layouts/Base.astro';
+// DRAFT — describes Grossline's real data handling as built, but is generated
+// text, not reviewed law. It MUST be reviewed by a qualified lawyer/CA before
+// the site launches. See docs/phase-8-handover.md.
+import Marketing from '../layouts/Marketing.astro';
 ---
 
-<Base title="Privacy policy — Grossline">
-  <h1>Privacy policy</h1>
-  <p class="lede">Last updated: 5 September 2026</p>
+<Marketing
+  title="Grossline — privacy"
+  description="What Grossline reads, what it deliberately never collects, how it's protected, and how to have it deleted."
+  path="/privacy"
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="eyebrow">Privacy</div>
+      <h1>What we hold, and what we don't.</h1>
+      <p class="updated">Last updated: 15 September 2026</p>
+    </div>
+  </div>
 
-  <h2>What we collect</h2>
-  <p>
-    When a merchant engages Grossline, we access their Shopify order data, Google Ads cost data
-    and Meta Ads spend data, using read-only credentials the merchant grants us. We also keep the
-    contact details the merchant gives us (name, email address).
-  </p>
+  <section class="prose-section" style="padding-top:48px">
+    <div class="wrap">
+      <div class="prose">
+        <p>
+          Grossline produces a monthly reporting service for Shopify brands. To do that we read
+          data from the platforms you already use. This page explains exactly what we read, what we
+          leave alone, and what happens to it. It's written to match what the software actually
+          does.
+        </p>
 
-  <h2>How we use it</h2>
-  <p>
-    Platform data is used solely to compute reporting metrics and produce reports for the merchant
-    it belongs to. We do not sell data, share one merchant's data with another, use it for
-    advertising, or build cross-merchant profiles.
-  </p>
+        <h2>What we read</h2>
+        <p>With the read-only access you grant us, we read:</p>
+        <ul>
+          <li>
+            <b>Your Shopify store</b> — orders and their amounts, products, and the sales history we
+            need to work out what you kept.
+          </li>
+          <li>
+            <b>Your Google Ads and Meta ad accounts</b> — how much you spent, by account and
+            campaign. We can't spend your money or change a campaign.
+          </li>
+          <li>
+            <b>Your contact details</b> — the name and email you give us so we can send your report
+            and talk to you.
+          </li>
+        </ul>
 
-  <h2>How it is protected</h2>
-  <p>
-    Access credentials are encrypted at rest. Each merchant's data is isolated at the database
-    level. Access is limited to the analyst preparing the merchant's reports.
-  </p>
+        <h2>What we deliberately never collect</h2>
+        <p>
+          We do not collect your customers' names, email addresses, phone numbers or delivery
+          addresses. The software is built to leave that data behind: from Shopify we take only an
+          anonymous customer reference, an order count and a lifetime-spend figure — never the
+          identifying fields. We never receive card or bank details. And we never write anything
+          back to your store or your ad accounts.
+        </p>
 
-  <h2>Retention and deletion</h2>
-  <p>
-    Data is kept while the engagement is active. When a merchant leaves, their platform
-    credentials are revoked and their data is deleted on request to
-    <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>.
-  </p>
+        <h2>How we use it</h2>
+        <p>
+          Your data is used for one thing: producing your reports. We do not sell data, we do not
+          share one brand's data with another, we do not use it for advertising, and we do not build
+          profiles across brands.
+        </p>
+        <p>
+          To help draft the wording of a report, the report's computed figures may be sent to an AI
+          provider that turns them into plain-English sentences. Only the calculated numbers are
+          sent — and since we hold no customer personal data, none is involved. When that step is
+          switched off, the report uses fixed templates instead. Our providers are listed on our
+          <a href="/data-processing">data processing</a> page.
+        </p>
 
-  <h2>Contact</h2>
-  <p>
-    Questions about this policy: <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>.
-  </p>
-</Base>
+        <h2>How it's protected</h2>
+        <p>
+          The access credentials you grant are encrypted where they're stored. Each brand's data is
+          isolated at the database level so one engagement can never read another's. Access is
+          limited to the analyst preparing your reports.
+        </p>
+
+        <h2>How long we keep it, and deleting it</h2>
+        <p>
+          When you start, we pull roughly the last thirteen months so your first report has
+          history to compare against. We keep your data while your engagement is active. When you
+          leave, your platform credentials are revoked and your data is deleted on request to
+          <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a> — this removes your
+          orders, cost data, computed figures, reports and connection records.
+        </p>
+
+        <h2>Your choices</h2>
+        <p>
+          You can ask us what we hold about you, ask us to correct it, or ask us to delete it, at
+          any time. You can also revoke our access from inside Shopify, Google or Meta yourself,
+          which stops any further reading immediately.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about this policy, or a request about your data:
+          <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>. Grossline is based in
+          Ahmedabad, India.
+        </p>
+      </div>
+    </div>
+  </section>
+</Marketing>

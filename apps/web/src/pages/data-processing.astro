@@ -1,0 +1,92 @@
+---
+// DRAFT — describes Grossline's real processing roles and sub-processors as
+// built, but is generated text, not reviewed law. It MUST be reviewed by a
+// qualified lawyer/CA before the site launches, and the sub-processor list kept
+// current. See docs/phase-8-handover.md.
+import Marketing from '../layouts/Marketing.astro';
+---
+
+<Marketing
+  title="Grossline — data processing"
+  description="How Grossline processes your data on your behalf, the security measures in place, and the sub-processors involved."
+  path="/data-processing"
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="eyebrow">Data processing</div>
+      <h1>Who does what with your data.</h1>
+      <p class="updated">Last updated: 15 September 2026</p>
+    </div>
+  </div>
+
+  <section class="prose-section" style="padding-top:48px">
+    <div class="wrap">
+      <div class="prose">
+        <h2>Who is responsible</h2>
+        <p>
+          For the commerce and advertising data we read from your platforms, <b>you</b> decide what
+          happens to it and <b>we</b> process it on your instructions to produce your reports. For
+          the contact details you give us so we can run the engagement, we're responsible directly.
+        </p>
+
+        <h2>What we process, and why</h2>
+        <p>
+          We process your Shopify order, product and sales data and your Google and Meta ad-spend
+          data, for the single purpose of producing your monthly reports. As set out in our
+          <a href="/privacy">privacy</a> policy, we do not take your customers' names, emails, phone
+          numbers or addresses — the software is built to leave that data behind.
+        </p>
+
+        <h2>How it's kept safe</h2>
+        <ul>
+          <li>Access credentials are encrypted where they're stored.</li>
+          <li>Each brand's data is isolated at the database level, enforced in the database itself.</li>
+          <li>The access we hold is read-only — we can't change anything in your accounts.</li>
+          <li>Access is limited to the analyst preparing your reports.</li>
+        </ul>
+
+        <h2>Sub-processors</h2>
+        <p>
+          To run the service we rely on a small number of providers. Each handles only what it needs
+          to:
+        </p>
+        <ul>
+          <li>
+            <b>Our cloud hosting and database provider</b> — stores the data and runs the service.
+          </li>
+          <li>
+            <b>Resend</b> — delivers report emails and notifications to you.
+          </li>
+          <li>
+            <b>Anthropic</b> — turns a report's already-computed figures into plain-English wording.
+            Only the calculated numbers are sent; no customer personal data is involved because we
+            hold none. This step can be switched off, in which case fixed templates are used instead.
+          </li>
+        </ul>
+        <p>
+          Your source platforms — <b>Shopify</b>, <b>Google Ads</b> and <b>Meta</b> — are where your
+          data originates; we only read from them.
+        </p>
+
+        <h2>Where it's processed</h2>
+        <p>
+          Data may be processed outside your own country by the providers above. Where that happens,
+          it's on the basis those providers offer for international transfers.
+        </p>
+
+        <h2>How long we keep it</h2>
+        <p>
+          We keep your data while your engagement is active, and delete it on request when you leave
+          — your credentials are revoked and your orders, cost data, computed figures, reports and
+          connection records are removed. See <a href="/privacy">privacy</a> for detail.
+        </p>
+
+        <h2>Changes</h2>
+        <p>
+          If we add or change a sub-processor, we'll update this page. Questions:
+          <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Marketing>
