@@ -1,14 +1,16 @@
 import type { ReactNode } from 'react';
 import { requirePortalSession } from '../../lib/session';
 import { logout } from '../login/actions';
+import { switchTenant } from './actions';
+import { PortalNav } from './nav';
 
-// Every page under (app) is behind this layout, which resolves the session
-// (revocation / disabled / membership are enforced here on every request) and
-// hands the active tenant down. Pages read the tenant from the session, never
-// from the URL.
+// Resolves the session on every request (revocation / disabled / membership are
+// enforced here), renders the tenant switcher from memberships only, and hands
+// the active tenant down. Pages read the tenant from the session, never the URL.
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const session = await requirePortalSession();
   const active = session.memberships.find((m) => m.tenantId === session.activeTenantId);
+  const multi = session.memberships.length > 1;
 
   return (
     <div>
@@ -20,7 +22,27 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <span className="gl-h1" style={{ fontSize: 20 }}>
             Grossline
           </span>
-          {active ? <span className="gl-sub">{active.tenantName}</span> : null}
+          {multi ? (
+            <form action={switchTenant}>
+              <select
+                name="tenantId"
+                defaultValue={session.activeTenantId}
+                className="gl-switch"
+                aria-label="Switch business"
+              >
+                {session.memberships.map((m) => (
+                  <option key={m.tenantId} value={m.tenantId}>
+                    {m.tenantName}
+                  </option>
+                ))}
+              </select>{' '}
+              <button type="submit" className="gl-btn ghost sm">
+                Switch
+              </button>
+            </form>
+          ) : active ? (
+            <span className="gl-sub">{active.tenantName}</span>
+          ) : null}
           {session.user.isDemo ? <span className="gl-tag warn">Demo</span> : null}
         </div>
         <div className="gl-hactions">
@@ -32,6 +54,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </form>
         </div>
       </header>
+      <PortalNav />
       <main className="gl-pad">{children}</main>
     </div>
   );

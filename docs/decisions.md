@@ -1637,3 +1637,26 @@ Architecture decisions taken up front (restrictive-by-default per the spec):
   `PORTAL_BASE_URL` sets the link host.
 - Proof: `packages/db/test/merchant-auth.test.ts` — single-use, expiry, previous-
   token invalidation, session-kill on reset, and per-email / per-IP lockout.
+
+### 2026-09-15 — Phase 8.5/8.6/8.7: portal shell, pages, reports
+
+- **Shell (§8.5):** top bar + tab nav (This month, Channels, Customers, Products,
+  Reports, Settings) + a tenant switcher shown only for multi-tenant users,
+  populated from memberships; switching goes through `setActiveTenant` (validated
+  against memberships). `(app)/scope.ts` is the one place a page gets its tenant —
+  from the session — and every page starts there, so no query runs without a
+  session-derived scope.
+- **Pages (§8.6):** This month (headline figures incl. MER/CAC in plain language),
+  Channels (spend + claim gap per platform), Customers (new/returning + repeat
+  rates), Products (units, returns, gross sales), Settings (connections + health
+  read-only, product costs read-only, people with access, and a "report a problem"
+  form → tickets, `type=question source=in_app`, tenant + submitter from the
+  session). The portal never renders margins-vs-others, unapproved/dismissed/
+  suppressed findings, raw sync state, tokens, internal notes or the issues queue.
+- **Reports (§8.7):** the archive lists **sent** reports only (drafts invisible);
+  each report is read from its immutable snapshot via `getReport(tenantId, period)`
+  (tenant-scoped), rendered to HTML (`/reports/[period]/view`) and to PDF
+  (`/reports/[period]/pdf`, via the worker's shared render). A period guessed in
+  the URL can only ever return this tenant's own sent report.
+- The portal now depends on `@grossline/worker` for report render/PDF (playwright
+  kept as a `serverExternalPackages` external, as in the admin).
