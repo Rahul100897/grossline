@@ -20,6 +20,8 @@ export type ResolvedMerchantSession = {
   memberships: { tenantId: string; tenantName: string; role: MerchantRole }[];
   activeTenantId: string;
   activeRole: MerchantRole;
+  /** True for an admin view-as session — read-only, banner-flagged. */
+  viewAs: boolean;
 };
 
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
@@ -186,6 +188,30 @@ export async function createMerchantSession(userId: string): Promise<string> {
   return row.id;
 }
 
+/**
+ * A read-only admin view-as session for a user, pinned to a tenant and expiring
+ * soon (§8.8). Validated against the user's memberships, so an admin cannot pin
+ * a tenant the user cannot access.
+ */
+export async function createViewAsSession(
+  userId: string,
+  tenantId: string,
+  ttlMs = 30 * 60 * 1000,
+): Promise<string | null> {
+  const memberships = await membershipsForUser(userId);
+  if (!memberships.some((m) => m.tenantId === tenantId)) return null;
+  const [row] = await adminDb()
+    .insert(merchantSessions)
+    .values({
+      userId,
+      activeTenantId: tenantId,
+      viewAs: true,
+      expiresAt: new Date(Date.now() + ttlMs),
+    })
+    .returning({ id: merchantSessions.id });
+  return row?.id ?? null;
+}
+
 export async function revokeMerchantSession(sessionId: string): Promise<void> {
   await adminDb()
     .update(merchantSessions)
@@ -243,6 +269,7 @@ export async function resolveMerchantSession(
     memberships,
     activeTenantId: active.tenantId,
     activeRole: active.role,
+    viewAs: session.viewAs,
   };
 }
 
@@ -283,4 +310,25 @@ export async function verifyMerchantLogin(
  *  until this sweeps them). Callable from a nightly job. */
 export async function purgeExpiredMerchantSessions(before = new Date()): Promise<void> {
   await adminDb().delete(merchantSessions).where(lt(merchantSessions.expiresAt, before));
+}
+
+/**
+ * Tenant deletion (§8.10): drop every merchant's access to this tenant, kill
+ * their sessions, and delete any user who is now orphaned (no memberships left).
+ * A multi-tenant user keeps their account but loses this tenant and is logged out.
+ */
+export async function removeTenantMerchantAccess(tenantId: string): Promise<void> {
+  const rows = await adminDb()
+    .select({ userId: merchantMemberships.userId })
+    .from(merchantMemberships)
+    .where(eq(merchantMemberships.tenantId, tenantId));
+  const userIds = [...new Set(rows.map((r) => r.userId))];
+  await adminDb().delete(merchantMemberships).where(eq(merchantMemberships.tenantId, tenantId));
+  for (const userId of userIds) {
+    await revokeAllSessionsForUser(userId);
+    const remaining = await membershipsForUser(userId);
+    if (remaining.length === 0) {
+      await adminDb().delete(merchantUsers).where(eq(merchantUsers.id, userId));
+    }
+  }
 }

@@ -9,6 +9,7 @@ import {
   changeRole,
   revokeAccess,
   disableUser,
+  startViewAs,
 } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -86,6 +87,15 @@ export default async function AccessPage({
                   <Td quiet>{u.lastLoginAt ? formatDate(u.lastLoginAt) : 'never'}</Td>
                   <Td>
                     <div className="flex flex-wrap gap-1">
+                      {u.status === 'active' ? (
+                        <form action={startViewAs}>
+                          {hidden}
+                          <input type="hidden" name="userId" value={u.userId} />
+                          <button type="submit" className="gl-btn ghost sm">
+                            View as
+                          </button>
+                        </form>
+                      ) : null}
                       {u.status === 'invited' ? (
                         <form action={resendInvite}>
                           {hidden}

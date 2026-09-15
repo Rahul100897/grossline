@@ -1683,3 +1683,27 @@ The point of Part A. Coverage across five files, both nets tested:
   and proves each redirects to the admin login for no session and for a portal
   cookie (the apps have separate cookies, so a merchant session is structurally
   never an admin session).
+
+### 2026-09-15 — Phase 8.8/8.10: view-as + operations
+
+- **View-as (§8.8)** — migration 0037 adds `merchant_sessions.view_as` and a
+  `viewas` token purpose. From a tenant's Access panel the admin clicks "View as"
+  on an active user: an audited, single-use handoff token (2-min) is issued and
+  the admin is sent to the portal's `/view-as/[token]?tenant=…`, which exchanges it
+  for a **read-only, 30-minute session pinned to that tenant** (validated against
+  the user's memberships). The portal shows a prominent banner, hides the tenant
+  switcher, labels sign-out "Exit", and refuses every write (report-a-problem) —
+  a view-as session never saves anything. Audited on start and (as a login) on
+  entry.
+- **Tenant deletion (§8.10)** — `offboardTenant` now calls
+  `removeTenantMerchantAccess` first: drops this tenant's memberships, revokes the
+  affected users' sessions, and deletes any user left orphaned (a multi-tenant
+  user keeps their account, loses this tenant, and is logged out).
+- **Stale-sync notice (§8.10)** — the portal shell shows a merchant-visible banner
+  when any of the tenant's connections is degraded/broken, so an old-looking
+  figure has an explanation instead of an email.
+- **Login/error visibility** — merchant login, failed-login, lockout and the admin
+  access actions all land in the shared audit log (visible in the admin console);
+  a dedicated failed-login alert and the nightly demo-reset schedule are noted for
+  the ops runbook (the `demo:reset` script exists; recompute of the demo's metrics
+  is part of the nightly job).

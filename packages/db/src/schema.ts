@@ -467,7 +467,7 @@ export const merchantMemberships = pgTable(
 
 // Single-use links for invite acceptance and password reset (§8.3/§8.4). Only a
 // hash of the token is stored; the raw token lives only in the emailed link.
-export const merchantTokenPurpose = pgEnum('merchant_token_purpose', ['invite', 'reset']);
+export const merchantTokenPurpose = pgEnum('merchant_token_purpose', ['invite', 'reset', 'viewas']);
 export const merchantTokens = pgTable('merchant_tokens', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
@@ -506,6 +506,8 @@ export const merchantSessions = pgTable('merchant_sessions', {
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
   /** Set the moment access is revoked / the user logs out; a revoked row is dead. */
   revokedAt: timestamp('revoked_at', { withTimezone: true }),
+  /** An admin view-as session: read-only, short-lived, and banner-flagged. */
+  viewAs: boolean('view_as').notNull().default(false),
 });
 
 // Issues are DERIVED, never authored (admin lib/issues.ts). This table is not

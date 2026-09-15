@@ -9,6 +9,7 @@ import { setMerchantPassword, revokeAllSessionsForUser } from './merchant';
 
 const INVITE_TTL_MS = 72 * 60 * 60 * 1000; // 72 hours (§8.3)
 const RESET_TTL_MS = 60 * 60 * 1000; // 1 hour — short (§8.4)
+const VIEWAS_TTL_MS = 2 * 60 * 1000; // 2 minutes — the handoff link only
 
 function hashToken(raw: string): string {
   return createHash('sha256').update(raw).digest('hex');
@@ -18,11 +19,12 @@ function hashToken(raw: string): string {
  *  never stored. Any existing unused token of the same purpose is invalidated. */
 export async function issueMerchantToken(
   userId: string,
-  purpose: 'invite' | 'reset',
+  purpose: 'invite' | 'reset' | 'viewas',
 ): Promise<string> {
   await invalidateTokens(userId, purpose);
   const raw = randomBytes(32).toString('base64url');
-  const ttl = purpose === 'invite' ? INVITE_TTL_MS : RESET_TTL_MS;
+  const ttl =
+    purpose === 'invite' ? INVITE_TTL_MS : purpose === 'reset' ? RESET_TTL_MS : VIEWAS_TTL_MS;
   await adminDb()
     .insert(merchantTokens)
     .values({
@@ -34,7 +36,10 @@ export async function issueMerchantToken(
   return raw;
 }
 
-async function invalidateTokens(userId: string, purpose: 'invite' | 'reset'): Promise<void> {
+async function invalidateTokens(
+  userId: string,
+  purpose: 'invite' | 'reset' | 'viewas',
+): Promise<void> {
   await adminDb()
     .update(merchantTokens)
     .set({ usedAt: new Date() })
@@ -145,4 +150,21 @@ export async function isLoginLocked(email: string, ip: string): Promise<boolean>
       ),
     );
   return (byIp?.n ?? 0) >= MAX_FAILURES_PER_IP;
+}
+
+/** Claim a single-use view-as handoff token (§8.8). Returns the target user id. */
+export async function consumeViewAsToken(raw: string): Promise<string | null> {
+  const [claimed] = await adminDb()
+    .update(merchantTokens)
+    .set({ usedAt: new Date() })
+    .where(
+      and(
+        eq(merchantTokens.tokenHash, hashToken(raw)),
+        eq(merchantTokens.purpose, 'viewas'),
+        isNull(merchantTokens.usedAt),
+        gte(merchantTokens.expiresAt, new Date()),
+      ),
+    )
+    .returning({ userId: merchantTokens.userId });
+  return claimed?.userId ?? null;
 }

@@ -20,5 +20,5 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 export const config = {
   // /login and the invite-acceptance/reset pages authenticate on their own; the
   // rest of the portal needs a session.
-  matcher: ['/((?!login|accept|reset|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!login|accept|reset|view-as|_next/static|_next/image|favicon.ico).*)'],
 };
