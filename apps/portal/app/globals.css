@@ -208,3 +208,38 @@ body {
   background: var(--color-cream-3);
   font-weight: 600;
 }
+
+/* Portal chrome (not part of the shared admin primitives). */
+.gl-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 26px;
+  border-bottom: 1px solid var(--gl-line);
+  background: var(--gl-white);
+  flex-wrap: wrap;
+}
+.gl-tab {
+  padding: 12px 12px;
+  font-size: 14px;
+  color: var(--gl-slate);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  text-decoration: none;
+}
+.gl-tab:hover {
+  color: var(--gl-ink);
+}
+.gl-tab.on {
+  color: var(--gl-ink);
+  font-weight: 500;
+  border-bottom-color: var(--gl-green);
+}
+.gl-switch {
+  border: 1px solid var(--gl-line);
+  background: var(--gl-white);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--gl-ink);
+}
