@@ -21,6 +21,13 @@ async function user() {
   return createMerchantUser({ email: `auth-${n}-${Date.now()}@example.com`, name: 'u' });
 }
 
+// A unique, disposable IP per assertion. `ip` is stored as free text, and the
+// test DB is not reset between runs, so a constant IP would let login-attempt
+// rows from a previous run inside the 15-minute lockout window leak into these
+// counts and flip a fresh-account assertion. Uniqueness isolates each run, the
+// same way the emails above already do.
+const uniqueIp = (): string => `ip-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
 describe('merchant auth security (Phase 8 §8.3/§8.4)', () => {
   it('an invite token is single-use and sets the password once', async () => {
     const u = await user();
@@ -90,16 +97,16 @@ describe('merchant auth security (Phase 8 §8.3/§8.4)', () => {
 
   it('locks out after repeated failures per email, and does not count successes', async () => {
     const email = `lockout-${Date.now()}@example.com`;
-    const ip = '203.0.113.7';
+    const ip = uniqueIp();
     expect(await isLoginLocked(email, ip)).toBe(false);
     for (let i = 0; i < 5; i++) await recordLoginAttempt(email, ip, false);
     expect(await isLoginLocked(email, ip)).toBe(true);
     // A different email from a different IP is unaffected.
-    expect(await isLoginLocked('someone-else@example.com', '198.51.100.9')).toBe(false);
+    expect(await isLoginLocked(`someone-else-${Date.now()}@example.com`, uniqueIp())).toBe(false);
   });
 
   it('locks out an IP hammering many different accounts', async () => {
-    const ip = '203.0.113.99';
+    const ip = uniqueIp();
     for (let i = 0; i < 20; i++)
       await recordLoginAttempt(`x${i}-${Date.now()}@example.com`, ip, false);
     expect(await isLoginLocked(`fresh-${Date.now()}@example.com`, ip)).toBe(true);
