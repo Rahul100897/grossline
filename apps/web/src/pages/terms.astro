@@ -1,40 +1,88 @@
 ---
-import Base from '../layouts/Base.astro';
+// DRAFT — describes Grossline's real service terms as built, but is generated
+// text, not reviewed law. It MUST be reviewed by a qualified lawyer/CA before
+// the site launches. Governing-law and liability clauses in particular need
+// professional input. See docs/phase-8-handover.md.
+import Marketing from '../layouts/Marketing.astro';
 ---
 
-<Base title="Terms of service — Grossline">
-  <h1>Terms of service</h1>
-  <p class="lede">Last updated: 5 September 2026</p>
+<Marketing
+  title="Grossline — terms"
+  description="The terms of the Grossline reporting service: what it is, the access it needs, how numbers are produced, fees, and liability."
+  path="/terms"
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="eyebrow">Terms of service</div>
+      <h1>The deal, in plain terms.</h1>
+      <p class="updated">Last updated: 15 September 2026</p>
+    </div>
+  </div>
 
-  <h2>The service</h2>
-  <p>
-    Grossline provides reporting on a merchant's own commerce and advertising data. Reports are
-    prepared for the merchant they are addressed to and are not financial, tax or investment
-    advice.
-  </p>
+  <section class="prose-section" style="padding-top:48px">
+    <div class="wrap">
+      <div class="prose">
+        <h2>The service</h2>
+        <p>
+          Grossline reports on your own commerce and advertising data. Each report is prepared for
+          the brand it's addressed to. It is information to help you run your business — it is not
+          financial, tax or investment advice, and you make your own decisions from it.
+        </p>
 
-  <h2>Access</h2>
-  <p>
-    Merchants grant Grossline read-only access to the platforms covered by their engagement. We
-    never write to a merchant's store or ad accounts. Access can be revoked by the merchant at any
-    time.
-  </p>
+        <h2>Access</h2>
+        <p>
+          You grant us read-only access to the platforms your engagement covers — your Shopify store
+          and your Google and Meta ad accounts. We never write to your store or your ad accounts,
+          and we can't spend your money. You can revoke our access at any time from inside those
+          platforms.
+        </p>
 
-  <h2>Accuracy</h2>
-  <p>
-    Numbers are computed from the data the platforms provide. Platforms restate historical data;
-    reports reflect the data available at the time they were produced. Definitions used in reports
-    are documented and applied consistently.
-  </p>
+        <h2>How the numbers are produced</h2>
+        <p>
+          Figures are computed from the data the platforms give us. Platforms sometimes restate
+          their own history — Meta revises recent days, for example — so a report reflects the data
+          available when it was produced. What we mean by each term ("net sales", "a new customer",
+          "what you kept") is written down and applied the same way every month.
+        </p>
 
-  <h2>Liability</h2>
-  <p>
-    The service is provided as-is. To the maximum extent permitted by law, Grossline's liability
-    is limited to the fees paid for the month in which a claim arises.
-  </p>
+        <h2>The free first report</h2>
+        <p>
+          Your first month's report is free, with a call to go through it. There's no obligation to
+          continue afterwards.
+        </p>
 
-  <h2>Contact</h2>
-  <p>
-    Questions about these terms: <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>.
-  </p>
-</Base>
+        <h2>Fees and billing</h2>
+        <p>
+          Ongoing plans are a flat monthly fee based on your ad-spend band, billed quarterly in
+          advance, with a one-time setup fee to connect everything and pull your history. There's no
+          lock-in — the plans are on our <a href="/pricing">pricing</a> page.
+        </p>
+
+        <h2>Stopping</h2>
+        <p>
+          You can stop at any time by telling us. We revoke access, stop billing for future periods,
+          and delete your data on request.
+        </p>
+
+        <h2>Liability</h2>
+        <p>
+          The service is provided as-is. To the maximum extent the law allows, our liability for any
+          claim arising from the service is limited to the fees you paid for the month in which the
+          claim arose. Nothing here limits any liability that can't be limited by law.
+        </p>
+
+        <h2>Governing law</h2>
+        <p>
+          These terms are governed by the laws of India, and disputes fall to the courts of
+          Ahmedabad, Gujarat.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms:
+          <a href="mailto:hello@getgrossline.com">hello@getgrossline.com</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Marketing>

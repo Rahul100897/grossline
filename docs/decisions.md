@@ -1707,3 +1707,39 @@ The point of Part A. Coverage across five files, both nets tested:
   a dedicated failed-login alert and the nightly demo-reset schedule are noted for
   the ops runbook (the `demo:reset` script exists; recompute of the demo's metrics
   is part of the nightly job).
+
+### 2026-09-15 — Phase 8.11: marketing-site completion (Part B)
+
+- **`Marketing.astro` supersedes `Base.astro`.** The homepage was ported to the
+  new design system as a standalone document (`index.astro`); the inner pages
+  still used the older `Base.astro` chrome and engineer-facing copy. The
+  homepage's nav, footer, tokens and type were lifted into one reusable layout so
+  every page matches the landing page at 1440px and 390px. `Base.astro` is deleted
+  once the last page (forms) is converted.
+- **Plain language, per the spec's translation table.** MER → "for every $1 you
+  spend on ads, this comes back"; blended CAC → "what a new customer costs you";
+  contribution → "what you actually kept"; reporting timezone → "your store's own
+  timezone"; claim gap → "where the platforms disagree with your store". No
+  acronym without its meaning; no implementation detail sold as a benefit.
+- **Pricing mirrors the homepage.** The dedicated Pricing page repeats the
+  homepage's exact tiers (Advisory / Growth / Partner) and numbers so the two can
+  never contradict each other. The client-quote slot is left visibly empty — no
+  invented proof.
+- **"Log in" added to nav and footer on every page**, pointing to the merchant
+  portal via `PUBLIC_PORTAL_URL` (dev fallback `http://localhost:3002`), mirroring
+  how the forms already read `PUBLIC_ADMIN_URL`.
+- **Legal pages describe real behaviour, and are drafts pending professional
+  review.** Privacy / Terms / Data processing were rewritten to match what the
+  software actually does, verified against the code:
+  - The connectors deliberately collect **no end-customer PII** — the Shopify
+    customer query (`services/worker/src/connectors/shopify/queries.ts`) takes only
+    an opaque customer id, order count and lifetime spend; never name, email, phone
+    or address. So the site's "no customer data" claim is accurate.
+  - Sub-processors named truthfully: the cloud hosting/database provider, **Resend**
+    (email), and **Anthropic** (report commentary — receives only computed figures,
+    only when `ANTHROPIC_API_KEY` is set, else fixed templates). Source platforms
+    (Shopify/Google/Meta) are read-only origins.
+  - Each legal file carries a top-of-file `DRAFT` comment; the handover flags them
+    **prominently as requiring a qualified lawyer/CA review before launch** —
+    governing-law, liability, and international-transfer clauses in particular.
+    Generated legal text is never presented as final.
