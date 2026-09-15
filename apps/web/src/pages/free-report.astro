@@ -1,66 +1,73 @@
 ---
-import Base from '../layouts/Base.astro';
+import Marketing from '../layouts/Marketing.astro';
 
-// The free-first-report request posts to the same public intake endpoint as the
-// contact form (task 3.7), with its own ticket type `free_report` so it lands in
-// the same inbox, filterable on its own (task 5.C3).
+// The free-first-report request posts to the admin app's public intake endpoint
+// (task 3.7) with its own ticket type `free_report`, so it lands in the same
+// inbox filterable on its own (task 5.C3) and notifies the analyst by email.
 const intakeUrl =
   (import.meta.env.PUBLIC_ADMIN_URL ?? 'http://localhost:3000') + '/api/tickets/intake';
 ---
 
-<Base
-  title="Grossline — request your free first report"
-  description="Request the free first report. Tell us about your store and we'll deliver one full monthly report at no charge."
+<Marketing
+  title="Grossline — get your first report free"
+  description="Request your free first report. Tell us about your store and we'll deliver one full monthly report at no charge, with a call to walk through it."
   path="/free-report"
 >
-  <h1>Request your free first report</h1>
-  <p class="lede">
-    The free first report is the service delivered once, at no charge — not a demo of software.
-    Tell us about your store and we'll be in touch.
-  </p>
-
-  <form id="fr-form" novalidate>
-    <label>
-      Your name
-      <input name="name" type="text" autocomplete="name" />
-    </label>
-    <label>
-      Email
-      <input name="email" type="email" autocomplete="email" required />
-    </label>
-    <label>
-      Store URL
-      <input name="store" type="text" placeholder="yourstore.myshopify.com or your domain" required />
-    </label>
-    <label>
-      Rough monthly ad spend
-      <input name="spend" type="text" placeholder="e.g. $20k across Google + Meta" />
-    </label>
-    <label>
-      Anything we should know?
-      <textarea name="message" rows="5"></textarea>
-    </label>
-    <!-- Honeypot: hidden from people, tempting to bots. -->
-    <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px">
-      <label>Company<input name="company" type="text" tabindex="-1" autocomplete="off" /></label>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="eyebrow">Free first report</div>
+      <h1>Get your first report free.</h1>
+      <p class="lede">
+        This is the whole service, delivered once at no charge — a real monthly report on your last
+        month, with a call to walk through it. Not a demo, and no card needed. Tell us about your
+        store and we'll be in touch.
+      </p>
     </div>
-    <button type="submit">Request my free report</button>
-    <p id="status" role="status"></p>
-  </form>
+  </div>
 
-  <p><a href="/the-report">← See what's in the report first</a></p>
-</Base>
+  <section style="padding-top:32px">
+    <div class="wrap">
+      <form id="fr-form" class="formcard" novalidate>
+        <div class="field">
+          <label for="fr-name">Your name</label>
+          <input id="fr-name" name="name" type="text" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="fr-email">Email</label>
+          <input id="fr-email" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="fr-store">Store URL</label>
+          <input
+            id="fr-store"
+            name="store"
+            type="text"
+            placeholder="yourstore.myshopify.com or your domain"
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="fr-spend">Rough monthly ad spend</label>
+          <input id="fr-spend" name="spend" type="text" placeholder="e.g. $20k across Google + Meta" />
+        </div>
+        <div class="field">
+          <label for="fr-message">Anything we should know?</label>
+          <textarea id="fr-message" name="message" rows="5"></textarea>
+        </div>
+        <!-- Honeypot: hidden from people, tempting to bots. -->
+        <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px">
+          <label>Company<input name="company" type="text" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <button type="submit" class="btn">Request my free report</button>
+        <p id="status" class="formstatus" role="status"></p>
+      </form>
 
-<style>
-  form { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; max-width: 34rem; }
-  label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.95rem; color: var(--muted); }
-  input, textarea { font: inherit; color: var(--ink); padding: 0.55rem 0.7rem; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
-  button { align-self: flex-start; font: inherit; font-weight: 600; color: #fff; background: var(--ink); border: 0; border-radius: 6px; padding: 0.6rem 1.1rem; cursor: pointer; }
-  button:disabled { opacity: 0.5; cursor: default; }
-  #status { font-size: 0.95rem; margin: 0; }
-  #status.ok { color: var(--accent); }
-  #status.err { color: var(--warn); }
-</style>
+      <p class="demo-note">
+        <a href="/the-report" style="color:var(--gl-green)">See what's in the report first →</a>
+      </p>
+    </div>
+  </section>
+</Marketing>
 
 <script define:vars={{ intakeUrl }}>
   const form = document.getElementById('fr-form');
@@ -70,11 +77,11 @@ const intakeUrl =
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     status.textContent = '';
-    status.className = '';
+    status.className = 'formstatus';
     const d = Object.fromEntries(new FormData(form).entries());
     if (!d.email || !d.store) {
       status.textContent = 'An email and your store URL are required.';
-      status.className = 'err';
+      status.className = 'formstatus err';
       return;
     }
     const body = [
@@ -102,10 +109,10 @@ const intakeUrl =
       if (!response.ok) throw new Error('bad status');
       form.reset();
       status.textContent = 'Thank you — we have it and will be in touch about your free report.';
-      status.className = 'ok';
+      status.className = 'formstatus ok';
     } catch {
       status.textContent = 'Something went wrong. Please email hello@getgrossline.com instead.';
-      status.className = 'err';
+      status.className = 'formstatus err';
     } finally {
       button.disabled = false;
       button.textContent = 'Request my free report';
