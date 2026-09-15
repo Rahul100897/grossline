@@ -1,0 +1,26 @@
+# Render blueprint for the merchant portal (demo deploy).
+#
+# This defines only the portal WEB SERVICE. The managed Postgres is created
+# separately in the Render dashboard so its plan (and its cost) is an explicit,
+# deliberate choice — see docs/deploy.md "Merchant portal + Postgres".
+#
+# After creating the database and the grossline_app role, set DATABASE_URL and
+# APP_DATABASE_URL on this service (they are sync:false — not stored in the repo).
+services:
+  - type: web
+    name: grossline-portal
+    runtime: docker
+    dockerfilePath: ./apps/portal/Dockerfile
+    dockerContext: .
+    plan: starter # ~$7/mo; `free` also works but cold-starts (~50s) look bad for a client demo
+    healthCheckPath: /login
+    autoDeploy: false # deploy on demand, not on every push, while this is a demo
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true # Render generates a strong secret
+      - key: DATABASE_URL
+        sync: false # paste the database's OWNER (internal) connection string
+      - key: APP_DATABASE_URL
+        sync: false # same host/db, user grossline_app, its password

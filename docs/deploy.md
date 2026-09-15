@@ -73,3 +73,91 @@ site does go up, the Phase 5 pieces need:
   and the admin/worker runtime (Playwright/Chromium for PDFs, the Postgres
   migrations for the `reports`/`reconciliation_runs` tables) are a separate,
   still-unwired admin/worker deploy — not part of the marketing-site Pages deploy.
+
+---
+
+# Merchant portal + Postgres (Render)
+
+Phase 8 demo deploy: the merchant portal (`apps/portal`) on **Render** with a
+**Render Postgres** database, seeded with the synthetic demo tenant so a client
+can be given a working login. This is the demo slice only — the admin console,
+the worker and Redis are **not** deployed here (the demo is read-only and its
+data is pre-seeded, so it needs neither).
+
+Provider decision recorded in `docs/decisions.md` (2026-09-15): hosting is
+**Render**, database is **Render Postgres**. These are the names the
+`/data-processing` page now uses.
+
+## What is in the repo
+
+- `apps/portal/Dockerfile` — production image (build from the repo root; the
+  portal needs its workspace packages). Ships Chromium for the report-PDF route.
+- `render.yaml` — a blueprint for the portal web service (the database is created
+  in the dashboard so its cost is a deliberate choice).
+- `packages/db/scripts/prod-app-role.sql` — creates the `grossline_app` role
+  (no BYPASSRLS) on the production database, so row-level security is enforced.
+- `pnpm --filter @grossline/worker demo:provision` — seeds the synthetic demo
+  tenant, computes metrics through the last complete month, and creates the demo
+  login. Safe on any database; never touches a real store or credentials.
+
+## 💰 Cost (flag before committing)
+
+- **Web service**: Render Starter ≈ **$7/mo**. The Free tier works but cold-starts
+  (~50s) look bad for a client demo.
+- **Postgres**: Render's smallest paid tier ≈ **$7/mo**. Free Postgres exists but
+  **expires after ~30 days** — unsuitable for a demo you keep sending out.
+- Total ≈ **$14/mo**. Nothing here is charged until you create the paid services.
+
+## One-time setup
+
+1. **Create the database.** Render dashboard → **New → Postgres**. Pick a name
+   (e.g. `grossline-db`), region, and a paid plan (see cost above). Note both the
+   **Internal Database URL** (the owner connection string) and the host/db/user.
+2. **Create the `grossline_app` role.** Using the database's `psql` (Render shows
+   a connect command), run the repo script with a strong password:
+   ```
+   psql "<owner connection string>" \
+     -v app_password="'<a-strong-secret>'" \
+     -f packages/db/scripts/prod-app-role.sql
+   ```
+3. **Run migrations** against the owner connection string (applies the schema,
+   RLS policies and the grants to `grossline_app`):
+   ```
+   DATABASE_URL="<owner connection string>" NODE_ENV=production pnpm db:migrate
+   ```
+4. **Provision the demo data** (synthetic only):
+   ```
+   DATABASE_URL="<owner connection string>" NODE_ENV=production \
+     pnpm --filter @grossline/worker demo:provision
+   ```
+   It prints the demo login: `demo@getgrossline.com` / `explore-grossline`.
+5. **Create the web service.** Render → **New → Blueprint**, point it at this repo
+   (it reads `render.yaml`), or **New → Web Service → Docker** with Dockerfile
+   `apps/portal/Dockerfile` and context `/`. Set env vars:
+   - `DATABASE_URL` = the owner connection string
+   - `APP_DATABASE_URL` = same host/db, user `grossline_app`, the password from
+     step 2
+   - `SESSION_SECRET` = a strong random string (the blueprint generates one)
+   - `NODE_ENV` = `production`
+6. **Deploy.** The build runs the Dockerfile; the service comes up on a
+   `https://grossline-portal-*.onrender.com` URL. Open `/login` and sign in with
+   the demo credentials — you should land on the latest complete month with real
+   figures. That URL is the one to send a client.
+
+## Wiring the marketing "Log in" to it
+
+Once the portal URL exists, set `PUBLIC_PORTAL_URL` to it in the Cloudflare Pages
+project and rebuild (see the marketing section above) so the site's "Log in"
+points at the live portal instead of localhost.
+
+## Known limits of the demo slice
+
+- **Reports tab is empty** — the demo has no *sent* reports (building and sending
+  a report is a gated admin flow, and the admin console is not deployed here). The
+  four data tabs (This month, Channels, Customers, Products) are fully populated;
+  Reports shows its empty state. Provisioning demo reports is a fast follow.
+- **No RLS bypass**: the portal connects as `grossline_app`, so RLS is enforced in
+  production exactly as locally — proven by the isolation suite.
+- Verified locally before any Render spend: the Dockerfile image builds, boots,
+  and the demo login renders August figures against the `grossline_app`
+  (RLS-enforced) connection.

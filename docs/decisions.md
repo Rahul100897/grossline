@@ -1743,3 +1743,34 @@ The point of Part A. Coverage across five files, both nets tested:
     **prominently as requiring a qualified lawyer/CA review before launch** —
     governing-law, liability, and international-transfer clauses in particular.
     Generated legal text is never presented as final.
+
+### 2026-09-15 — Deploy: providers and the demo-portal slice
+
+- **Marketing site → Cloudflare Pages**, per `docs/deploy.md`. The domain
+  `getgrossline.com` is **not yet registered**, so the live marketing URL is the
+  project's `*.pages.dev` until the domain is bought (~$10–12/yr) — flagged as a
+  cost, deferred by choice.
+- **Hosting provider is Render; database is Render Postgres.** Chosen for a
+  single-vendor, low-operations setup at this scale, and so the
+  `/data-processing` page names one clean pair of providers (now updated from the
+  placeholder "cloud hosting and database provider").
+- **Only the demo portal + Postgres are deployed, by choice** (the "least money"
+  option). The demo is read-only and its data is pre-seeded, so it needs neither
+  the worker nor Redis; the admin console is not deployed either. Est. ≈ $14/mo
+  (Render Starter web + smallest paid Postgres); the free tiers were rejected for
+  a client demo (web cold-starts; free Postgres expires ~30 days).
+- **RLS is preserved in production.** The portal connects as `grossline_app`
+  (no BYPASSRLS); `packages/db/scripts/prod-app-role.sql` creates that role with a
+  real secret before migrations, which the 0001 `IF NOT EXISTS` guard then leaves
+  alone while still applying its grants/policies. No security net was dropped for
+  the deploy.
+- **Demo data is synthetic-only.** A new `demo:provision` worker CLI seeds the
+  demo-brand tenant, computes metrics **through the last complete month** (so the
+  portal lands on full figures, not a half-elapsed month), and creates the demo
+  login. A local-DB dump was explicitly rejected: it would have copied the real
+  Shopify dev-store tenant and its encrypted platform credentials into production.
+- **Proven before spend.** The `apps/portal/Dockerfile` image was built and run
+  locally against a fresh migrated + provisioned database; the demo login renders
+  August figures against the RLS-enforced connection. The **Reports tab is empty**
+  in the demo (no *sent* reports — that is a gated admin flow, not deployed);
+  provisioning demo reports is a noted fast follow.

@@ -13,6 +13,7 @@ export {
   type Tenant,
 } from './admin';
 export { seedDemoTenant, type SeedSummary } from './seed-demo';
+export { seedDemoMerchant, resetDemo, type DemoMerchantSeed } from './seed-merchant-demo';
 export {
   putCredential,
   getCredential,
