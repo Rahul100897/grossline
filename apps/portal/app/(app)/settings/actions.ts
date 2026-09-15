@@ -15,6 +15,8 @@ const schema = z.object({
  *  they are or which tenant it is. */
 export async function reportProblem(formData: FormData): Promise<void> {
   const session = await requirePortalSession();
+  // A view-as session never writes.
+  if (session.viewAs) redirect('/settings');
   const parsed = schema.safeParse({
     subject: formData.get('subject'),
     body: formData.get('body'),

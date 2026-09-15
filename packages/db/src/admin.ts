@@ -5,6 +5,7 @@
 import { asc, eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { adminDb } from './client';
+import { removeTenantMerchantAccess } from './merchant';
 import {
   connections,
   credentials,
@@ -108,6 +109,9 @@ export async function getTenantBySlug(slug: string): Promise<Tenant | null> {
  */
 export async function offboardTenant(tenantId: string): Promise<void> {
   const db = adminDb();
+  // Merchant access first (§8.10): drop memberships, kill sessions, delete
+  // orphaned users — before the tenant's own rows go.
+  await removeTenantMerchantAccess(tenantId);
   // ticket_messages have no tenant_id — delete via their tenant-linked tickets.
   const tenantTickets = await db
     .select({ id: tickets.id })

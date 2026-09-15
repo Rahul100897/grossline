@@ -119,6 +119,23 @@ export async function revokeAccess(formData: FormData): Promise<void> {
   redirect(back(tid));
 }
 
+/** View-as (§8.8): open the portal as this merchant, read-only and time-limited.
+ *  Issues a single-use handoff token and sends the admin to the portal, which
+ *  exchanges it for a short-lived read-only session. Audited here and on entry. */
+export async function startViewAs(formData: FormData): Promise<void> {
+  const session = await requireSession();
+  const tid = await tenantId(formData);
+  const userId = idSchema.parse(formData.get('userId'));
+  const token = await issueMerchantToken(userId, 'viewas');
+  await writeAuditLog({
+    actor: session.sub,
+    action: 'merchant.view_as_started',
+    tenantId: tid,
+    subject: userId,
+  });
+  redirect(`${portalBaseUrl()}/view-as/${token}?tenant=${tid}`);
+}
+
 /** Disable a user entirely (all tenants), killing every live session at once. */
 export async function disableUser(formData: FormData): Promise<void> {
   const session = await requireSession();

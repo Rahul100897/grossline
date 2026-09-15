@@ -197,6 +197,7 @@ export {
   createMembership,
   removeMembership,
   createMerchantSession,
+  createViewAsSession,
   revokeMerchantSession,
   revokeAllSessionsForUser,
   resolveMerchantSession,
@@ -205,6 +206,7 @@ export {
   purgeExpiredMerchantSessions,
   listTenantMerchantUsers,
   setMembershipRole,
+  removeTenantMerchantAccess,
   type TenantMerchantUser,
   type MerchantUser,
   type MerchantMembership,
@@ -217,6 +219,7 @@ export {
   issueMerchantToken,
   peekMerchantToken,
   consumeTokenAndSetPassword,
+  consumeViewAsToken,
   recordLoginAttempt,
   isLoginLocked,
 } from './merchant-auth';
