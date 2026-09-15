@@ -38,7 +38,8 @@
     "findings:draft": "tsx src/cli/findings-draft.ts",
     "assets:gen": "tsx scripts/gen-report-assets.ts",
     "reports:build": "tsx src/cli/reports-build.ts",
-    "digest:send": "tsx src/cli/digest-send.ts"
+    "digest:send": "tsx src/cli/digest-send.ts",
+    "demo:provision": "tsx src/cli/demo-provision.ts"
   },
   "dependencies": {
     "@grossline/core": "workspace:*",

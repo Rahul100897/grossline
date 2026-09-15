@@ -219,5 +219,7 @@ verification reliable.
 - Inherited from Phase 5/7 and still open: no scheduled worker jobs for
   report/digest build; no production deploy target; Meta/Google still on
   fixtures; the four dormant entity-level findings rules.
-- The hosting/database provider is unnamed on the data-processing page — name it
-  once chosen.
+- The hosting/database provider is now chosen — **Render** (hosting) and **Render
+  Postgres** (database) — and named on the data-processing page. See
+  `docs/deploy.md` "Merchant portal + Postgres" and the 2026-09-15 deploy entry in
+  `docs/decisions.md`.
