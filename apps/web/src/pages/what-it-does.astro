@@ -1,66 +1,119 @@
 ---
-import Base from '../layouts/Base.astro';
+import Marketing from '../layouts/Marketing.astro';
 ---
 
-<Base
+<Marketing
   title="Grossline — what it does"
-  description="How Grossline turns your Shopify, Google and Meta data into one monthly report an analyst stands behind."
+  description="Grossline reads your Shopify store and your ad accounts together, works out what you actually kept, and sends one short monthly report with the few things worth changing."
   path="/what-it-does"
-  wide
 >
-  <h1>What Grossline does</h1>
-  <p class="lede">
-    It pulls your commerce and advertising data into one place, computes the blended numbers that
-    matter, and hands you a monthly report with the few findings worth acting on.
-  </p>
-
-  <h2>How it works</h2>
-  <div class="cols">
-    <div class="card">
-      <h3>1 · Connect</h3>
-      <p>Your Shopify store and your Google Ads and Meta ad accounts. Read-only — Grossline never writes to your store or your campaigns.</p>
-    </div>
-    <div class="card">
-      <h3>2 · Blend</h3>
-      <p>Orders, spend and costs land untouched, then become blended metrics: MER, contribution, blended CAC, payback — currency-aware, in your reporting timezone.</p>
-    </div>
-    <div class="card">
-      <h3>3 · Report</h3>
-      <p>A monthly PDF with the headline, the margin waterfall, the claim gap, what changed, and a short set of findings — reconciled against the platforms first.</p>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="eyebrow">What it does</div>
+      <h1>One place where your sales and your ad spend <em>finally agree</em>.</h1>
+      <p class="lede">
+        Grossline reads your Shopify store and your Google and Meta ad accounts together, works out
+        what you actually kept after every cost, and hands you a short monthly report with the two or
+        three things worth changing.
+      </p>
     </div>
   </div>
 
-  <h2>The numbers, done properly</h2>
-  <div class="cols two">
-    <div class="card">
-      <h3>Blended, not attributed</h3>
-      <p>No pixel modelling, no attribution guesswork. Just what was sold and what it cost to sell it, across every channel at once.</p>
+  <section style="padding-top:56px">
+    <div class="wrap">
+      <div class="eyebrow">How it works</div>
+      <h2>Connect once. Then a report just arrives.</h2>
+      <div class="cols">
+        <div class="card">
+          <div class="idx">01</div>
+          <h3>You connect your accounts</h3>
+          <p>
+            Your Shopify store and your Google and Meta ad accounts. We ask for read-only access,
+            which means we can look but never change anything in your store or your campaigns.
+          </p>
+        </div>
+        <div class="card">
+          <div class="idx">02</div>
+          <h3>We put the numbers together</h3>
+          <p>
+            Your orders, your ad spend and your costs land untouched, then we work out the numbers
+            that actually matter: what you kept, whether your ads paid for themselves, and what a new
+            customer costs — all in your store's own timezone.
+          </p>
+        </div>
+        <div class="card">
+          <div class="idx">03</div>
+          <h3>You get a report and a call</h3>
+          <p>
+            A short monthly report with the headline, where your money went, where the platforms
+            disagree with your store, what changed, and the few things worth doing — checked against
+            Shopify and your ad platforms before you ever see it.
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <h3>Honest by construction</h3>
-      <p>Money is integer minor units with its currency. Missing costs are shown as incomplete, never as zero. Every report carries when it was last synced and reconciled.</p>
-    </div>
-  </div>
+  </section>
 
-  <h2>Findings, not dashboards</h2>
-  <p>
-    Each month you get a small, ranked set of findings — not a wall of charts. They fall into two
-    kinds, and the report never blurs them:
-  </p>
-  <div class="cols two">
-    <div class="card">
-      <h3>Where money is leaking</h3>
-      <p>Efficiency below break-even, acquisition that doesn't pay back on the first order, discount share creeping up, spend pacing over target. Provable savings, ranked by the money at stake.</p>
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">The numbers, done properly</div>
+      <h2>Counted, not guessed.</h2>
+      <div class="cols two">
+        <div class="card">
+          <h3>We count what happened, not what a pixel thinks happened</h3>
+          <p>
+            No tracking pixels, no attribution guesswork. Just what was sold and what it cost to sell
+            it, across every channel at once — the real total, not one platform's version of it.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Honest by construction</h3>
+          <p>
+            Every figure is exact to the cent, and carries its currency. When a cost is missing we
+            show the number as incomplete, never as zero. Each report says when it was last pulled and
+            last checked.
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <h3>Where there is room to grow</h3>
-      <p>When efficiency is healthy, where the freed budget could go — framed as a bounded test with a check next month, because a campaign at today's ROAS will not hold it on triple the budget.</p>
-    </div>
-  </div>
-  <p class="demo-note">
-    Findings depend on the data a store connects; the report says plainly what it could and could not
-    measure this month.
-  </p>
+  </section>
 
-  <p style="margin-top:2rem"><a class="btn" href="/free-report">Request your free first report</a></p>
-</Base>
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">Findings, not dashboards</div>
+      <h2>A few things to do — not a wall of charts.</h2>
+      <p class="lede">
+        Each month you get a short, ranked list of findings. They come in two kinds, and the report
+        never blurs them.
+      </p>
+      <div class="cols two">
+        <div class="card">
+          <h3>Where money is leaking</h3>
+          <p>
+            Ads that aren't paying for themselves, new customers who cost more than their first order
+            brings back, discounts creeping up, spend running ahead of plan. Real savings, ranked by
+            the money at stake.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Where there's room to grow</h3>
+          <p>
+            When your ads are working well, where the spare budget could go — put as a small, bounded
+            test with a check the following month, because what works at today's spend won't
+            automatically hold at triple the budget.
+          </p>
+        </div>
+      </div>
+      <p class="demo-note">
+        What we can find depends on the data your store connects; the report says plainly what it
+        could and could not measure that month.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-top:0;padding-bottom:96px">
+    <div class="wrap">
+      <a class="btn" href="/free-report">Get your first report free</a>
+    </div>
+  </section>
+</Marketing>

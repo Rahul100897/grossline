@@ -1,58 +1,219 @@
 ---
-import Base from '../layouts/Base.astro';
+import Marketing from '../layouts/Marketing.astro';
 ---
 
-<Base
+<Marketing
   title="Grossline — pricing"
-  description="Flat monthly pricing based on your ad spend — never a percentage of revenue. Three plans: Advisory, Growth, Partner."
+  description="A flat monthly fee based on what you spend on ads — never a cut of your sales. Three plans: Advisory, Growth, Partner. Your first report is free."
   path="/pricing"
-  wide
 >
-  <h1>Pricing</h1>
-  <p class="lede">
-    A flat monthly fee based on your ad-spend band — never a percentage of your revenue. Your fee
-    doesn't rise just because you had a good month.
-  </p>
-  <p><span class="flat">Flat fee · based on ad spend · never % of revenue</span></p>
-
-  <div class="tiers">
-    <div class="tier">
-      <h3>Advisory</h3>
-      <p class="who">The monthly report, delivered.</p>
-      <ul>
-        <li>Monthly PDF report</li>
-        <li>Blended metrics &amp; findings</li>
-        <li>Figures reconciled against the platforms</li>
-        <li>Delivered by email</li>
-      </ul>
-    </div>
-    <div class="tier mid">
-      <h3>Growth</h3>
-      <p class="who">The report, plus the weekly pulse.</p>
-      <ul>
-        <li>Everything in Advisory</li>
-        <li>Weekly digest — five numbers, catches a problem in days</li>
-        <li>WhatsApp summary, ready to paste</li>
-        <li>Growth opportunities tracked month to month</li>
-      </ul>
-    </div>
-    <div class="tier">
-      <h3>Partner</h3>
-      <p class="who">Hands-on, for scaling brands.</p>
-      <ul>
-        <li>Everything in Growth</li>
-        <li>A deeper review cadence</li>
-        <li>A direct line to the analyst</li>
-        <li>Priority on new findings as they land</li>
-      </ul>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="eyebrow">Pricing</div>
+      <h1>Based on what you spend on ads. <em>Never on what you sell.</em></h1>
+      <p class="lede">
+        Most tools in this category take a slice of your revenue, so your bill climbs as you grow.
+        We charge a flat monthly fee, and it doesn't move because you had a good quarter.
+      </p>
     </div>
   </div>
 
-  <p>
-    Your band depends on your monthly ad spend. Tell us your spend and we'll quote the flat fee —
-    <a href="/contact">request a quote</a>, and your first report is free.
-  </p>
+  <section class="pricing" style="margin-top:40px">
+    <div class="wrap">
+      <div class="tiers">
+        <div class="tier">
+          <div class="name">Advisory</div>
+          <div class="for">Under $25k a month on ads</div>
+          <div class="price">$549<span class="per">/mo</span></div>
+          <ul>
+            <li><b>One store</b></li>
+            <li>Monthly report, <b>written by a person</b></li>
+            <li><b>30-minute call</b> every month</li>
+            <li>Alerts if something goes wrong mid-month</li>
+            <li>We track whether our advice worked</li>
+          </ul>
+          <a class="btn outline-light" href="/free-report">Start free</a>
+        </div>
 
-  <h2>What clients say</h2>
-  <div class="quote-slot">A client quote will go here once we have a real one worth quoting.</div>
-</Base>
+        <div class="tier feature">
+          <div class="tag">MOST CHOSEN</div>
+          <div class="name">Growth</div>
+          <div class="for">$25k–60k a month on ads</div>
+          <div class="price">$949<span class="per">/mo</span></div>
+          <ul>
+            <li><b>Up to three stores</b>, in one view</li>
+            <li>Monthly report, <b>written by a person</b></li>
+            <li><b>45 minutes, every two weeks</b></li>
+            <li>Weekly summary email</li>
+            <li>Alerts tuned to your business</li>
+            <li>Two questions a month, any time</li>
+          </ul>
+          <a class="btn" href="/free-report">Start free</a>
+        </div>
+
+        <div class="tier">
+          <div class="name">Partner</div>
+          <div class="for">$60k+ a month on ads</div>
+          <div class="price">$1,800<span class="per">+ /mo</span></div>
+          <ul>
+            <li><b>Unlimited stores</b></li>
+            <li><b>Weekly call</b></li>
+            <li>Full history, as far back as it goes</li>
+            <li>Ask us anything, any time</li>
+            <li>Quarterly deep dive</li>
+          </ul>
+          <a class="btn outline-light" href="/contact">Talk to us</a>
+        </div>
+      </div>
+
+      <p class="pricenote">
+        <b>Your first report is free.</b> One month of data, one report, one call — then you decide.<br
+        />
+        Setup is $600 one time, and covers connecting everything and pulling 13 months of history. Extra
+        stores are $129 a month. Billed every three months, in advance. No lock-in.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">What clients say</div>
+      <h2>We'll put a real quote here.</h2>
+      <div class="quote-slot">
+        A client quote will go here once we have a real one worth quoting. We'd rather leave it empty
+        than invent one.
+      </div>
+    </div>
+  </section>
+</Marketing>
+
+<style>
+  /* Dark pricing section — mirrors the homepage's pricing block so the numbers
+     match what a visitor already saw on the landing page. */
+  .pricing {
+    background: var(--gl-green-night);
+    color: var(--gl-green-fog);
+    padding: 72px 0;
+  }
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .tier {
+    background: var(--gl-green-tier);
+    border: 1px solid var(--gl-green-line-2);
+    border-radius: 16px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+  }
+  .tier.feature {
+    background: var(--gl-white);
+    color: var(--gl-ink);
+    border-color: var(--gl-white);
+    position: relative;
+  }
+  .tier .tag {
+    position: absolute;
+    top: -12px;
+    left: 28px;
+    background: var(--gl-gold-display);
+    color: var(--gl-gold-text);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+  }
+  .tier .name {
+    font-size: 19px;
+    font-weight: 600;
+  }
+  .tier .for {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--gl-green-muted-2);
+  }
+  .tier.feature .for {
+    color: var(--gl-slate);
+  }
+  .tier .price {
+    margin-top: 26px;
+    font-family: var(--gl-font-display);
+    font-size: 46px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .tier .per {
+    font-family: var(--gl-font-body);
+    font-size: 15px;
+    color: var(--gl-green-muted-2);
+    letter-spacing: 0;
+  }
+  .tier.feature .per {
+    color: var(--gl-slate);
+  }
+  .tier ul {
+    margin-top: 26px;
+    list-style: none;
+    font-size: 15px;
+    line-height: 1.5;
+    flex: 1;
+  }
+  .tier li {
+    padding: 11px 0;
+    border-top: 1px solid var(--gl-green-line-2);
+    color: var(--gl-green-list);
+    display: flex;
+    gap: 10px;
+  }
+  .tier.feature li {
+    border-top-color: var(--gl-line);
+    color: var(--gl-slate);
+  }
+  .tier li:before {
+    content: '—';
+    color: var(--gl-green-numeral);
+    flex: none;
+  }
+  .tier.feature li:before {
+    color: var(--gl-green);
+  }
+  .tier li b {
+    color: var(--gl-white);
+    font-weight: 500;
+  }
+  .tier.feature li b {
+    color: var(--gl-ink);
+  }
+  .tier .btn {
+    margin-top: 26px;
+    width: 100%;
+  }
+  .pricenote {
+    margin-top: 28px;
+    font-size: 14.5px;
+    color: var(--gl-green-muted-2);
+    line-height: 1.7;
+  }
+  .pricenote b {
+    color: var(--gl-white);
+    font-weight: 500;
+  }
+  .quote-slot {
+    margin-top: 28px;
+    border: 1.5px dashed var(--gl-line-2);
+    border-radius: 14px;
+    padding: 34px;
+    text-align: center;
+    color: var(--gl-slate);
+    font-size: 15px;
+    max-width: 680px;
+  }
+  @media (max-width: 1080px) {
+    .tiers {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
