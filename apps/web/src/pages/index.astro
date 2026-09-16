@@ -766,6 +766,14 @@ const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
         gap: 56px;
         align-items: center;
       }
+      .portrait {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: var(--gl-shadow-image);
+        display: block;
+      }
       .quote {
         font-family: var(--gl-font-display);
         font-size: 30px;
@@ -1340,13 +1348,14 @@ const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
     <!-- ANALYST -->
     <section class="analyst">
       <div class="wrap">
-        <div class="ph" style="min-height:380px">
-          <div class="lbl">Image placeholder</div>
-          <div class="name">analyst-portrait.jpg</div>
-          <div class="desc">
-            A real photo of you. Natural light, plain background, looking at the camera.
-          </div>
-        </div>
+        <img
+          class="portrait"
+          src="/analyst-portrait.jpg"
+          width="800"
+          height="800"
+          loading="lazy"
+          alt="Rahul Thakor, founder of Grossline"
+        />
         <div>
           <div class="eyebrow">Who's behind it</div>
           <p class="quote">
