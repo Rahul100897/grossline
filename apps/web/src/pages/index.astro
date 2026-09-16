@@ -768,7 +768,10 @@ const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
       }
       .portrait {
         width: 100%;
-        aspect-ratio: 1 / 1;
+        /* Grid items default to min-width:auto, which lets a replaced <img> use
+           its intrinsic 800px and overflow the 340px column — pin it to 0. */
+        min-width: 0;
+        height: 400px;
         object-fit: cover;
         border-radius: 16px;
         box-shadow: var(--gl-shadow-image);
@@ -1351,7 +1354,7 @@ const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
         <img
           class="portrait"
           src="/analyst-portrait.jpg"
-          width="800"
+          width="640"
           height="800"
           loading="lazy"
           alt="Rahul Thakor, founder of Grossline"
@@ -1365,7 +1368,7 @@ const portalUrl = import.meta.env.PUBLIC_PORTAL_URL ?? 'http://localhost:3002';
           </p>
           <p class="byline">
             <b>Rahul Thakor</b>Founder, Grossline. Shopify developer working with direct-to-consumer
-            brands since 2019.
+            brands since 2015.
           </p>
         </div>
       </div>
